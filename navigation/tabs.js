@@ -1,33 +1,13 @@
+// Helpful source: https://github.com/bizzara/rncomponents/blob/main/react-native-bottom-tab-navigation/App.js
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/AntDesign';
+import { StyleSheet, Text, Button, Image, View, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons'; 
 
 
-import HomePage from "../screens/HomePage";
-import AddExpense from "../screens/AddExpense";
-import GraphPage from "../screens/GraphPage";
 
-
-const screenOptions = (route, color) => {
-    let iconName;
-  
-    switch (route.name) {
-      case 'Home':
-        return <AntDesign name={'home'} color={color} size={34} />;
-        break;
-      case 'Add': 
-        return <AntDesign name={'pluscircleo'} color={color} size={34} />;
-        break;
-      case 'Graph': 
-        return <FontAwesome name={'bar-chart'} color={color} size={34} />;
-        break;
-      default:
-        break;
-    }
- 
-    return <Icon name={iconName} color={color} size={24} />;
-  };
+import {HomePage, AddExpense, GraphPage} from "../screens";
 
 
 const Tab = createBottomTabNavigator();
@@ -37,23 +17,66 @@ const Tabs = () => {
         <Tab.Navigator 
             initialRouteName={"HomePage"} 
             screenOptions={({route}) => ({
-                tabBarIcon: ({color}) => screenOptions(route, color),
-                headerShown: false,
-            })}
-            tabBarOptions={{
-                activeTintColor: '#37c871',
-                inactiveTintColor: '#b7c8be',
+                initialRouteName: "HomePage",
+                tabBarShowLabel:false,
+                headerShown:false,
                 showLabel: false,
-                style: {
-                    borderTopColor: '#66666666',
-                    backgroundColor: 'transparent',
+                tabBarStyle: {
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    left: 0,
                     elevation: 0,
-                },
-            }}
+                    height: 80,
+                    background: "#fff"
+                }
+            })}
         >
-            <Tab.Screen name="Home" component={HomePage} />
-            <Tab.Screen name="Add" component={AddExpense} />
-            <Tab.Screen name="Graph" component={GraphPage} />
+            <Tab.Screen name="Home" component={HomePage} 
+                options={{
+                    tabBarIcon: ({focused})=>{
+                        return (
+                        <View style={{alignItems: "center", justifyContent: "center"}}> 
+                            <AntDesign name="home" size={30} color={focused ? "#37c871": "#b7c8be"} />
+                        </View>
+                        )
+                    }
+                }}
+            />
+            <Tab.Screen 
+                name="Add" 
+                component={AddExpense} 
+                options={{
+                    tabBarIcon: ({focused})=>{
+                    return (
+                        <View
+                            style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "#37c871",
+                                width: Platform.OS == "ios" ? 60 : 70,
+                                height: Platform.OS == "ios" ? 60 : 70,
+                                top: Platform.OS == "ios" ? -10 : -20,
+                                borderRadius: Platform.OS == "ios" ? 30 : 35
+                            }}
+                            >
+                                <AntDesign name="pluscircleo" size={30} color="#fff" />
+                        </View>
+                    )
+                    }
+                }}
+                />
+            <Tab.Screen name="Graph" component={GraphPage}
+                options={{
+                    tabBarIcon: ({focused})=>{
+                        return (
+                        <View style={{alignItems: "center", justifyContent: "center"}}> 
+                            <FontAwesome name="bar-chart" size={30} color={focused ? "#37c871": "#b7c8be"} />
+                        </View>
+                        )
+                    }
+                }}
+                />
         </Tab.Navigator>
     );
   }
