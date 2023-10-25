@@ -1,21 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Text, TextInput, View, Image, SafeAreaView } from 'react-native';
 import React, { useState } from 'react';
+import { addRowToExpenseSheet, getExpenseSheet } from '../util/FileSystemUtils';
+import { csvToJsonList } from '../util/CsvUtils';
 
 export default function App() {
-const handleButtonPress = () => {
+
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
+  const [category, setCategory] = useState("");
+
+  const handleButtonPress = async () => {
     // Add your button click logic here
-    alert('Submitted');
-};
+    // alert('Submitted');
+    const date = new Date();
+    const dateString = `${date.getUTCFullYear()}${date.getUTCMonth()}${date.getUTCDate()}`;
+    const expenseData = csvToJsonList(await getExpenseSheet());
+    let max_id = -1;
+    expenseData.forEach(entry => {
+      entry_id = parseInt(entry[id]);
+      if (entry_id > max_id) {
+        max_id = entry_id;
+      }
+    });
+    await addRowToExpenseSheet(dateString, category, name, amount, max_id + 1);
+  };
 
-const [name, setName] = useState("");
-const [amount, setAmount] = useState("");
-const [category, setCategory] = useState("");
-
-const formattedAmount = amount.toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-});
+  const formattedAmount = amount.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+  });
 
   return (
     <View style={styles.container}>
