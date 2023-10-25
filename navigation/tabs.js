@@ -1,4 +1,5 @@
 // Helpful source: https://github.com/bizzara/rncomponents/blob/main/react-native-bottom-tab-navigation/App.js
+// Link for icons: https://icons.expo.fyi/Index
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, Text, Button, Image, View, TouchableOpacity } from 'react-native';
