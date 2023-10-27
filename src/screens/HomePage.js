@@ -1,12 +1,38 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text, TextInput, ScrollView } from 'react-native';
-import { backgroundColor, primaryColor, secondaryColor, subHeadingColor } from './Colors';
-import AddButton from './components/AddButton';
+import { StyleSheet, View, Text, TextInput, ScrollView, VirtualizedList } from 'react-native';
+import { backgroundColor, primaryColor, secondaryColor, subHeadingColor } from '../../Colors';
+import AddButton from '../../components/AddButton';
+import { useEffect, useMemo, useState } from 'react';
+import { csvToJsonList } from '../util/CsvUtils';
+import { getExpenseSheet } from '../util/FileSystemUtils';
+import { getCurrentDateString } from '../util/DatetimeUtils';
 
-export default function HomePage() {
+export default function HomePage({ navigation }) {
+
+    const [expenses, setExpense] = useState([]);
+
+    const spending = useMemo(() => {
+        let newSpending = 0;
+        expenses.filter((expense) => expense["date"] == getCurrentDateString()).forEach((expense) => {
+            newSpending += parseInt(expense["amount"]);
+        });
+        return newSpending;
+    }, [expenses]);
+
     const goToAddPage = () => {
-        navigation.navigate('TEMPORARY') // change TEMPORARY to actual page
+        navigation.navigate('AddExpense') // change TEMPORARY to actual page
     };
+
+
+    useEffect(() => {
+        const querySheet = async () => {
+            setExpense(csvToJsonList(await getExpenseSheet()));
+        }
+        querySheet();
+        navigation.addListener('focus', () => {
+            querySheet();
+        });
+    }, []);
     
     return (
         <View style={styles.container}>
@@ -16,10 +42,9 @@ export default function HomePage() {
                 <Text style={styles.subHeading}>
                     Today's Expenses
                 </Text>
-                <TextInput 
+                <Text 
                     style={styles.textInput}
-                    placeholder='$0.00'
-                />
+                >{`$${spending}`}</Text>
             </View>
             <View style={styles.expensesContainer}>
                 <Text style={styles.subHeading}>
@@ -28,11 +53,19 @@ export default function HomePage() {
                 <ScrollView>
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
-                        <View style={styles.expenseBoxes}></View>
-                        <View style={styles.expenseBoxes}></View>
-                        <View style={styles.expenseBoxes}></View>
-                        <View style={styles.expenseBoxes}></View>
-                        <View style={styles.expenseBoxes}></View>
+                        {expenses.reverse().map((expense) => {
+                            return <View key={expense["id"]} style={styles.expenseBoxes}> 
+                                <Text style={styles.expenseData}>
+                                    {expense["category"]}
+                                </Text>
+                                <Text style={styles.expenseData}>
+                                    {expense["name"]}
+                                </Text>
+                                <Text style={styles.expenseData}>
+                                    {expense["amount"]}
+                                </Text>
+                            </View>;
+                        })}
                         {/* Add more content as needed */}
                     </View>
                 </ScrollView>
@@ -97,8 +130,16 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 70,
         backgroundColor: 'white',
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
         borderRadius: 15,
         borderWidth: 2,
         borderColor: secondaryColor,
     },
+    expenseData: {
+        width: '30%',
+        textAlign: "center",
+    }
 });

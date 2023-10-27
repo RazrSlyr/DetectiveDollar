@@ -3,8 +3,9 @@ import { TouchableOpacity, StyleSheet, Text, TextInput, View, Image, SafeAreaVie
 import React, { useState } from 'react';
 import { addRowToExpenseSheet, getExpenseSheet } from '../util/FileSystemUtils';
 import { csvToJsonList } from '../util/CsvUtils';
+import { getCurrentDateString } from '../util/DatetimeUtils';
 
-export default function App() {
+export default function App({ navigation }) {
 
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
@@ -12,18 +13,22 @@ export default function App() {
 
   const handleButtonPress = async () => {
     // Add your button click logic here
-    // alert('Submitted');
-    const date = new Date();
-    const dateString = `${date.getUTCFullYear()}${date.getUTCMonth()}${date.getUTCDate()}`;
-    const expenseData = csvToJsonList(await getExpenseSheet());
+    if (name == "" || amount == "" || category == "") {
+      alert("Please Input a Name, Amount, and Category");
+      return;
+    }
+    const dateString = getCurrentDateString();
+    let expenseData = csvToJsonList(await getExpenseSheet());
     let max_id = -1;
     expenseData.forEach(entry => {
-      entry_id = parseInt(entry[id]);
+      entry_id = parseInt(entry["id"]);
       if (entry_id > max_id) {
         max_id = entry_id;
       }
     });
     await addRowToExpenseSheet(dateString, category, name, amount, max_id + 1);
+    expenseData = csvToJsonList(await getExpenseSheet());
+    navigation.navigate("Home")
   };
 
   const formattedAmount = amount.toLocaleString('en-US', {
@@ -33,7 +38,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-        <Text style={styles.title}>Add{"\n"}Expense</Text>
+        <Text style={[styles.title, styles.topTitle]}>Add{"\n"}Expense</Text>
         <StatusBar style="auto" />
         <View style={styles.box}>
             <Text style={{
@@ -44,7 +49,7 @@ export default function App() {
                 left: 5,
                 }}>Today's Remaining Budget
             </Text>
-            <Text style={{...styles.title, fontSize: 40, position: 'center', top: 10 }}>${formattedAmount}</Text>
+            <Text style={{...styles.title, fontSize: 40, top: 10 }}>${formattedAmount}</Text>
         </View>
         <View style={styles.box2}>
             <TextInput style={{...styles.input,
@@ -73,11 +78,11 @@ export default function App() {
                 fontSize: 30}}>Add</Text>
             </View>
         </TouchableOpacity>
-        <View style={{...styles.box, position: 'absolute', height: 60, bottom: 10, left: 10}}>
+        {/* <View style={{...styles.box, position: 'absolute', height: 60, bottom: 10, left: 10}}>
             <Text>Stored Name: {name}</Text>
             <Text>Stored Amount: {amount}</Text>
             <Text>Stored Category: {category}</Text>
-        </View>
+        </View> */}
     </View>
     );
   }
@@ -88,6 +93,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     alignItems: 'center',
     justifyContent: 'top',
+  },
+  topTitle: {
+    paddingTop: 50,
+    margin: 'auto',
   },
   title: {
     color: '#37c871',
@@ -118,7 +127,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     width: 250,
     height: 40,
-    outlineColor: "#37c871",
     borderColor: "#37c871",
     borderRadius: 10,
     padding: 10,

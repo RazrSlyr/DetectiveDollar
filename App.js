@@ -1,12 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { ButtonStyleSheet, Text, TextInput, View, Image, Image } from 'react-native';
+import { ButtonStyleSheet, Text, TextInput, View, Image } from 'react-native';
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AddExpense from './src/screens/AddExpense';
 import { useFonts } from 'expo-font';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomePage from './HomePage';
+import HomePage from './src/screens/HomePage';
 
 // used for routing to other pages
 const Stack = createNativeStackNavigator()
