@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+
 import { secondaryColor } from '../Colors';
 
 const AddButton = ({ onPress }) => {
@@ -9,7 +10,7 @@ const AddButton = ({ onPress }) => {
                 <Text style={styles.buttonText}>Add</Text>
             </View>
         </TouchableOpacity>
-  );
+    );
 };
 
 const styles = StyleSheet.create({

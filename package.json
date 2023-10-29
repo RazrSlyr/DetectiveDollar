@@ -6,7 +6,10 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "fix:prettier": "prettier --config .prettierrc.js --write '**/*.{ts,tsx,js,jsx}'",
+    "check:prettier": "prettier --config .prettierrc.js --check '**/*.{ts,tsx,js,jsx}'",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
@@ -23,6 +26,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "eslint": "^8.52.0",
+    "eslint-config-universe": "^12.0.0",
+    "prettier": "^3.0.3",
     "react-native-svg-transformer": "^1.1.0"
   },
   "private": true
