@@ -1,20 +1,17 @@
+import { NavigationContainer } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { ButtonStyleSheet, Text, TextInput, View, Image } from 'react-native';
+import Tabs from './components/navigation/tabs';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Detective Dollar</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    const [fontsLoaded] = useFonts({
+        'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
+    });
+    return (
+        <NavigationContainer>
+            <Tabs />
+        </NavigationContainer>
+    );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
