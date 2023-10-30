@@ -8,7 +8,7 @@ import AddExpense from './src/screens/AddExpense';
 import HomePage from './src/screens/HomePage';
 
 // used for routing to other pages
-const Stack = createNativeStackNavigator()
+const Stack = createNativeStackNavigator();
 
 export default function App() {
     const [fontsLoaded] = useFonts({
