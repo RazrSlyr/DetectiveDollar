@@ -1,76 +1,66 @@
 import { StatusBar } from 'expo-status-bar';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, ScrollView, VirtualizedList } from 'react-native';
+
 import { backgroundColor, primaryColor, secondaryColor, subHeadingColor } from '../../Colors';
 import AddButton from '../../components/AddButton';
-import { useEffect, useMemo, useState } from 'react';
 import { csvToJsonList } from '../util/CsvUtils';
-import { getExpenseSheet } from '../util/FileSystemUtils';
 import { getCurrentDateString } from '../util/DatetimeUtils';
+import { getExpenseSheet } from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
-
     const [expenses, setExpense] = useState([]);
-
     const spending = useMemo(() => {
         let newSpending = 0;
-        expenses.filter((expense) => expense["date"] == getCurrentDateString()).forEach((expense) => {
-            newSpending += parseInt(expense["amount"]);
-        });
+        expenses
+            // eslint-disable-next-line eqeqeq
+            .filter((expense) => expense['date'] == getCurrentDateString())
+            .forEach((expense) => {
+                newSpending += parseInt(expense['amount'], 10);
+            });
         return newSpending;
     }, [expenses]);
 
     const goToAddPage = () => {
-        navigation.navigate('AddExpense') // change TEMPORARY to actual page
+        navigation.navigate('AddExpense'); // change TEMPORARY to actual page
     };
-
 
     useEffect(() => {
         const querySheet = async () => {
             setExpense(csvToJsonList(await getExpenseSheet()));
-        }
+        };
         querySheet();
         navigation.addListener('focus', () => {
             querySheet();
         });
     }, []);
-    
     return (
         <View style={styles.container}>
             <Text style={[styles.title, styles.topTitle]}>Daily</Text>
             <Text style={styles.title}>Summary</Text>
             <View style={styles.totalExpensesContainer}>
-                <Text style={styles.subHeading}>
-                    Today's Expenses
-                </Text>
-                <Text 
-                    style={styles.textInput}
-                >{`$${spending}`}</Text>
+                <Text style={styles.subHeading}>Today's Expenses</Text>
+                <Text style={styles.textInput}>{`$${spending}`}</Text>
             </View>
             <View style={styles.expensesContainer}>
-                <Text style={styles.subHeading}>
-                    History
-                </Text>
+                <Text style={styles.subHeading}>History</Text>
                 <ScrollView>
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
                         {expenses.reverse().map((expense) => {
-                            return <View key={expense["id"]} style={styles.expenseBoxes}> 
-                                <Text style={styles.expenseData}>
-                                    {expense["category"]}
-                                </Text>
-                                <Text style={styles.expenseData}>
-                                    {expense["name"]}
-                                </Text>
-                                <Text style={styles.expenseData}>
-                                    {expense["amount"]}
-                                </Text>
-                            </View>;
+                            return (
+                                <View key={expense['id']} style={styles.expenseBoxes}>
+                                    <Text style={styles.expenseData}>{expense['category']}</Text>
+                                    <Text style={styles.expenseData}>{expense['name']}</Text>
+                                    <Text style={styles.expenseData}>{expense['amount']}</Text>
+                                </View>
+                            );
                         })}
                         {/* Add more content as needed */}
                     </View>
                 </ScrollView>
             </View>
-            <AddButton onPress={goToAddPage}></AddButton>
+            <AddButton onPress={goToAddPage} />
             <StatusBar style="auto" />
         </View>
     );
@@ -130,16 +120,16 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 70,
         backgroundColor: 'white',
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         borderRadius: 15,
         borderWidth: 2,
         borderColor: secondaryColor,
     },
     expenseData: {
         width: '30%',
-        textAlign: "center",
-    }
+        textAlign: 'center',
+    },
 });
