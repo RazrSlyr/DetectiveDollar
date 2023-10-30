@@ -6,23 +6,41 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "fix:prettier": "prettier --config .prettierrc.js --write '**/*.{ts,tsx,js,jsx}'",
+    "check:prettier": "prettier --config .prettierrc.js --check '**/*.{ts,tsx,js,jsx}'",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
+<<<<<<< HEAD
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
+=======
+    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/native-stack": "^6.9.15",
+    "@react-navigation/stack": "^6.3.19",
+>>>>>>> origin/master
     "expo": "~49.0.13",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.72.6",
+<<<<<<< HEAD
     "react-native-web": "~0.19.6",
     "react-native-screens": "~3.22.0",
     "react-native-safe-area-context": "4.6.3"
+=======
+    "react-native-svg": "13.9.0",
+    "react-native-web": "~0.19.6"
+>>>>>>> origin/master
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "eslint": "^8.52.0",
+    "eslint-config-universe": "^12.0.0",
+    "prettier": "^3.0.3",
+    "react-native-svg-transformer": "^1.1.0"
   },
   "private": true
 }
