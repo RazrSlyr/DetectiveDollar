@@ -60,7 +60,10 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
-            <AddButton onPress={goToAddPage} />
+            {/* This will add the add button to the home page. I have not set up the naviagtion for it 
+            so when it is added back it will produce an error  */}
+            {/* <AddButton onPress={goToAddPage} /> */}
+
             <StatusBar style="auto" />
         </View>
     );
