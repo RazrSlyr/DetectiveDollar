@@ -3,7 +3,7 @@
 
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, Text, Button, Image, View, TouchableOpacity } from 'react-native';
+import { View, Platform } from 'react-native';
 
 import { HomePage, AddExpense, GraphPage } from '../../src/screens';
 
@@ -56,10 +56,10 @@ const Tabs = () => {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     backgroundColor: '#37c871',
-                                    width: Platform.OS == 'ios' ? 60 : 70,
-                                    height: Platform.OS == 'ios' ? 60 : 70,
-                                    top: Platform.OS == 'ios' ? -10 : -20,
-                                    borderRadius: Platform.OS == 'ios' ? 30 : 35,
+                                    width: Platform.OS === 'ios' ? 60 : 70,
+                                    height: Platform.OS === 'ios' ? 60 : 70,
+                                    top: Platform.OS === 'ios' ? -10 : -20,
+                                    borderRadius: Platform.OS === 'ios' ? 30 : 35,
                                 }}>
                                 <AntDesign name="pluscircleo" size={30} color="#fff" />
                             </View>
