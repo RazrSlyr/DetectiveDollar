@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, Button, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 const GraphPage = ({ navigation }) => {
     return (
