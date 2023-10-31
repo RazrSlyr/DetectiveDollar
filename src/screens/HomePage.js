@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, ScrollView, VirtualizedList } from 'react-native';
 
 import { backgroundColor, primaryColor, secondaryColor, subHeadingColor } from '../../Colors';
-import AddButton from '../../components/AddButton';
+// import AddButton from '../../components/AddButton';
 import { csvToJsonList } from '../util/CsvUtils';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import { getExpenseSheet } from '../util/FileSystemUtils';
@@ -60,7 +60,10 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
-            <AddButton onPress={goToAddPage} />
+            {/* This will add the add button to the home page. I have not set up the naviagtion for it 
+            so when it is added back it will produce an error  */}
+            {/* <AddButton onPress={goToAddPage} /> */}
+
             <StatusBar style="auto" />
         </View>
     );
