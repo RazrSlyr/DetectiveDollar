@@ -16,9 +16,13 @@ export default function HomePage({ navigation }) {
             // eslint-disable-next-line eqeqeq
             .filter((expense) => expense['date'] == getCurrentDateString())
             .forEach((expense) => {
-                newSpending += parseInt(expense['amount'], 10);
+                newSpending += parseFloat(expense['amount']);
             });
-        return newSpending;
+        const todaySpending = newSpending.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        });
+        return todaySpending;
     }, [expenses]);
 
     const goToAddPage = () => {
@@ -40,7 +44,7 @@ export default function HomePage({ navigation }) {
             <Text style={styles.title}>Summary</Text>
             <View style={styles.totalExpensesContainer}>
                 <Text style={styles.subHeading}>Today's Expenses</Text>
-                <Text style={styles.textInput}>{`$${spending}`}</Text>
+                <Text style={styles.textInput}>{`${spending}`}</Text>
             </View>
             <View style={styles.expensesContainer}>
                 <Text style={styles.subHeading}>History</Text>
@@ -88,10 +92,10 @@ const styles = StyleSheet.create({
     totalExpensesContainer: {
         backgroundColor: 'white',
         borderRadius: 15,
-        flex: 1 / 4,
         margin: 20,
-        width: '70%',
-        alignItems: 'right',
+        height: 100,
+        width: 270,
+        alignItems: 'center',
         justifyContent: 'center',
     },
     subHeading: {
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
     },
     expenseBoxes: {
         width: '100%',
-        height: 70,
+        height: 60,
         backgroundColor: 'white',
         display: 'flex',
         flexDirection: 'row',

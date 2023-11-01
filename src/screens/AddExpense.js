@@ -70,7 +70,7 @@ export default function App({ navigation }) {
                 <TextInput
                     style={{ ...styles.input, position: 'absolute', top: 150 }}
                     placeholder="Amount"
-                    keyboardType="phone-pad"
+                    keyboardType="numeric"
                     maxLength={10}
                     onChangeText={(value) => setAmount(value)}
                 />
