@@ -1,14 +1,18 @@
-function getCurrentDateString() {
+const getCurrentDateString = () => {
     const date = new Date();
-    let month = date.getUTCMonth();
+    let month = date.getMonth();
     if (month.length < 2) {
         month = '0' + month;
     }
-    let day = date.getUTCDate();
+    let day = date.getDate();
     if (day.length < 2) {
         day = '0' + day;
     }
-    return `${date.getUTCFullYear()}${month}${day}`;
+    return `${date.getFullYear()}${month}${day}`;
 }
 
-export { getCurrentDateString };
+const getCurrentUTCTimestamp = () => {
+    return Date.now();
+}
+
+export { getCurrentDateString, getCurrentUTCTimestamp };

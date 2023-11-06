@@ -1,45 +1,64 @@
 import * as FileSystem from 'expo-file-system';
+import * as SQLite from 'expo-sqlite';
 
-const dataDir = FileSystem.cacheDirectory + 'data/';
-const spreadsheetLocation = dataDir + 'expense_sheet.csv';
+import { 
+    CREATE_EXPENSES_TABLE,
+    CREATE_REACCURING_TABLE,
+    GET_EXPENSES_TABLE_QUERY,
+    SET_EXPENSE_CATERGORY_AS_INDEX,
+    SET_EXPENSE_DAY_AS_INDEX,
+    createExpenseByDayQuery,
+    createExpenseInsert,
+} from './SQLiteUtils';
 
-// Checks if data directory exists. If not, creates it
-async function ensureDirExists() {
+const dataDir = FileSystem.documentDirectory + 'SQLite';
+const databaseName = 'DetectiveDollar.db';
+
+// Gets the database if it exists. If not, creates it
+async function getDatabase() {
+    let firstTime = false;
     const dirInfo = await FileSystem.getInfoAsync(dataDir);
     if (!dirInfo.exists) {
-        await FileSystem.makeDirectoryAsync(dataDir, { intermediates: true });
+        await FileSystem.makeDirectoryAsync(dataDir);
+        firstTime = true;
     }
+    const db = SQLite.openDatabase(databaseName);
+    if (!firstTime) return db;
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(CREATE_REACCURING_TABLE);
+        await tx.executeSqlAsync(CREATE_EXPENSES_TABLE);
+        const promises = [
+            tx.executeSqlAsync(SET_EXPENSE_CATERGORY_AS_INDEX),
+            tx.executeSqlAsync(SET_EXPENSE_DAY_AS_INDEX),
+        ];
+        await Promise.all(promises);
+    });
+    return db;
 }
 
-// Sets spreadsheet to provided csv string
-export async function setExpenseSheet(csvString, skipDirCheck) {
-    if (skipDirCheck === undefined) {
-        await ensureDirExists();
-    }
-    await FileSystem.writeAsStringAsync(spreadsheetLocation, csvString, {
-        encoding: FileSystem.EncodingType.UTF8,
+export async function getExpenseTable() {
+    const db = await getDatabase();
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
+    });
+    return rows;
+}
+
+export async function addRowToExpenseTable(name, category, amount, day) {
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day));
     });
 }
 
-// Returns our spreadsheet as a csv string
-// If our spreadsheet doesn't exist, create it
-export async function getExpenseSheet() {
-    await ensureDirExists();
-
-    const fileInfo = await FileSystem.getInfoAsync(spreadsheetLocation);
-
-    if (!fileInfo.exists) {
-        setExpenseSheet('date,category,name,amount,id', true);
-    }
-
-    return await FileSystem.readAsStringAsync(spreadsheetLocation, {
-        encoding: FileSystem.EncodingType.UTF8,
+export async function getExpensesFromDay(day) {
+    const db = await getDatabase();
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        try {
+            rows = (await tx.executeSqlAsync(createExpenseByDayQuery(day))).rows;
+        } catch {}
     });
-}
-
-// Adds a row to our current spreadsheet
-export async function addRowToExpenseSheet(date, category, name, amount, id) {
-    let sheet = await getExpenseSheet();
-    sheet += `\n${date},${category},${name},${amount},${id}`;
-    setExpenseSheet(sheet);
+    return rows;
 }

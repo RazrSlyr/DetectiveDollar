@@ -1,41 +1,38 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, ScrollView, VirtualizedList } from 'react-native';
+import { StyleSheet, View, Text, ScrollView } from 'react-native';
 
-import { backgroundColor, primaryColor, secondaryColor, subHeadingColor } from '../../Colors';
-// import AddButton from '../../components/AddButton';
-import { csvToJsonList } from '../util/CsvUtils';
+import { primaryColor, secondaryColor, subHeadingColor } from '../../Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { getExpenseSheet } from '../util/FileSystemUtils';
+import { getExpensesFromDay } from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
-    const [expenses, setExpense] = useState([]);
+    const [todayExpenses, setTodayExpenses] = useState([]);
     const spending = useMemo(() => {
+        if (todayExpenses?.length === 0) {
+            return 0;
+        }
         let newSpending = 0;
-        expenses
-            // eslint-disable-next-line eqeqeq
-            .filter((expense) => expense['date'] == getCurrentDateString())
-            .forEach((expense) => {
-                newSpending += parseFloat(expense['amount']);
-            });
+        todayExpenses.forEach((expense) => {
+            newSpending += parseFloat(expense['amount']);
+        });
         const todaySpending = newSpending.toLocaleString('en-US', {
             style: 'currency',
             currency: 'USD',
         });
         return todaySpending;
-    }, [expenses]);
+    }, [todayExpenses]);
 
     const goToAddPage = () => {
         navigation.navigate('AddExpense'); // change TEMPORARY to actual page
     };
 
     useEffect(() => {
-        const querySheet = async () => {
-            setExpense(csvToJsonList(await getExpenseSheet()));
+        const getExpenses = async () => {
+            setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
         };
-        querySheet();
         navigation.addListener('focus', () => {
-            querySheet();
+            getExpenses();
         });
     }, []);
     return (
@@ -51,7 +48,7 @@ export default function HomePage({ navigation }) {
                 <ScrollView>
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
-                        {expenses.reverse().map((expense) => {
+                        {todayExpenses.reverse().map((expense) => {
                             return (
                                 <View key={expense['id']} style={styles.expenseBoxes}>
                                     <Text style={styles.expenseData}>{expense['category']}</Text>
