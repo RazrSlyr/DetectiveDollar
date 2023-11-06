@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
-import { 
+import {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
     GET_EXPENSES_TABLE_QUERY,
@@ -9,6 +9,7 @@ import {
     SET_EXPENSE_DAY_AS_INDEX,
     createExpenseByDayQuery,
     createExpenseInsert,
+    createExpenseByTimeframeQuery,
 } from './SQLiteUtils';
 
 const dataDir = FileSystem.documentDirectory + 'SQLite';
@@ -58,6 +59,24 @@ export async function getExpensesFromDay(day) {
     await db.transactionAsync(async (tx) => {
         try {
             rows = (await tx.executeSqlAsync(createExpenseByDayQuery(day))).rows;
+        } catch {}
+    });
+    return rows;
+}
+
+export async function getExpensesFromTimeframe(startTimestamp, endTimestamp) {
+    /* 
+    params: startTime, endTimestamp ints,
+    */
+    const db = await getDatabase();
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        try {
+            rows = (
+                await tx.executeSqlAsync(
+                    createExpenseByTimeframeQuery(startTimestamp, endTimestamp)
+                )
+            ).rows;
         } catch {}
     });
     return rows;
