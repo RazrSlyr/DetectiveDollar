@@ -37,7 +37,7 @@ const createExpenseByDayQuery = (day) => {
 };
 
 const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
-    return `SELECT * FROM expenses WHERE timestamp BETWEEN ${startTimestamp} AND ${endTimestamp}`;
+    return `SELECT * FROM expenses WHERE timestamp BETWEEN ${startTimestamp} AND ${endTimestamp} ORDER BY timestamp`;
 };
 
 export {

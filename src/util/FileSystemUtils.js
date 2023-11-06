@@ -64,11 +64,15 @@ export async function getExpensesFromDay(day) {
     return rows;
 }
 
-export async function getExpensesFromTimeframe(startTimestamp, endTimestamp) {
-    /* 
-    params: startTime, endTimestamp ints,
-    */
+export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
+    //params: ISO format strings: YYYY-MM-DD
     const db = await getDatabase();
+    const startTimestamp = Date.parse(startDateStr);
+    const endTimestamp = Date.parse(endDateStr);
+    if (isNaN(startTimestamp) || isNaN(endTimestamp)) {
+        console.warn(`fail to get timestamp ${startDateStr} ${endDateStr}`);
+        return [];
+    }
     let rows = [];
     await db.transactionAsync(async (tx) => {
         try {
@@ -77,7 +81,9 @@ export async function getExpensesFromTimeframe(startTimestamp, endTimestamp) {
                     createExpenseByTimeframeQuery(startTimestamp, endTimestamp)
                 )
             ).rows;
-        } catch {}
+        } catch (error) {
+            console.warn(`getExpensesFromTimeframe error ${error}`);
+        }
     });
     return rows;
 }
