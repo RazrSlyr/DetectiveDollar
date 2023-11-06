@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
-import { 
+import {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
     GET_EXPENSES_TABLE_QUERY,
@@ -9,6 +9,7 @@ import {
     SET_EXPENSE_DAY_AS_INDEX,
     createExpenseByDayQuery,
     createExpenseInsert,
+    createExpenseByTimeframeQuery,
 } from './SQLiteUtils';
 
 const dataDir = FileSystem.documentDirectory + 'SQLite';
@@ -59,6 +60,28 @@ export async function getExpensesFromDay(day) {
         try {
             rows = (await tx.executeSqlAsync(createExpenseByDayQuery(day))).rows;
         } catch {}
+    });
+    return rows;
+}
+
+export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
+    //params: ISO format strings: YYYY-MM-DD or YYYY-MM-DD hh:mm:ss
+    const db = await getDatabase();
+    const startTimestamp = Date.parse(startDateStr);
+    const endTimestamp = Date.parse(endDateStr);
+    if (isNaN(startTimestamp) || isNaN(endTimestamp)) {
+        console.warn(`malformed ISO strings to get timestamp ${startDateStr} ${endDateStr}`);
+        return [];
+    }
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        try {
+            rows = (
+                await tx.executeSqlAsync(createExpenseByTimeframeQuery(startDateStr, endDateStr))
+            ).rows;
+        } catch (error) {
+            console.warn(`getExpensesFromTimeframe error ${error}`);
+        }
     });
     return rows;
 }
