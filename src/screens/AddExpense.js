@@ -1,18 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
-    Image,
-    SafeAreaView,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { csvToJsonList } from '../util/CsvUtils';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToExpenseSheet, getExpenseSheet } from '../util/FileSystemUtils';
+import { addRowToExpenseTable } from '../util/FileSystemUtils';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
@@ -26,16 +17,7 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
-        let expenseData = csvToJsonList(await getExpenseSheet());
-        let max_id = -1;
-        expenseData.forEach((entry) => {
-            const entry_id = parseInt(entry['id'], 10);
-            if (entry_id > max_id) {
-                max_id = entry_id;
-            }
-        });
-        await addRowToExpenseSheet(dateString, category, name, amount, max_id + 1);
-        expenseData = csvToJsonList(await getExpenseSheet());
+        await addRowToExpenseTable(name, category, parseFloat(amount), dateString);
         navigation.navigate('Home');
     };
 
@@ -129,7 +111,7 @@ const styles = StyleSheet.create({
     },
     box2: {
         width: 300,
-        height: 400,
+        height: 300,
         backgroundColor: '#ffffff',
         borderRadius: 10,
         margin: 10,
