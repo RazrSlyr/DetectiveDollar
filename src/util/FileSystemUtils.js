@@ -65,21 +65,19 @@ export async function getExpensesFromDay(day) {
 }
 
 export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
-    //params: ISO format strings: YYYY-MM-DD
+    //params: ISO format strings: YYYY-MM-DD or YYYY-MM-DD hh:mm:ss
     const db = await getDatabase();
     const startTimestamp = Date.parse(startDateStr);
     const endTimestamp = Date.parse(endDateStr);
     if (isNaN(startTimestamp) || isNaN(endTimestamp)) {
-        console.warn(`fail to get timestamp ${startDateStr} ${endDateStr}`);
+        console.warn(`malformed ISO strings to get timestamp ${startDateStr} ${endDateStr}`);
         return [];
     }
     let rows = [];
     await db.transactionAsync(async (tx) => {
         try {
             rows = (
-                await tx.executeSqlAsync(
-                    createExpenseByTimeframeQuery(startTimestamp, endTimestamp)
-                )
+                await tx.executeSqlAsync(createExpenseByTimeframeQuery(startDateStr, endDateStr))
             ).rows;
         } catch (error) {
             console.warn(`getExpensesFromTimeframe error ${error}`);
