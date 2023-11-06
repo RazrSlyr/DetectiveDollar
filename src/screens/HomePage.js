@@ -28,12 +28,11 @@ export default function HomePage({ navigation }) {
     };
 
     useEffect(() => {
-        const querySheet = async () => {
+        const getExpenses = async () => {
             setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
         };
-        querySheet();
         navigation.addListener('focus', () => {
-            querySheet();
+            getExpenses();
         });
     }, []);
     return (
