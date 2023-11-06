@@ -20,7 +20,7 @@ const CREATE_EXPENSES_TABLE = `CREATE TABLE expenses (
 const SET_EXPENSE_CATERGORY_AS_INDEX = `CREATE INDEX idx_category 
 ON expenses (category);`;
 
-const SET_EXPENSE_DAY_AS_INDEX = `CREATE INDEX idx_category 
+const SET_EXPENSE_DAY_AS_INDEX = `CREATE INDEX idx_day 
 ON expenses (day);`;
 
 const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses';
@@ -28,11 +28,11 @@ const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses';
 const createExpenseInsert = (name, category, amount, day) => {
     return `INSERT INTO expenses (name, category, amount, day)
     VALUES ('${name}', '${category}', ${amount}, '${day}');`;
-}
+};
 
 const createExpenseByDayQuery = (day) => {
     return `SELECT * FROM expenses WHERE day = ${day} ORDER BY timestamp`;
-}
+};
 
 export {
     CREATE_EXPENSES_TABLE,

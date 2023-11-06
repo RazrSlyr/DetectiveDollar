@@ -49,7 +49,7 @@ export default function HomePage({ navigation }) {
                 <ScrollView>
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
-                        {todayExpenses.map((expense) => {
+                        {todayExpenses.reverse().map((expense) => {
                             return (
                                 <View key={expense['id']} style={styles.expenseBoxes}>
                                     <Text style={styles.expenseData}>{expense['category']}</Text>

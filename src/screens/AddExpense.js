@@ -2,8 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { getCurrentDateString, getCurrentUTCTimestamp } from '../util/DatetimeUtils';
-import { addRowToExpenseSheet } from '../util/FileSystemUtils';
+import { getCurrentDateString } from '../util/DatetimeUtils';
+import { addRowToExpenseTable } from '../util/FileSystemUtils';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
@@ -17,7 +17,7 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
-        await addRowToExpenseSheet(name, category, parseFloat(amount), dateString);
+        await addRowToExpenseTable(name, category, parseFloat(amount), dateString);
         navigation.navigate('Home');
     };
 

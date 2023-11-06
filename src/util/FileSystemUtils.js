@@ -18,7 +18,6 @@ const databaseName = 'DetectiveDollar.db';
 async function getDatabase() {
     let firstTime = false;
     const dirInfo = await FileSystem.getInfoAsync(dataDir);
-    console.log(dirInfo);
     if (!dirInfo.exists) {
         await FileSystem.makeDirectoryAsync(dataDir);
         firstTime = true;
@@ -46,7 +45,7 @@ export async function getExpenseTable() {
     return rows;
 }
 
-export async function addRowToExpenseSheet(name, category, amount, day) {
+export async function addRowToExpenseTable(name, category, amount, day) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day));
