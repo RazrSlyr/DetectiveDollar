@@ -75,7 +75,11 @@ const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
 };
 
 const createExpenseByCategoryQuery = (category) => {
-    return `SELECT * FROM expenses WHERE category = "${category}" ORDER BY category;`;
+    return `SELECT * FROM expenses WHERE category = "${category}";`;
+};
+
+const createExpenseByCategoryandTimeframeQuery = (category, startTimestamp, endTimestamp) => {
+    return `SELECT * FROM expenses WHERE category = "${category}" AND timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY category, timestamp;`;
 };
 
 export {
@@ -93,4 +97,5 @@ export {
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
     createExpenseByCategoryQuery,
+    createExpenseByCategoryandTimeframeQuery,
 };

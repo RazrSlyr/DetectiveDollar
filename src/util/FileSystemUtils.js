@@ -15,7 +15,6 @@ import {
     createReacurringInsert,
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
-    createExpenseByCategoryQuery,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
 
@@ -117,28 +116,19 @@ export async function getExpensesbyCategory() {
 
     let rows = [];
     await db.transactionAsync(async (tx) => {
-        rows = (await tx.executeSqlAsync(GET_CATEGORY_QUERY)).rows;
+        try {
+            rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
+        } catch (error) {
+            console.warn(`getExpensesbyCategory error ${error}`);
+        }
     });
 
-    if (!rows) {
-        console.error('No categories retrieved from the database.');
-        return categoryDict;
+    for (const row of rows) {
+        if (row['category'] in categoryDict) {
+            categoryDict[row['category']].push(row);
+        } else {
+            categoryDict[row['category']] = [row];
+        }
     }
-
-    const categories = rows.map((row) => row['category']);
-
-    let categoryRows = [];
-    for (const category of categories) {
-        await db.transactionAsync(async (tx) => {
-            try {
-                categoryRows = (await tx.executeSqlAsync(createExpenseByCategoryQuery(category)))
-                    .rows;
-                categoryDict[category] = categoryRows;
-            } catch (error) {
-                console.warn(`getExpensesbyCategory error ${error}`);
-            }
-        });
-    }
-
     return categoryDict;
 }
