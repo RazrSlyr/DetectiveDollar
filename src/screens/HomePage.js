@@ -1,11 +1,11 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 
 import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { getExpensesFromDay } from '../util/FileSystemUtils';
+import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
@@ -36,6 +36,7 @@ export default function HomePage({ navigation }) {
             getExpenses();
         });
     }, []);
+
     return (
         <View style={styles.container}>
             <Text style={[styles.title, styles.topTitle]}>Daily</Text>
@@ -64,6 +65,25 @@ export default function HomePage({ navigation }) {
                                         )}
                                     </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
+                                    {/* This code handles the expense deletion */}
+                                    <TouchableOpacity  onPress={ async() => {
+                                        Alert.alert(
+                                            'Deleting Expense',
+                                            'Are you sure you want to delete this expense? This cannot be undone.',
+                                            [
+                                                {text: 'NO'},
+                                                {text: 'YES', onPress: async() => {
+                                                    await deleteRowFromExpenseTable(expense['id'])
+                                                    setTodayExpenses(await getExpensesFromDay(getCurrentDateString()))
+                                                }},
+                                            ]
+                                        )
+                                    }}>
+                                        <View>
+                                            <Text style={{color: 'red'}}> X </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    {/* End expense deletion code */}
                                 </View>
                             );
                         })}
