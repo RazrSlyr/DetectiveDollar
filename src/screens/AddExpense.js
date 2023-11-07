@@ -6,7 +6,7 @@ import DropdownSelector from '../components/Dropdown';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToExpenseTable } from '../util/FileSystemUtils';
+import { addRowToExpenseTable, getExpensesbyCategory, getExpenseTable } from '../util/FileSystemUtils';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
@@ -23,6 +23,9 @@ export default function App({ navigation }) {
         const dateString = getCurrentDateString();
         await addRowToExpenseTable(name, category, parseFloat(amount), dateString, frequency);
         // navigation.navigate('Home');
+
+        await getExpensesbyCategory();
+        //await getExpenseTable();
     };
 
     const formattedAmount = amount.toLocaleString('en-US', {
