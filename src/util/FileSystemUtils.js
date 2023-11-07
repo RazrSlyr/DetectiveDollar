@@ -7,11 +7,17 @@ import {
     GET_EXPENSES_TABLE_QUERY,
     SET_EXPENSE_CATERGORY_AS_INDEX,
     SET_EXPENSE_DAY_AS_INDEX,
+    GET_CATEGORY_QUERY,
     createExpenseByDayQuery,
     deleteExpense,
     createExpenseInsert,
     createExpenseByTimeframeQuery,
+    createExpenseByIdQuery,
+    createReacurringInsert,
+    createReacurringByIdQuery,
+    createExpenseInsertWithReacurringId,
 } from './SQLiteUtils';
+import { NO_REPETION } from '../constants/FrequencyConstants';
 
 const dataDir = FileSystem.documentDirectory + 'SQLite';
 const databaseName = 'DetectiveDollar.db';
@@ -44,13 +50,33 @@ export async function getExpenseTable() {
     await db.transactionAsync(async (tx) => {
         rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
     });
+    console.log(rows);
     return rows;
 }
 
-export async function addRowToExpenseTable(name, category, amount, day) {
+export async function addRowToExpenseTable(name, category, amount, day, expenseFrequency) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
-        await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day));
+        if (expenseFrequency === NO_REPETION) {
+            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day));
+            return;
+        }
+        const reacurringInsertId = (
+            await tx.executeSqlAsync(createReacurringInsert(expenseFrequency))
+        )?.insertId;
+        const reacurringEntryTimestamp = (
+            await tx.executeSqlAsync(createReacurringByIdQuery(reacurringInsertId))
+        ).rows[0].start;
+        await tx.executeSqlAsync(
+            createExpenseInsertWithReacurringId(
+                name,
+                category,
+                amount,
+                day,
+                reacurringEntryTimestamp,
+                reacurringInsertId
+            )
+        );
     });
 }
 
@@ -65,9 +91,7 @@ export async function getExpensesFromDay(day) {
     const db = await getDatabase();
     let rows = [];
     await db.transactionAsync(async (tx) => {
-        try {
-            rows = (await tx.executeSqlAsync(createExpenseByDayQuery(day))).rows;
-        } catch {}
+        rows = (await tx.executeSqlAsync(createExpenseByDayQuery(day))).rows;
     });
     return rows;
 }
@@ -92,4 +116,27 @@ export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
         }
     });
     return rows;
+}
+
+export async function getExpensesbyCategory() {
+    const db = await getDatabase();
+    const categoryDict = {};
+
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        try {
+            rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
+        } catch (error) {
+            console.warn(`getExpensesbyCategory error ${error}`);
+        }
+    });
+
+    for (const row of rows) {
+        if (row['category'] in categoryDict) {
+            categoryDict[row['category']].push(row);
+        } else {
+            categoryDict[row['category']] = [row];
+        }
+    }
+    return categoryDict;
 }
