@@ -32,6 +32,10 @@ const createExpenseInsert = (name, category, amount, day) => {
     VALUES ('${name}', '${category}', ${amount}, '${day}');`;
 };
 
+const deleteExpense = (row) => {
+    return `DELETE FROM expenses WHERE id = ${row}`;
+}
+
 const createExpenseByDayQuery = (day) => {
     return `SELECT * FROM expenses WHERE day = ${day} ORDER BY timestamp`;
 };
@@ -47,6 +51,7 @@ export {
     SET_EXPENSE_DAY_AS_INDEX,
     GET_EXPENSES_TABLE_QUERY,
     createExpenseInsert,
+    deleteExpense,
     createExpenseByDayQuery,
     createExpenseByTimeframeQuery,
 };

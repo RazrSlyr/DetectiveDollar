@@ -8,6 +8,7 @@ import {
     SET_EXPENSE_CATERGORY_AS_INDEX,
     SET_EXPENSE_DAY_AS_INDEX,
     createExpenseByDayQuery,
+    deleteExpense,
     createExpenseInsert,
     createExpenseByTimeframeQuery,
 } from './SQLiteUtils';
@@ -50,6 +51,13 @@ export async function addRowToExpenseTable(name, category, amount, day) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day));
+    });
+}
+
+export async function deleteRowFromExpenseTable(row) {
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(deleteExpense(row));
     });
 }
 
