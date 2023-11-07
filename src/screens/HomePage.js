@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 
-import { primaryColor, secondaryColor, subHeadingColor } from '../../Colors';
+import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import { getExpensesFromDay } from '../util/FileSystemUtils';
 

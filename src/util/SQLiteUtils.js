@@ -1,8 +1,10 @@
+import { incrementDateByFrequency } from './DatetimeUtils';
+
 const CREATE_REACCURING_TABLE = `CREATE TABLE reacurring (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     frequency TEXT NOT NULL,
-    start TIMESTAMP NOT NULL,
-    next_trigger TIMESTAMP
+    start DATETIME NOT NULL,
+    next_trigger DATETIME
 );`;
 
 const CREATE_EXPENSES_TABLE = `CREATE TABLE expenses (
@@ -32,8 +34,38 @@ const createExpenseInsert = (name, category, amount, day) => {
     VALUES ('${name}', '${category}', ${amount}, '${day}');`;
 };
 
+const createExpenseInsertWithReacurringId = (
+    name,
+    category,
+    amount,
+    day,
+    timestamp,
+    reacurring_id
+) => {
+    return `INSERT INTO expenses (name, category, amount, day, timestamp, reacurring_id)
+    VALUES ('${name}', '${category}', ${amount}, '${day}', '${timestamp}', ${reacurring_id});`;
+};
+
+const createReacurringInsert = (frequency) => {
+    const start = new Date();
+    const next = incrementDateByFrequency(start, frequency);
+    const command = `INSERT INTO reacurring (frequency, start, next_trigger)
+    VALUES ('${frequency}', datetime(${start.getTime() / 1000}, 'unixepoch'), datetime(${
+        next / 1000
+    }, 'unixepoch'));`;
+    return command;
+};
+
 const createExpenseByDayQuery = (day) => {
-    return `SELECT * FROM expenses WHERE day = ${day} ORDER BY timestamp`;
+    return `SELECT * FROM expenses WHERE day = '${day}' ORDER BY timestamp ASC`;
+};
+
+const createExpenseByIdQuery = (id) => {
+    return `SELECT * FROM expenses WHERE id = ${id};`;
+};
+
+const createReacurringByIdQuery = (id) => {
+    return `SELECT * FROM reacurring WHERE id = ${id};`;
 };
 
 const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
@@ -49,4 +81,8 @@ export {
     createExpenseInsert,
     createExpenseByDayQuery,
     createExpenseByTimeframeQuery,
+    createReacurringInsert,
+    createExpenseByIdQuery,
+    createReacurringByIdQuery,
+    createExpenseInsertWithReacurringId,
 };
