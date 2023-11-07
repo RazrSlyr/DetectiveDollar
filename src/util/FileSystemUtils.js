@@ -7,6 +7,7 @@ import {
     GET_EXPENSES_TABLE_QUERY,
     SET_EXPENSE_CATERGORY_AS_INDEX,
     SET_EXPENSE_DAY_AS_INDEX,
+    GET_CATEGORY_QUERY,
     createExpenseByDayQuery,
     createExpenseInsert,
     createExpenseByTimeframeQuery,
@@ -15,7 +16,6 @@ import {
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
     createExpenseByCategoryQuery,
-    GET_CATEGORY_TABLE_QUERY,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
 
@@ -117,7 +117,7 @@ export async function getExpensesbyCategory() {
 
     let rows = [];
     await db.transactionAsync(async (tx) => {
-        rows = (await tx.executeSqlAsync(GET_CATEGORY_TABLE_QUERY)).rows;
+        rows = (await tx.executeSqlAsync(GET_CATEGORY_QUERY)).rows;
     });
 
     if (!rows) {
@@ -130,14 +130,15 @@ export async function getExpensesbyCategory() {
     let categoryRows = [];
     for (const category of categories) {
         await db.transactionAsync(async (tx) => {
-            console.log(category);
-            categoryRows = (await tx.executeSqlAsync(createExpenseByCategoryQuery(category))).rows;
-            categoryDict[category] = categoryRows;
+            try {
+                categoryRows = (await tx.executeSqlAsync(createExpenseByCategoryQuery(category)))
+                    .rows;
+                categoryDict[category] = categoryRows;
+            } catch (error) {
+                console.warn(`getExpensesbyCategory error ${error}`);
+            }
         });
     }
-    console.log(rows);
-    console.log(categoryRows);
-    console.log(categories);
-    console.log(categoryDict);
+
     return categoryDict;
 }
