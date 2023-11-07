@@ -29,6 +29,8 @@ ON expenses (day);`;
 
 const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses';
 
+const GET_CATEGORY_QUERY = 'SELECT DISTINCT category FROM expenses';
+
 const createExpenseInsert = (name, category, amount, day) => {
     return `INSERT INTO expenses (name, category, amount, day)
     VALUES ('${name}', '${category}', ${amount}, '${day}');`;
@@ -72,12 +74,21 @@ const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
     return `SELECT * FROM expenses WHERE timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY timestamp`;
 };
 
+const createExpenseByCategoryQuery = (category) => {
+    return `SELECT * FROM expenses WHERE category = "${category}";`;
+};
+
+const createExpenseByCategoryandTimeframeQuery = (category, startTimestamp, endTimestamp) => {
+    return `SELECT * FROM expenses WHERE category = "${category}" AND timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY category, timestamp;`;
+};
+
 export {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
     SET_EXPENSE_CATERGORY_AS_INDEX,
     SET_EXPENSE_DAY_AS_INDEX,
     GET_EXPENSES_TABLE_QUERY,
+    GET_CATEGORY_QUERY,
     createExpenseInsert,
     createExpenseByDayQuery,
     createExpenseByTimeframeQuery,
@@ -85,4 +96,6 @@ export {
     createExpenseByIdQuery,
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
+    createExpenseByCategoryQuery,
+    createExpenseByCategoryandTimeframeQuery,
 };

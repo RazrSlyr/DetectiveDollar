@@ -7,6 +7,7 @@ import {
     GET_EXPENSES_TABLE_QUERY,
     SET_EXPENSE_CATERGORY_AS_INDEX,
     SET_EXPENSE_DAY_AS_INDEX,
+    GET_CATEGORY_QUERY,
     createExpenseByDayQuery,
     createExpenseInsert,
     createExpenseByTimeframeQuery,
@@ -48,6 +49,7 @@ export async function getExpenseTable() {
     await db.transactionAsync(async (tx) => {
         rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
     });
+    console.log(rows);
     return rows;
 }
 
@@ -106,4 +108,27 @@ export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
         }
     });
     return rows;
+}
+
+export async function getExpensesbyCategory() {
+    const db = await getDatabase();
+    const categoryDict = {};
+
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        try {
+            rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
+        } catch (error) {
+            console.warn(`getExpensesbyCategory error ${error}`);
+        }
+    });
+
+    for (const row of rows) {
+        if (row['category'] in categoryDict) {
+            categoryDict[row['category']].push(row);
+        } else {
+            categoryDict[row['category']] = [row];
+        }
+    }
+    return categoryDict;
 }
