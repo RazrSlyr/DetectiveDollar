@@ -1,3 +1,4 @@
+import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
@@ -52,7 +53,16 @@ export default function HomePage({ navigation }) {
                             return (
                                 <View key={expense['id']} style={styles.expenseBoxes}>
                                     <Text style={styles.expenseData}>{expense['category']}</Text>
-                                    <Text style={styles.expenseData}>{expense['name']}</Text>
+                                    <View style={styles.expenseNameBox}>
+                                        <Text style={styles.expenseData}>{expense['name']}</Text>
+                                        {expense['reacurring_id'] && (
+                                            <FontAwesome
+                                                name="repeat"
+                                                size={24}
+                                                color={secondaryColor}
+                                            />
+                                        )}
+                                    </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
                                 </View>
                             );
@@ -126,14 +136,19 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
         borderRadius: 15,
         borderWidth: 2,
         borderColor: secondaryColor,
     },
     expenseData: {
-        width: '30%',
         textAlign: 'center',
+    },
+    expenseNameBox: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 8,
     },
 });

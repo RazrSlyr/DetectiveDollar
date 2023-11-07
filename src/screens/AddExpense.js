@@ -22,7 +22,7 @@ export default function App({ navigation }) {
         }
         const dateString = getCurrentDateString();
         await addRowToExpenseTable(name, category, parseFloat(amount), dateString, frequency);
-        navigation.navigate('Home');
+        // navigation.navigate('Home');
     };
 
     const formattedAmount = amount.toLocaleString('en-US', {
