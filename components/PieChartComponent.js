@@ -1,65 +1,102 @@
-import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { View, Text } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
 
-const randomGreenShade = () => {
-    // Need to work on this if we want more consistent green colors
-    // let greenComponent;
-    // let redComponent;
-    // let blueComponent
-    
-    // // lower values for red and blue components so we can more shades of green
-    // do {
-    //     greenComponent = Math.floor(Math.random() * 256);
-    //     redComponent = Math.floor(Math.random() * 256);
-    //     blueComponent = Math.floor(Math.random() * 256);
-        
-    // } while ((greenComponent <= redComponent) || (greenComponent <= blueComponent));
-    const greenComponent = Math.floor(Math.random() * 256);
-    const redComponent = Math.floor(Math.random() * 256);
-    const blueComponent = Math.floor(Math.random() * 256);
+import { getExpensesbyCategory } from '../src/util/FileSystemUtils';
 
-    const randomColor = `rgb(${redComponent}, ${greenComponent}, ${blueComponent})`;
-  
-    return randomColor;
-};
+const YourPieChartComponent = () => {
+    const [pieChartData, setPieChartData] = useState([]);
 
-// Function to grab our data
-// edit this function to grab the data we need
-const getPieChartData = (data: []) => {
-    return data.map((item, index) => {  
-        const color = randomGreenShade();
+    // Call the function to fetch and update data
+    const updatePieChartData = async () => {
+        try {
+            const categoryDict = await getExpensesbyCategory();
+            let totalSpending = 0;
 
-        return  {
-            key: index,
-            value: item,
-            svg: { fill: color },
+            // Process the data
+            const pieChartData = Object.keys(categoryDict).map((category) => {
+                const total = categoryDict[category].reduce(
+                    (sum, expense) => sum + expense.amount,
+                    0
+                );
+
+                // add to the totalOfEverything
+                totalSpending += total;
+                return {
+                    key: category,
+                    value: total,
+                    svg: { fill: getRandomColor() },
+                };
+            });
+
+            setPieChartData(pieChartData);
+            setTotalSpending(totalSpending);
+        } catch (error) {
+            console.error('Error fetching data:', error);
         }
-    })
-}
+    };
 
-export const PieChartComponent = () => {
-    // random data I made. Pass our data here
-    const randData = [40, 30, 20, 10, 9, 2, 50]
-    const pieChartData = getPieChartData(randData)
+    useFocusEffect(
+        React.useCallback(() => {
+            updatePieChartData();
+        }, [])
+    );
+
+    const [totalSpending, setTotalSpending] = useState(0);
+
+    // Helper function to generate random colors
+    const getRandomColor = () => {
+        const red = Math.floor(Math.random() * 256);
+        const green = Math.floor(Math.random() * 256);
+        const blue = Math.floor(Math.random() * 256);
+
+        // padStart used incase number generated is not 3 digits
+        // toString(16) change to hexadecimal values
+        const randomColor = `#${red.toString(16).padStart(2, '0')}${green
+            .toString(16)
+            .padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
+
+        return randomColor;
+    };
+
+    // Function to generate labels for the pie chart
+    const generateLabels = ({ slices }) => {
+        return slices.map((slice, index) => {
+            const { pieCentroid, data } = slice;
+            const category = data.key; // Extract the category name from the data object
+            const percentage = ((data.value / totalSpending) * 100).toFixed(2); // calculates percentage of the graph
+            const num = data.value; // total amount of the category
+
+            return (
+                <Text
+                    key={index}
+                    x={pieCentroid[0]}
+                    y={pieCentroid[1]}
+                    fill="black"
+                    textAnchor="middle"
+                    alignmentBaseline="middle"
+                    label={`${category}: $${num}, ${percentage}`}
+                    fontSize={16}
+                />
+            );
+        });
+    };
 
     return (
-        <PieChart
-            style={styles.chart}
-            data={pieChartData}
-            innerRadius={0}
-            padAngle={0}
-        />
-    )
-}
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <PieChart
+                style={{ height: 200, width: 200 }}
+                data={pieChartData}
+                innerRadius={0}
+                outerRadius="100%"
+                padAngle={0}
+                labelRadius="85%"
+                // label={generateLabels} // not working
+            />
+            <Text style={{ marginTop: 10 }}>Total Spending: ${totalSpending}</Text>
+        </View>
+    );
+};
 
-const styles = StyleSheet.create({
-    chart: {
-        width: 200,
-        height: 200,
-        flex: 1, 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        marginLeft: 30, // for some reason graph is hugging right side
-    },
-});
+export default YourPieChartComponent;

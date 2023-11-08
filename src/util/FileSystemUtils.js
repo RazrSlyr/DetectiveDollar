@@ -9,6 +9,7 @@ import {
     SET_EXPENSE_DAY_AS_INDEX,
     GET_CATEGORY_QUERY,
     createExpenseByDayQuery,
+    deleteExpense,
     createExpenseInsert,
     createExpenseByTimeframeQuery,
     createExpenseByIdQuery,
@@ -76,6 +77,13 @@ export async function addRowToExpenseTable(name, category, amount, day, expenseF
                 reacurringInsertId
             )
         );
+    });
+}
+
+export async function deleteRowFromExpenseTable(row) {
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(deleteExpense(row));
     });
 }
 

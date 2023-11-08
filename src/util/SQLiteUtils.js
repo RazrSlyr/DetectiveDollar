@@ -36,6 +36,10 @@ const createExpenseInsert = (name, category, amount, day) => {
     VALUES ('${name}', '${category}', ${amount}, '${day}');`;
 };
 
+const deleteExpense = (row) => {
+    return `DELETE FROM expenses WHERE id = ${row}`;
+}
+
 const createExpenseInsertWithReacurringId = (
     name,
     category,
@@ -90,6 +94,7 @@ export {
     GET_EXPENSES_TABLE_QUERY,
     GET_CATEGORY_QUERY,
     createExpenseInsert,
+    deleteExpense,
     createExpenseByDayQuery,
     createExpenseByTimeframeQuery,
     createReacurringInsert,
