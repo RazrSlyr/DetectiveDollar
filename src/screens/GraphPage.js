@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import ChartWithInteractivity from '../../components/ChartWithInteractivity';
 import PieChartComponent from '../../components/PieChartComponent';
-import ChartWithInteractivity  from '../../components/ChartWithInteractivity';
 import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 
 const GraphPage = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Stats</Text>
-            <View style={styles.lineChartContainer}>
-                {/* put line chart here */}
+            <View style={styles.chartContainer}>
+                {/* put line chart here later */}
                 <ChartWithInteractivity />
             </View>
-            <View style={styles.pieChartContainer}>
+            <View style={styles.chartContainer}>
                 <PieChartComponent />
             </View>
         </View>
@@ -35,18 +35,13 @@ const styles = StyleSheet.create({
         color: secondaryColor,
         marginTop: 95,
     },
-    lineChartContainer: {
-        height: 260,
-        width: 260,
-        alignContent: 'center',
-        backgroundColor: 'white',
-        margin: 20,
-    },
-    pieChartContainer: {
+    chartContainer: {
+        margin: 5,
         height: 280,
         width: 260,
         alignContent: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',
+        borderRadius: 20,
     },
 });
