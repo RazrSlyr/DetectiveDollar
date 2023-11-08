@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { backgroundColor, primaryColor, secondaryColor, subHeadingColor } from '../../Colors';
-import { PieChartComponent } from '../../components/PieChartComponent';
+import PieChartComponent from '../../components/PieChartComponent';
 import ChartWithInteractivity  from '../../components/ChartWithInteractivity';
+import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 
 const GraphPage = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Stats</Text>
-            
             <View style={styles.lineChartContainer}>
                 {/* put line chart here */}
                 <ChartWithInteractivity />
