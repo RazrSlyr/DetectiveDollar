@@ -1,23 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
-    Image,
-    SafeAreaView,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, TextInput, View, Dimensions } from 'react-native';
 
-import { csvToJsonList } from '../util/CsvUtils';
+import DropdownSelector from '../components/Dropdown';
+import { textColor } from '../constants/Colors';
+import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToExpenseSheet, getExpenseSheet } from '../util/FileSystemUtils';
+import { addRowToExpenseTable } from '../util/FileSystemUtils';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
+    const [frequency, setFrequency] = useState(NO_REPETION);
 
     const handleButtonPress = async () => {
         // Add your button click logic here
@@ -26,17 +21,8 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
-        let expenseData = csvToJsonList(await getExpenseSheet());
-        let max_id = -1;
-        expenseData.forEach((entry) => {
-            const entry_id = parseInt(entry['id'], 10);
-            if (entry_id > max_id) {
-                max_id = entry_id;
-            }
-        });
-        await addRowToExpenseSheet(dateString, category, name, amount, max_id + 1);
-        expenseData = csvToJsonList(await getExpenseSheet());
-        navigation.navigate('Home');
+        await addRowToExpenseTable(name, category, parseFloat(amount), dateString, frequency);
+        // navigation.navigate('Home');
     };
 
     const formattedAmount = amount.toLocaleString('en-US', {
@@ -63,21 +49,33 @@ export default function App({ navigation }) {
             </View>
             <View style={styles.box2}>
                 <TextInput
-                    style={{ ...styles.input, position: 'absolute', top: 100 }}
+                    style={styles.input}
                     placeholder="Name"
                     onChangeText={(value) => setName(value)}
                 />
                 <TextInput
-                    style={{ ...styles.input, position: 'absolute', top: 150 }}
+                    style={styles.input}
                     placeholder="Amount"
-                    keyboardType="phone-pad"
+                    keyboardType="numeric"
                     maxLength={10}
                     onChangeText={(value) => setAmount(value)}
                 />
                 <TextInput
-                    style={{ ...styles.input, position: 'absolute', top: 200 }}
+                    style={styles.input}
                     placeholder="Category"
                     onChangeText={(value) => setCategory(value)}
+                />
+                <DropdownSelector
+                    data={[
+                        { label: "Don't Repeat", value: NO_REPETION },
+                        { label: 'Daily', value: DAILY },
+                        { label: 'Weekly', value: WEEKLY },
+                        { label: 'Monthly', value: MONTHLY },
+                    ]}
+                    onChange={(item) => {
+                        setFrequency(item.value);
+                    }}
+                    dropdownLabel="Expense Frequency"
                 />
             </View>
             <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
@@ -93,11 +91,6 @@ export default function App({ navigation }) {
                     </Text>
                 </View>
             </TouchableOpacity>
-            {/* <View style={{...styles.box, position: 'absolute', height: 60, bottom: 10, left: 10}}>
-                <Text>Stored Name: {name}</Text>
-                <Text>Stored Amount: {amount}</Text>
-                <Text>Stored Category: {category}</Text>
-            </View> */}
         </View>
     );
 }
@@ -129,19 +122,20 @@ const styles = StyleSheet.create({
     },
     box2: {
         width: 300,
-        height: 400,
+        height: Dimensions.get('window').height * 0.4,
         backgroundColor: '#ffffff',
         borderRadius: 10,
         margin: 10,
+        display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
     },
     input: {
-        color: '#1a1a1a',
+        color: textColor,
         fontFamily: 'Roboto-Bold',
         fontSize: 20,
         width: 250,
-        height: 40,
         borderColor: '#37c871',
         borderRadius: 10,
         padding: 10,

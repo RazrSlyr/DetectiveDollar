@@ -1,58 +1,89 @@
+import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, ScrollView, VirtualizedList } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 
-import { backgroundColor, primaryColor, secondaryColor, subHeadingColor } from '../../Colors';
-import AddButton from '../../components/AddButton';
-import { csvToJsonList } from '../util/CsvUtils';
+import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { getExpenseSheet } from '../util/FileSystemUtils';
+import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
-    const [expenses, setExpense] = useState([]);
+    const [todayExpenses, setTodayExpenses] = useState([]);
     const spending = useMemo(() => {
+        if (todayExpenses?.length === 0) {
+            return 0;
+        }
         let newSpending = 0;
-        expenses
-            // eslint-disable-next-line eqeqeq
-            .filter((expense) => expense['date'] == getCurrentDateString())
-            .forEach((expense) => {
-                newSpending += parseInt(expense['amount'], 10);
-            });
-        return newSpending;
-    }, [expenses]);
+        todayExpenses.forEach((expense) => {
+            newSpending += parseFloat(expense['amount']);
+        });
+        const todaySpending = newSpending.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        });
+        return todaySpending;
+    }, [todayExpenses]);
 
     const goToAddPage = () => {
         navigation.navigate('AddExpense'); // change TEMPORARY to actual page
     };
 
     useEffect(() => {
-        const querySheet = async () => {
-            setExpense(csvToJsonList(await getExpenseSheet()));
+        const getExpenses = async () => {
+            setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
         };
-        querySheet();
         navigation.addListener('focus', () => {
-            querySheet();
+            getExpenses();
         });
     }, []);
+
     return (
         <View style={styles.container}>
             <Text style={[styles.title, styles.topTitle]}>Daily</Text>
             <Text style={styles.title}>Summary</Text>
             <View style={styles.totalExpensesContainer}>
                 <Text style={styles.subHeading}>Today's Expenses</Text>
-                <Text style={styles.textInput}>{`$${spending}`}</Text>
+                <Text style={styles.textInput}>{`${spending}`}</Text>
             </View>
             <View style={styles.expensesContainer}>
                 <Text style={styles.subHeading}>History</Text>
                 <ScrollView>
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
-                        {expenses.reverse().map((expense) => {
+                        {todayExpenses.reverse().map((expense) => {
                             return (
                                 <View key={expense['id']} style={styles.expenseBoxes}>
                                     <Text style={styles.expenseData}>{expense['category']}</Text>
-                                    <Text style={styles.expenseData}>{expense['name']}</Text>
+                                    <View style={styles.expenseNameBox}>
+                                        <Text style={styles.expenseData}>{expense['name']}</Text>
+                                        {expense['reacurring_id'] && (
+                                            <FontAwesome
+                                                name="repeat"
+                                                size={24}
+                                                color={secondaryColor}
+                                            />
+                                        )}
+                                    </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
+                                    {/* This code handles the expense deletion */}
+                                    <TouchableOpacity  onPress={ async() => {
+                                        Alert.alert(
+                                            'Deleting Expense',
+                                            'Are you sure you want to delete this expense? This cannot be undone.',
+                                            [
+                                                {text: 'NO'},
+                                                {text: 'YES', onPress: async() => {
+                                                    await deleteRowFromExpenseTable(expense['id'])
+                                                    setTodayExpenses(await getExpensesFromDay(getCurrentDateString()))
+                                                }},
+                                            ]
+                                        )
+                                    }}>
+                                        <View>
+                                            <Text style={{color: 'red'}}> X </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    {/* End expense deletion code */}
                                 </View>
                             );
                         })}
@@ -60,7 +91,10 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
-            <AddButton onPress={goToAddPage} />
+            {/* This will add the add button to the home page. I have not set up the naviagtion for it 
+            so when it is added back it will produce an error  */}
+            {/* <AddButton onPress={goToAddPage} /> */}
+
             <StatusBar style="auto" />
         </View>
     );
@@ -74,7 +108,7 @@ const styles = StyleSheet.create({
         // figure out fontStyles
     },
     topTitle: {
-        paddingTop: 50,
+        paddingTop: 80,
         margin: 'auto',
     },
     title: {
@@ -85,10 +119,10 @@ const styles = StyleSheet.create({
     totalExpensesContainer: {
         backgroundColor: 'white',
         borderRadius: 15,
-        flex: 1 / 4,
         margin: 20,
-        width: '70%',
-        alignItems: 'right',
+        height: 100,
+        width: 270,
+        alignItems: 'center',
         justifyContent: 'center',
     },
     subHeading: {
@@ -118,18 +152,23 @@ const styles = StyleSheet.create({
     },
     expenseBoxes: {
         width: '100%',
-        height: 70,
+        height: 60,
         backgroundColor: 'white',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
         borderRadius: 15,
         borderWidth: 2,
         borderColor: secondaryColor,
     },
     expenseData: {
-        width: '30%',
         textAlign: 'center',
+    },
+    expenseNameBox: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 8,
     },
 });
