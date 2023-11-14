@@ -30,8 +30,7 @@
     "react-native-screens": "~3.22.0",
     "react-native-svg": "^6.2.1",
     "react-native-svg-charts": "^5.4.0",
-    "react-native-web": "~0.19.6",
-    "typescript": "^5.2.2"
+    "react-native-web": "~0.19.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
