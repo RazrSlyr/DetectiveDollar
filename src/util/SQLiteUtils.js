@@ -31,14 +31,14 @@ const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses';
 
 const GET_CATEGORY_QUERY = 'SELECT DISTINCT category FROM expenses';
 
-const createExpenseInsert = (name, category, amount, day) => {
-    return `INSERT INTO expenses (name, category, amount, day)
-    VALUES ('${name}', '${category}', ${amount}, '${day}');`;
+const createExpenseInsert = (name, category, amount, day, image_uri) => {
+    return `INSERT INTO expenses (name, category, amount, day, picture)
+    VALUES ('${name}', '${category}', ${amount}, '${day}', ${image_uri});`;
 };
 
 const deleteExpense = (row) => {
     return `DELETE FROM expenses WHERE id = ${row}`;
-}
+};
 
 const createExpenseInsertWithReacurringId = (
     name,
@@ -46,10 +46,11 @@ const createExpenseInsertWithReacurringId = (
     amount,
     day,
     timestamp,
+    image_uri,
     reacurring_id
 ) => {
-    return `INSERT INTO expenses (name, category, amount, day, timestamp, reacurring_id)
-    VALUES ('${name}', '${category}', ${amount}, '${day}', '${timestamp}', ${reacurring_id});`;
+    return `INSERT INTO expenses (name, category, amount, day, timestamp, picture, reacurring_id)
+    VALUES ('${name}', '${category}', ${amount}, '${day}', '${timestamp}', ${image_uri}, ${reacurring_id});`;
 };
 
 const createReacurringInsert = (frequency) => {

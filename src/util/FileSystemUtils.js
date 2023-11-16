@@ -54,11 +54,18 @@ export async function getExpenseTable() {
     return rows;
 }
 
-export async function addRowToExpenseTable(name, category, amount, day, expenseFrequency) {
+export async function addRowToExpenseTable(
+    name,
+    category,
+    amount,
+    day,
+    expenseFrequency,
+    image_uri = ''
+) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         if (expenseFrequency === NO_REPETION) {
-            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day));
+            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day, image_uri));
             return;
         }
         const reacurringInsertId = (
@@ -74,6 +81,7 @@ export async function addRowToExpenseTable(name, category, amount, day, expenseF
                 amount,
                 day,
                 reacurringEntryTimestamp,
+                image_uri,
                 reacurringInsertId
             )
         );
