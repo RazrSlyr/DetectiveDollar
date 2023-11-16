@@ -5,7 +5,7 @@ import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Platform } from 'react-native';
 
-import { HomePage, AddExpense, GraphPage, CameraWithPreview } from '../../src/screens';
+import { HomePage, AddExpense, GraphPage } from '../../src/screens';
 
 const Tab = createBottomTabNavigator();
 
@@ -83,11 +83,6 @@ const Tabs = () => {
                         );
                     },
                 }}
-            />
-            <Tab.Screen
-                name="Camera"
-                component={CameraWithPreview}
-                options={{ tabBarVisible: false }}
             />
         </Tab.Navigator>
     );

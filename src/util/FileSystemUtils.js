@@ -60,7 +60,7 @@ export async function addRowToExpenseTable(
     amount,
     day,
     expenseFrequency,
-    image_uri = ''
+    image_uri = null
 ) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {

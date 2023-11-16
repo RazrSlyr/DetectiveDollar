@@ -23,7 +23,7 @@ export default function CameraWithPreview({ navigation }) {
     const [hasCameraPermission, setHasCameraPermission] = useState();
     const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
     const [photo, setPhoto] = useState();
-    const [image_uri, setImageURI] = useState('');
+    const [imageURI, setImageURI] = useState('');
 
     useEffect(() => {
         (async () => {
@@ -65,7 +65,7 @@ export default function CameraWithPreview({ navigation }) {
             setPhoto(undefined);
             setImageURI(asset.uri);
             console.log(asset.uri);
-            navigation.navigate('PrevScreen', { image: image_uri });
+            navigation.navigate('PrevScreen', { image: imageURI });
         };
         return (
             <View style={{ flex: 1 }}>

@@ -24,10 +24,6 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
-    const goToAddPage = () => {
-        navigation.navigate('AddExpense'); // change TEMPORARY to actual page
-    };
-
     useEffect(() => {
         const getExpenses = async () => {
             setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
@@ -66,21 +62,31 @@ export default function HomePage({ navigation }) {
                                     </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
                                     {/* This code handles the expense deletion */}
-                                    <TouchableOpacity  onPress={ async() => {
-                                        Alert.alert(
-                                            'Deleting Expense',
-                                            'Are you sure you want to delete this expense? This cannot be undone.',
-                                            [
-                                                {text: 'NO'},
-                                                {text: 'YES', onPress: async() => {
-                                                    await deleteRowFromExpenseTable(expense['id'])
-                                                    setTodayExpenses(await getExpensesFromDay(getCurrentDateString()))
-                                                }},
-                                            ]
-                                        )
-                                    }}>
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            Alert.alert(
+                                                'Deleting Expense',
+                                                'Are you sure you want to delete this expense? This cannot be undone.',
+                                                [
+                                                    { text: 'NO' },
+                                                    {
+                                                        text: 'YES',
+                                                        onPress: async () => {
+                                                            await deleteRowFromExpenseTable(
+                                                                expense['id']
+                                                            );
+                                                            setTodayExpenses(
+                                                                await getExpensesFromDay(
+                                                                    getCurrentDateString()
+                                                                )
+                                                            );
+                                                        },
+                                                    },
+                                                ]
+                                            );
+                                        }}>
                                         <View>
-                                            <Text style={{color: 'red'}}> X </Text>
+                                            <Text style={{ color: 'red' }}> X </Text>
                                         </View>
                                     </TouchableOpacity>
                                     {/* End expense deletion code */}
