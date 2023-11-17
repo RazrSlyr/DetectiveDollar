@@ -1,14 +1,17 @@
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 
+import { ExpenseInfoComponent } from '../components/ExpenseInfoComponent';
 import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
-
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
+    const [openExpenseInfo, setOpenExpenseInfo] = useState(false);
+    const [selectedExpense, setSelectedExpense] = useState();
+
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
             return 0;
@@ -32,7 +35,13 @@ export default function HomePage({ navigation }) {
             getExpenses();
         });
     }, []);
-
+    const openInfo = async (expense) => {
+        setOpenExpenseInfo(true);
+        setSelectedExpense(expense);
+    };
+    const closeInfo = () => {
+        setOpenExpenseInfo(null);
+    };
     return (
         <View style={styles.container}>
             <Text style={[styles.title, styles.topTitle]}>Daily</Text>
@@ -62,6 +71,9 @@ export default function HomePage({ navigation }) {
                                     </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
                                     {/* This code handles the expense deletion */}
+                                    <TouchableOpacity>
+                                        <Entypo name="info-with-circle" size={24} color="black" />
+                                    </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={async () => {
                                             Alert.alert(
@@ -100,10 +112,14 @@ export default function HomePage({ navigation }) {
             {/* This will add the add button to the home page. I have not set up the naviagtion for it 
             so when it is added back it will produce an error  */}
             {/* <AddButton onPress={goToAddPage} /> */}
-
             <StatusBar style="auto" />
         </View>
     );
+    //<ExpenseInfoComponent
+    //    isVisable={openExpenseInfo}
+    //    onClose={closeInfo}
+    //    expense={selectedExpense}
+    ///>
 }
 
 const styles = StyleSheet.create({

@@ -1,6 +1,5 @@
 import { AntDesign, Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import * as MediaLibrary from 'expo-media-library';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
@@ -11,12 +10,10 @@ import {
     View,
     Dimensions,
     SafeAreaView,
-    Alert,
 } from 'react-native';
 
 import CameraComponent from '../components/CameraComponent';
 import DropdownSelector from '../components/Dropdown';
-import { saveImageToAlbum } from '../components/SaveImageComponent';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
@@ -26,10 +23,8 @@ export default function App({ navigation }) {
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
     const [frequency, setFrequency] = useState(NO_REPETION);
-
     const [showCamera, setShowCamera] = useState(false);
     const [image_uri, setImageURI] = useState(null);
-    const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
     const handleButtonPress = async () => {
         // Add your button click logic here
         if (name === '' || amount === '' || category === '') {
@@ -46,7 +41,6 @@ export default function App({ navigation }) {
             frequency,
             image_uri
         );
-        // navigation.navigate('Home');
     };
     const formattedAmount = amount.toLocaleString('en-US', {
         style: 'currency',
