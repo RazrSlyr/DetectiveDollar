@@ -37,24 +37,6 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
-        let asset_uri = null;
-        if (image_uri) {
-            const mediaLibaryPermission = await MediaLibrary.requestPermissionsAsync();
-            setMediaLibraryPermission(mediaLibaryPermission.status === 'granted');
-            if (hasMediaLibraryPermission) {
-                asset_uri = await saveImageToAlbum(image_uri);
-            } else {
-                const alert = async () => {
-                    Alert.alert(
-                        'Media Permisions not set',
-                        'Please change this in settings for remove photo',
-                        [{ text: 'OK' }]
-                    );
-                };
-                await alert();
-                return;
-            }
-        }
 
         await addRowToExpenseTable(
             name,
@@ -62,7 +44,7 @@ export default function App({ navigation }) {
             parseFloat(amount),
             dateString,
             frequency,
-            asset_uri
+            image_uri
         );
         // navigation.navigate('Home');
     };
@@ -77,9 +59,6 @@ export default function App({ navigation }) {
         setShowCamera(false);
     };
     const handlePictureTaken = (pictureUri) => {
-        if (!pictureUri) {
-            return;
-        }
         setImageURI(pictureUri);
         console.log('Add expense image uri: ' + pictureUri);
         setShowCamera(false);

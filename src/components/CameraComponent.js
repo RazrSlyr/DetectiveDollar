@@ -13,10 +13,12 @@ import {
     SafeAreaView,
     Button,
     Pressable,
+    Alert,
     Modal,
 } from 'react-native';
+import { err } from 'react-native-svg';
 
-import { OPTIONS } from '../constants/ImageConstants';
+import { ALBUMNNAME, OPTIONS } from '../constants/ImageConstants';
 
 const CameraComponent = ({ isVisible, onClose, onPictureTaken }) => {
     const cameraRef = useRef(null);
@@ -50,9 +52,34 @@ const CameraComponent = ({ isVisible, onClose, onPictureTaken }) => {
         }
     };
     const usePicture = async () => {
-        const uri = photo.uri;
+        if (!hasMediaLibraryPermission) {
+            console.error('Missing Media Library Permission');
+            setPhoto(null);
+            onPictureTaken(null);
+            return;
+        }
+        const asset = await MediaLibrary.createAssetAsync(photo.uri);
+        const albumRef = await MediaLibrary.getAlbumAsync(ALBUMNNAME);
+        if (albumRef === null) {
+            await MediaLibrary.createAlbumAsync(ALBUMNNAME, asset, true);
+        } else {
+            await MediaLibrary.addAssetsToAlbumAsync(asset, albumRef, true);
+        }
         setPhoto(null);
-        onPictureTaken(uri);
+        const albumAssets = await MediaLibrary.getAssetsAsync({
+            album: albumRef,
+            first: 1,
+            sortBy: MediaLibrary.SortBy.creationTime,
+        });
+        //console.log(albumAssets.assets[0]);
+        if (albumAssets !== undefined || (albumAssets !== null && albumAssets.length > 0)) {
+            const asset_uri = albumAssets.assets[0].uri;
+            console.log('asset_uri: ' + asset_uri);
+            onPictureTaken(asset_uri);
+            return;
+        }
+        console.error('No files in Album');
+        //console.error(albumAssets);
     };
     return (
         <Modal animationType="slide" transparent={false} visible={isVisible}>
