@@ -3,13 +3,13 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 
-import { ExpenseInfoComponent } from '../components/ExpenseInfoComponent';
+import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
-    const [openExpenseInfo, setOpenExpenseInfo] = useState(false);
+    const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
 
     const spending = useMemo(() => {
@@ -35,15 +35,19 @@ export default function HomePage({ navigation }) {
             getExpenses();
         });
     }, []);
-    const openInfo = async (expense) => {
-        setOpenExpenseInfo(true);
-        setSelectedExpense(expense);
+
+    const openInfo = async () => {
+        setShowExpenseInfo(true);
     };
     const closeInfo = () => {
-        setOpenExpenseInfo(null);
+        setSelectedExpense(null);
+        setShowExpenseInfo(false);
     };
+
     return (
         <View style={styles.container}>
+            <StatusBar style="auto" />
+
             <Text style={[styles.title, styles.topTitle]}>Daily</Text>
             <Text style={styles.title}>Summary</Text>
             <View style={styles.totalExpensesContainer}>
@@ -71,8 +75,12 @@ export default function HomePage({ navigation }) {
                                     </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
                                     {/* This code handles the expense deletion */}
-                                    <TouchableOpacity>
-                                        <Entypo name="info-with-circle" size={24} color="black" />
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            setSelectedExpense(expense);
+                                            openInfo();
+                                        }}>
+                                        <Entypo name="info-with-circle" size={40} color="black" />
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={async () => {
@@ -109,17 +117,13 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
-            {/* This will add the add button to the home page. I have not set up the naviagtion for it 
-            so when it is added back it will produce an error  */}
-            {/* <AddButton onPress={goToAddPage} /> */}
-            <StatusBar style="auto" />
+            <ExpenseInfoComponent
+                isVisable={showExpenseInfo}
+                onClose={closeInfo}
+                expense={selectedExpense}
+            />
         </View>
     );
-    //<ExpenseInfoComponent
-    //    isVisable={openExpenseInfo}
-    //    onClose={closeInfo}
-    //    expense={selectedExpense}
-    ///>
 }
 
 const styles = StyleSheet.create({

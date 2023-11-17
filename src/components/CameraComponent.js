@@ -9,14 +9,9 @@ import {
     Text,
     View,
     Dimensions,
-    Platform,
     SafeAreaView,
-    Button,
-    Pressable,
-    Alert,
     Modal,
 } from 'react-native';
-import { err } from 'react-native-svg';
 
 import { ALBUMNNAME, OPTIONS } from '../constants/ImageConstants';
 
@@ -71,7 +66,6 @@ const CameraComponent = ({ isVisible, onClose, onPictureTaken }) => {
             first: 1,
             sortBy: MediaLibrary.SortBy.creationTime,
         });
-        //console.log(albumAssets.assets[0]);
         if (albumAssets !== undefined || (albumAssets !== null && albumAssets.length > 0)) {
             const asset_uri = albumAssets.assets[0].uri;
             console.log('asset_uri: ' + asset_uri);
@@ -79,7 +73,6 @@ const CameraComponent = ({ isVisible, onClose, onPictureTaken }) => {
             return;
         }
         console.error('No files in Album');
-        //console.error(albumAssets);
     };
     return (
         <Modal animationType="slide" transparent={false} visible={isVisible}>
