@@ -1,5 +1,6 @@
 import { AntDesign, Feather } from '@expo/vector-icons';
 import { Camera } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
 import React, { useState, useEffect, useRef } from 'react';
@@ -13,7 +14,8 @@ import {
     Modal,
 } from 'react-native';
 
-import { ALBUMNNAME, OPTIONS } from '../constants/ImageConstants';
+/* TODO change to use ImagePicker */
+import { ALBUMNNAME, CAPTUREOPTIONS } from '../constants/ImageConstants';
 
 const CameraComponent = ({ isVisible, onClose, onPictureTaken }) => {
     const cameraRef = useRef(null);
@@ -38,7 +40,7 @@ const CameraComponent = ({ isVisible, onClose, onPictureTaken }) => {
         }
         if (cameraRef) {
             try {
-                const newPhoto = await cameraRef.current.takePictureAsync(OPTIONS);
+                const newPhoto = await cameraRef.current.takePictureAsync(CAPTUREOPTIONS);
                 console.log(newPhoto.uri);
                 setPhoto(newPhoto);
             } catch (e) {
@@ -53,14 +55,23 @@ const CameraComponent = ({ isVisible, onClose, onPictureTaken }) => {
             onPictureTaken(null);
             return;
         }
-        const asset = await MediaLibrary.createAssetAsync(photo.uri);
+        const assetRef = await MediaLibrary.createAssetAsync(photo.uri);
         const albumRef = await MediaLibrary.getAlbumAsync(ALBUMNNAME);
-        if (albumRef === null) {
-            await MediaLibrary.createAlbumAsync(ALBUMNNAME, asset, true);
-        } else {
-            await MediaLibrary.addAssetsToAlbumAsync(asset, albumRef, true);
+        //copy asset to album
+        try {
+            if (albumRef === null) {
+                await MediaLibrary.createAlbumAsync(ALBUMNNAME, assetRef, true);
+            } else {
+                await MediaLibrary.addAssetsToAlbumAsync(assetRef, albumRef, true);
+            }
+            console.log('image moved succesfully');
+        } catch (error) {
+            console.log(error);
+            setPhoto(null);
+            throw error;
         }
         setPhoto(null);
+        //get latest asset in album
         const albumAssets = await MediaLibrary.getAssetsAsync({
             album: albumRef,
             first: 1,

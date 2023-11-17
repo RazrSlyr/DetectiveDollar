@@ -1,10 +1,19 @@
 import { FontAwesome, Entypo } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
+import {
+    TouchableOpacity,
+    StyleSheet,
+    View,
+    Text,
+    ScrollView,
+    Alert,
+    SafeAreaView,
+} from 'react-native';
 
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
-import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
+import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
 export default function HomePage({ navigation }) {
@@ -43,13 +52,11 @@ export default function HomePage({ navigation }) {
         setSelectedExpense(null);
         setShowExpenseInfo(false);
     };
-
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
 
-            <Text style={[styles.title, styles.topTitle]}>Daily</Text>
-            <Text style={styles.title}>Summary</Text>
+            <Text style={[styles.title, styles.topTitle]}>Daily Summary</Text>
             <View style={styles.totalExpensesContainer}>
                 <Text style={styles.subHeading}>Today's Expenses</Text>
                 <Text style={styles.textInput}>{`${spending}`}</Text>
@@ -69,7 +76,7 @@ export default function HomePage({ navigation }) {
                                             <FontAwesome
                                                 name="repeat"
                                                 size={24}
-                                                color={secondaryColor}
+                                                color={Colors.secondaryColor}
                                             />
                                         )}
                                     </View>
@@ -92,6 +99,14 @@ export default function HomePage({ navigation }) {
                                                     {
                                                         text: 'YES',
                                                         onPress: async () => {
+                                                            try {
+                                                                await FileSystem.deleteAsync(
+                                                                    expense['picture'],
+                                                                    { idempotent: true }
+                                                                );
+                                                            } catch (error) {
+                                                                console.error(error);
+                                                            }
                                                             await deleteRowFromExpenseTable(
                                                                 expense['id']
                                                             );
@@ -122,7 +137,7 @@ export default function HomePage({ navigation }) {
                 onClose={closeInfo}
                 expense={selectedExpense}
             />
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -130,17 +145,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: primaryColor,
+        backgroundColor: Colors.primaryColor,
         // figure out fontStyles
     },
     topTitle: {
-        paddingTop: 80,
+        paddingTop: 60,
         margin: 'auto',
     },
     title: {
         fontWeight: 'bold',
         fontSize: 36,
-        color: secondaryColor,
+        color: Colors.secondaryColor,
     },
     totalExpensesContainer: {
         backgroundColor: 'white',
@@ -152,7 +167,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     subHeading: {
-        color: subHeadingColor,
+        color: Colors.subHeadingColor,
         fontSize: 24,
         margin: 'auto',
         paddingLeft: 10,
@@ -186,7 +201,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 15,
         borderWidth: 2,
-        borderColor: secondaryColor,
+        borderColor: Colors.secondaryColor,
     },
     expenseData: {
         textAlign: 'center',

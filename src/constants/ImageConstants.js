@@ -1,8 +1,16 @@
-const OPTIONS = {
+import * as ImagePicker from 'expo-image-picker';
+const SELECTOPTIONS = {
     quality: 1,
-    base64: true,
     exif: false,
     allowsEditing: true,
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+};
+const CAPTUREOPTIONS = {
+    quality: 1,
+    exif: false,
+    allowsEditing: true,
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    cameraType: ImagePicker.CameraType.back,
 };
 const ALBUMNNAME = 'DetectiveDollar';
-export { OPTIONS, ALBUMNNAME };
+export { SELECTOPTIONS, CAPTUREOPTIONS, ALBUMNNAME };
