@@ -163,6 +163,9 @@ async function getImageDirectory() {
     return directory;
 }
 export async function addImage(imageURI) {
+    if (!imageURI) {
+        return;
+    }
     const dir = await getImageDirectory();
     const fileName = `IMG_${Date.now()}.jpg`;
     const newImageUri = `${dir}${fileName}`;
@@ -181,6 +184,9 @@ export async function addImage(imageURI) {
 }
 
 export async function deleteImage(imageURI) {
+    if (!imageURI) {
+        return;
+    }
     try {
         await FileSystem.deleteAsync(imageURI, { intermediates: true });
         console.log('Image deleted');

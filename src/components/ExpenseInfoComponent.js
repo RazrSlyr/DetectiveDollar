@@ -26,29 +26,41 @@ const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
         <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
             {expense ? (
                 <SafeAreaView style={styles.container}>
-                    <Text>Expense Info</Text>
-                    <Text>{expense.name}</Text>
-                    <Text>{expense.timestamp}</Text>
-                    <Text>{expense.category}</Text>
-                    {expense.picture && hasMediaLibraryPermission ? (
-                        <SafeAreaView style={styles.imageContainer}>
-                            <Text> {expense.picture}</Text>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.title}>Expense Info</Text>
+                    </View>
+                    {expense.picture !== null && hasMediaLibraryPermission ? (
+                        <TouchableOpacity style={styles.circleContainer}>
                             <Image
-                                style={styles.image}
+                                style={styles.circleImage}
                                 source={{ uri: expense.picture }}
                                 alt="unable to load image"
                             />
-                        </SafeAreaView>
+                        </TouchableOpacity>
                     ) : (
-                        <View>
-                            <Text>No Image</Text>
-                            <TouchableOpacity>
-                                <AntDesign name="upload" size={40} color="black" />
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity style={styles.circleContainer}>
+                            <AntDesign name="upload" size={40} color="black" />
+                        </TouchableOpacity>
                     )}
+                    <View style={styles.textContainer}>
+                        <Text style={styles.titleText}>Title</Text>
+                        <Text style={styles.valueText}>{expense.name}</Text>
+                    </View>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.titleText}>When</Text>
+                        <Text style={styles.valueText}>{expense.timestamp}</Text>
+                    </View>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.titleText}>Amount</Text>
+                        <Text style={styles.valueText}>${expense.amount}</Text>
+                    </View>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.titleText}>Category</Text>
+                        <Text style={styles.valueText}>{expense.category}</Text>
+                    </View>
+
                     <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                        <Feather name="x-circle" size={50} color="black" />
+                        <Feather name="x-circle" size={50} color="red" />
                     </TouchableOpacity>
                 </SafeAreaView>
             ) : (
@@ -64,36 +76,46 @@ export default ExpenseInfoComponent;
 const styles = StyleSheet.create({
     container: {
         height: '70%',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
         margin: 30,
         padding: 30,
         borderRadius: 30,
     },
-    imageContainer: {
-        flex: 1,
-        backgroundColor: 'grey',
+    circleContainer: {
+        width: Dimensions.get('window').width / 2, // Set the desired width of the circle
+        height: Dimensions.get('window').width / 2, // Set the desired height of the circle
+        borderRadius: Dimensions.get('window').width / 4, // Half of the width and height to create a circle
+        overflow: 'hidden', // Clip the content to the circle shape
+        backgroundColor: Colors.subHeadingColor,
         justifyContent: 'center',
         alignItems: 'center',
-        width: '100%',
-        height: '30%',
     },
-    buttonContainer: {
-        backgroundColor: '#37c871',
-        padding: 10,
-        borderRadius: 10,
-        height: 60,
-    },
-    image: {
-        flex: 1,
-        contentFit: 'contain',
+    circleImage: {
         width: '100%',
+        height: '100%',
     },
     closeButton: {
         position: 'absolute',
         top: 0,
         right: 0,
-        margin: 15,
+        margin: 5,
+    },
+    textContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 5,
+    },
+    titleText: {
+        fontSize: 15,
+    },
+    valueText: {
+        fontSize: 20,
+    },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 33,
+        color: Colors.secondaryColor,
     },
 });
