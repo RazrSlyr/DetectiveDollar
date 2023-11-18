@@ -1,13 +1,19 @@
 import { incrementDateByFrequency } from './DatetimeUtils';
 
-const CREATE_REACCURING_TABLE = `CREATE TABLE reacurring (
+const CREATE_REACCURING_TABLE = `CREATE TABLE IF NOT EXISTS reacurring (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     frequency TEXT NOT NULL,
     start DATETIME NOT NULL,
     next_trigger DATETIME
 );`;
 
-const CREATE_EXPENSES_TABLE = `CREATE TABLE expenses (
+const CREATE_CATEGORY_TABLE = `CREATE TABLE IF NOT EXISTS categories (
+    name TEXT PRIMARY KEY,
+    icon TEXT,
+    color TEXT
+);`;
+
+const CREATE_EXPENSES_TABLE = `CREATE TABLE IF NOT EXISTS expenses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     category TEXT NOT NULL,
@@ -62,6 +68,12 @@ const createReacurringInsert = (frequency) => {
     return command;
 };
 
+const createCategoryInsert = (category) => {
+    const command = `INSERT OR IGNORE INTO categories (name)
+    VALUES ('${category}');`;
+    return command;
+}
+
 const createExpenseByDayQuery = (day) => {
     return `SELECT * FROM expenses WHERE day = '${day}' ORDER BY timestamp ASC`;
 };
@@ -93,7 +105,9 @@ export {
     SET_EXPENSE_DAY_AS_INDEX,
     GET_EXPENSES_TABLE_QUERY,
     GET_CATEGORY_QUERY,
+    CREATE_CATEGORY_TABLE,
     createExpenseInsert,
+    createCategoryInsert,
     deleteExpense,
     createExpenseByDayQuery,
     createExpenseByTimeframeQuery,
@@ -103,4 +117,5 @@ export {
     createExpenseInsertWithReacurringId,
     createExpenseByCategoryQuery,
     createExpenseByCategoryandTimeframeQuery,
+    
 };

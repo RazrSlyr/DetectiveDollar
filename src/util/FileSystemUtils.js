@@ -16,6 +16,8 @@ import {
     createReacurringInsert,
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
+    createCategoryInsert,
+    CREATE_CATEGORY_TABLE,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
 
@@ -38,6 +40,7 @@ async function getDatabase() {
         const promises = [
             tx.executeSqlAsync(SET_EXPENSE_CATERGORY_AS_INDEX),
             tx.executeSqlAsync(SET_EXPENSE_DAY_AS_INDEX),
+            tx.executeSqlAsync(CREATE_CATEGORY_TABLE),
         ];
         await Promise.all(promises);
     });
@@ -79,6 +82,14 @@ export async function addRowToExpenseTable(name, category, amount, day, expenseF
         );
     });
 }
+
+export async function addRowToCategoryTable(category) {
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(createCategoryInsert(category));
+    });
+}
+
 
 export async function deleteRowFromExpenseTable(row) {
     const db = await getDatabase();

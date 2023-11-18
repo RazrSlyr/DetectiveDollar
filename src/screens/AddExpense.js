@@ -6,7 +6,7 @@ import DropdownSelector from '../components/Dropdown';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToExpenseTable } from '../util/FileSystemUtils';
+import { addRowToCategoryTable, addRowToExpenseTable } from '../util/FileSystemUtils';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
@@ -21,7 +21,11 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
-        await addRowToExpenseTable(name, category, parseFloat(amount), dateString, frequency);
+        const promises = [
+            addRowToExpenseTable(name, category, parseFloat(amount), dateString, frequency),
+            addRowToCategoryTable(category),
+        ];
+        await Promise.all(promises);
         // navigation.navigate('Home');
     };
 
@@ -76,6 +80,7 @@ export default function App({ navigation }) {
                         setFrequency(item.value);
                     }}
                     dropdownLabel="Expense Frequency"
+                    placeholderLabel="Expense Frequency"
                 />
             </View>
             <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
