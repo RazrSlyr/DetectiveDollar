@@ -58,6 +58,13 @@ const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
                         <Text style={styles.titleText}>Category</Text>
                         <Text style={styles.valueText}>{expense.category}</Text>
                     </View>
+                    <View style={styles.memoContainer}>
+                        <Text style={styles.titleText}>Memo</Text>
+                        <Text style={styles.valueText}>
+                            Sed a tortor at tortor bibendum cursus. Donec in interdum velit, sit
+                            amet scelerisque ipsum.  
+                        </Text>
+                    </View>
 
                     <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                         <Feather name="x-circle" size={50} color="red" />
@@ -75,7 +82,6 @@ export default ExpenseInfoComponent;
 
 const styles = StyleSheet.create({
     container: {
-        height: '70%',
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
@@ -101,6 +107,9 @@ const styles = StyleSheet.create({
         top: 0,
         right: 0,
         margin: 5,
+    },
+    memoContainer: {
+        height: 200,
     },
     textContainer: {
         justifyContent: 'center',
