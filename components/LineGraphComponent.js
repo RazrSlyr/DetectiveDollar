@@ -22,6 +22,10 @@ import { getCurrentDateString, incrementDateByFrequency} from '../src/util/Datet
 
 const LineGraphComponent = ({ startDate, endDate, step }) => {
     const [lineGraphData, setlineGraphData] = useState([]);
+    const [lineGraphDataValues, setlineGraphDataValues] = useState([]);
+    const [lineGraphDataLabels, setlineGraphDataLabels] = useState([]);
+    console.log(lineGraphDataValues);
+    console.log(lineGraphDataLabels);
     console.log(lineGraphData);
 
     // Will return the date of the beginning of the week (last sunday)
@@ -47,7 +51,7 @@ const LineGraphComponent = ({ startDate, endDate, step }) => {
         ];
     };
 
-// Gets a list of days inbetween and including startDate and endDate
+    // Gets a list of days inbetween and including startDate and endDate
     const getDatesInRange = (startDate, endDate) => {
         const dates = [];
         const currentDate = new Date(startDate);
@@ -63,7 +67,6 @@ const LineGraphComponent = ({ startDate, endDate, step }) => {
     const updateLineGraphData = async () => {
         try {
             const week = getWeekStartEndDate(getCurrentDateString());
-            console.log(week);
             startDate = startDate || week[0];
             endDate = endDate || week[1];
             step = step || WEEKLY;
@@ -82,8 +85,15 @@ const LineGraphComponent = ({ startDate, endDate, step }) => {
                     key: date, //new Date(date).getTime(), // Convert date string to timestamp
                     value: updatedData[date] || 0, // Use the value from the map or default to 0
                 }));
-                // const lineGraphData = getDatesInRange(startDate, endDate).map((date) => (updatedData[date] || 0));
                 setlineGraphData(lineGraphData);
+/* 
+                const lineGraphDataValues = getDatesInRange(startDate, endDate).map(
+                    (date) => updatedData[date] || 0
+                );
+                const lineGraphDataLabels = getDatesInRange(startDate, endDate).map((date) => date);
+                setlineGraphDataValues(lineGraphDataValues);
+                setlineGraphDataLabels(lineGraphDataLabels);
+                 */
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -96,19 +106,38 @@ const LineGraphComponent = ({ startDate, endDate, step }) => {
         }, [])
     );
 
+    const axesSvg = { fontSize: 10, fill: 'grey' };
+    const verticalContentInset = { top: 10, bottom: 10 }
+    const xAxisHeight = 30
+
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            {lineGraphData.length > 0 ? (
+        <View style={{ height: 300, padding: 20, flexDirection: 'row' }}>
+            <YAxis
+                data={lineGraphData}
+                yAccessor={({ item }) => item.value}
+                style={{ marginBottom: xAxisHeight }}
+                contentInset={verticalContentInset}
+                svg={axesSvg}
+            />
+            <View style={{ flex: 1, marginLeft: 10 }}>
                 <LineChart
-                    style={{ height: 200, width: 200 }}
+                    style={{ flex: 1 }}
                     data={lineGraphData}
-                    svg={{ stroke: 'rgb(134, 65, 244)' }}
-                    contentInset={{ top: 20, bottom: 20 }}>
+                    //xAccessor={({ item }) => item.key}
+                    yAccessor={({ item }) => item.value}
+                    contentInset={verticalContentInset}
+                    svg={{ stroke: 'rgb(134, 65, 244)' }}>
                     <Grid />
                 </LineChart>
-            ) : (
-                <Text>No data available</Text>
-            )}
+                <XAxis
+                    style={{ marginHorizontal: -10, height: xAxisHeight }}
+                    data={lineGraphData}
+                    //xAccessor={({ item }) => item.key}
+                    formatLabel={(value, index) => index}
+                    contentInset={{ left: 10, right: 10 }}
+                    svg={axesSvg}
+                />
+            </View>
         </View>
     );
 };
