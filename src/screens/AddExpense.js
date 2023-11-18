@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import DropdownSelector from '../components/Dropdown';
-import { pickImage, captureImage } from '../components/ImagePickerComponent';
+import { pickImage, captureImage } from '../util/ImagePickerUtil';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';

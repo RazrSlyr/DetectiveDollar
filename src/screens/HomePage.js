@@ -1,5 +1,4 @@
 import { FontAwesome, Entypo } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import {
