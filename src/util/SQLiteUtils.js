@@ -24,7 +24,8 @@ const CREATE_EXPENSES_TABLE = `CREATE TABLE IF NOT EXISTS expenses (
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     day TEXT NOT NULL,
     reacurring_id INTEGER,
-    FOREIGN KEY (reacurring_id) REFERENCES reacurring (id)
+    FOREIGN KEY (reacurring_id) REFERENCES reacurring (id),
+    FOREIGN KEY (category) REFERENCES categories (name)
 );`;
 
 const SET_EXPENSE_CATERGORY_AS_INDEX = `CREATE INDEX idx_category 

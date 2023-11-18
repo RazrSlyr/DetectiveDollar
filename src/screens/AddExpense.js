@@ -21,11 +21,8 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
-        const promises = [
-            addRowToExpenseTable(name, category, parseFloat(amount), dateString, frequency),
-            addRowToCategoryTable(category),
-        ];
-        await Promise.all(promises);
+        await addRowToCategoryTable(category);
+        await addRowToExpenseTable(name, category, parseFloat(amount), dateString, frequency);
         // navigation.navigate('Home');
     };
 
