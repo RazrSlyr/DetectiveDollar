@@ -37,6 +37,8 @@ const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses';
 
 const GET_CATEGORY_QUERY = 'SELECT DISTINCT category FROM expenses';
 
+const GET_ALL_CATEGORIES_QUERY = 'SELECT * FROM categories;';
+
 const createExpenseInsert = (name, category, amount, day) => {
     return `INSERT INTO expenses (name, category, amount, day)
     VALUES ('${name}', '${category}', ${amount}, '${day}');`;
@@ -44,7 +46,7 @@ const createExpenseInsert = (name, category, amount, day) => {
 
 const deleteExpense = (row) => {
     return `DELETE FROM expenses WHERE id = ${row}`;
-}
+};
 
 const createExpenseInsertWithReacurringId = (
     name,
@@ -72,7 +74,7 @@ const createCategoryInsert = (category) => {
     const command = `INSERT OR IGNORE INTO categories (name)
     VALUES ('${category}');`;
     return command;
-}
+};
 
 const createExpenseByDayQuery = (day) => {
     return `SELECT * FROM expenses WHERE day = '${day}' ORDER BY timestamp ASC`;
@@ -106,6 +108,7 @@ export {
     GET_EXPENSES_TABLE_QUERY,
     GET_CATEGORY_QUERY,
     CREATE_CATEGORY_TABLE,
+    GET_ALL_CATEGORIES_QUERY,
     createExpenseInsert,
     createCategoryInsert,
     deleteExpense,
@@ -117,5 +120,4 @@ export {
     createExpenseInsertWithReacurringId,
     createExpenseByCategoryQuery,
     createExpenseByCategoryandTimeframeQuery,
-    
 };
