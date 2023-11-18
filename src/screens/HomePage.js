@@ -11,6 +11,8 @@ import {
     SafeAreaView,
 } from 'react-native';
 
+import MyDateTimePicker from '../components/DatePickerComponent';
+import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
@@ -80,11 +82,17 @@ export default function HomePage({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-
-            <Text style={[styles.title, styles.topTitle]}>Daily Summary</Text>
-            <View style={styles.totalExpensesContainer}>
-                <Text style={styles.subHeading}>Today's Expenses</Text>
-                <Text style={styles.textInput}>{`${spending}`}</Text>
+            <View style={styles.titleContainer}>
+                <Text style={[styles.title, styles.topTitle]}>Today</Text>
+                {/* Date Selector */}
+                <MyDateTimePicker onDateChange={}/>
+            </View>
+            <View style={styles.arrowsAndTotalExpenseContainer}>
+                <Entypo name="triangle-left" size={52} style={styles.arrows} />
+                <View style={styles.totalExpensesContainer}>
+                    <Text style={styles.textInput}>{`${spending}`}</Text>
+                </View>
+                <Entypo name="triangle-right" size={52} style={styles.arrows} />
             </View>
             <View style={styles.expensesContainer}>
                 <Text style={styles.subHeading}>History</Text>
@@ -159,14 +167,30 @@ const styles = StyleSheet.create({
     topTitle: {
         paddingTop: 60,
         margin: 'auto',
+    titleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 60,
+        width: 270,
+        height: 80,
+        backgroundColor: 'white',
+        borderRadius: 15,
     },
     title: {
         fontWeight: 'bold',
+        fontSize: 48,
+        color: secondaryColor,
+        marginRight: 15,
         fontSize: 36,
         color: Colors.secondaryColor,
     },
     totalExpensesContainer: {
         backgroundColor: 'white',
+        borderRadius: 15,
+        marginTop: 20,
+        marginBottom: 20,
+        height: 100,
         height: 'auto',
         width: 270,
         alignItems: 'center',
@@ -184,15 +208,12 @@ const styles = StyleSheet.create({
     textInput: {
         fontSize: 50,
         margin: 'auto',
-        paddingLeft: 10,
-        paddingBottom: 5,
     },
     expensesContainer: {
-        backgroundColor: 'green',
+        // backgroundColor: 'green',
         flex: 1 / 2,
         width: '70%',
-        borderRadius: 15,
-        borderWidth: 2,
+        borderRadius: 10,
     },
     scrollableContent: {
         flex: 1,
@@ -207,7 +228,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        borderRadius: 15,
+        borderRadius: 10,
         borderWidth: 2,
         borderColor: Colors.secondaryColor,
     },
@@ -219,5 +240,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
+    },
+    arrowsAndTotalExpenseContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    arrows: {
+        color: secondaryColor,
     },
 });

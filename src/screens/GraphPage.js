@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ChartWithInteractivity from '../../components/ChartWithInteractivity';
+import ChartWithInteractivity from '../components/ChartWithInteractivity';
 import LineGraphComponent from '../../components/LineGraphComponent';
-import PieChartComponent from '../../components/PieChartComponent';
+import PieChartComponent from '../components/PieChartComponent';
 import WeekMonthYearButtons from '../../components/weekMonthYearComponent';
 import { secondaryColor } from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
