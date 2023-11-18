@@ -74,17 +74,26 @@ const createReacurringByIdQuery = (id) => {
     return `SELECT * FROM reacurring WHERE id = ${id};`;
 };
 
-const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
+/* const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
     return `SELECT * FROM expenses WHERE timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY timestamp`;
+}; */
+
+const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
+    return `
+        SELECT * 
+        FROM expenses 
+        WHERE timestamp >= "${startTimestamp}" 
+          AND timestamp < date("${endTimestamp}", '+1 day') 
+        ORDER BY timestamp;
+    `;
 };
+
 
 const createExpenseByCategoryQuery = (category) => {
     return `SELECT * FROM expenses WHERE category = "${category}";`;
 };
 
-const createExpenseByCategoryandTimeframeQuery = (category, startTimestamp, endTimestamp) => {
-    return `SELECT * FROM expenses WHERE category = "${category}" AND timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY category, timestamp;`;
-};
+
 
 export {
     CREATE_EXPENSES_TABLE,
@@ -102,5 +111,4 @@ export {
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
     createExpenseByCategoryQuery,
-    createExpenseByCategoryandTimeframeQuery,
 };
