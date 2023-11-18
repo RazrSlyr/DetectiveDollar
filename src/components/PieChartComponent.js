@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
 
-import { getExpensesbyCategory } from '../src/util/FileSystemUtils';
+import { getExpensesbyCategory } from '../util/FileSystemUtils';
 
-const YourPieChartComponent = () => {
+const PieChartComponent = () => {
     const [pieChartData, setPieChartData] = useState([]);
 
     // Call the function to fetch and update data
@@ -99,4 +99,4 @@ const YourPieChartComponent = () => {
     );
 };
 
-export default YourPieChartComponent;
+export default PieChartComponent;

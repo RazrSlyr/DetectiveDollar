@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import ChartWithInteractivity from '../../components/ChartWithInteractivity';
-import PieChartComponent from '../../components/PieChartComponent';
+import ChartWithInteractivity from '../components/ChartWithInteractivity';
+import PieChartComponent from '../components/PieChartComponent';
 import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 
 const GraphPage = ({ navigation }) => {

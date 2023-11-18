@@ -1,8 +1,9 @@
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 
+import MyDateTimePicker from '../components/DatePickerComponent';
 import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
@@ -24,9 +25,10 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
-    const goToAddPage = () => {
-        navigation.navigate('AddExpense'); // change TEMPORARY to actual page
-    };
+    // was used for original add button
+    // const goToAddPage = () => {
+    //     navigation.navigate('AddExpense'); // change TEMPORARY to actual page
+    // };
 
     useEffect(() => {
         const getExpenses = async () => {
@@ -39,11 +41,17 @@ export default function HomePage({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={[styles.title, styles.topTitle]}>Daily</Text>
-            <Text style={styles.title}>Summary</Text>
-            <View style={styles.totalExpensesContainer}>
-                <Text style={styles.subHeading}>Today's Expenses</Text>
-                <Text style={styles.textInput}>{`${spending}`}</Text>
+            <View style={styles.titleContainer}>
+                <Text style={[styles.title, styles.topTitle]}>Today</Text>
+                {/* Date Selector */}
+                <MyDateTimePicker onDateChange={}/>
+            </View>
+            <View style={styles.arrowsAndTotalExpenseContainer}>
+                <Entypo name="triangle-left" size={52} style={styles.arrows} />
+                <View style={styles.totalExpensesContainer}>
+                    <Text style={styles.textInput}>{`${spending}`}</Text>
+                </View>
+                <Entypo name="triangle-right" size={52} style={styles.arrows} />
             </View>
             <View style={styles.expensesContainer}>
                 <Text style={styles.subHeading}>History</Text>
@@ -66,21 +74,31 @@ export default function HomePage({ navigation }) {
                                     </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
                                     {/* This code handles the expense deletion */}
-                                    <TouchableOpacity  onPress={ async() => {
-                                        Alert.alert(
-                                            'Deleting Expense',
-                                            'Are you sure you want to delete this expense? This cannot be undone.',
-                                            [
-                                                {text: 'NO'},
-                                                {text: 'YES', onPress: async() => {
-                                                    await deleteRowFromExpenseTable(expense['id'])
-                                                    setTodayExpenses(await getExpensesFromDay(getCurrentDateString()))
-                                                }},
-                                            ]
-                                        )
-                                    }}>
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            Alert.alert(
+                                                'Deleting Expense',
+                                                'Are you sure you want to delete this expense? This cannot be undone.',
+                                                [
+                                                    { text: 'NO' },
+                                                    {
+                                                        text: 'YES',
+                                                        onPress: async () => {
+                                                            await deleteRowFromExpenseTable(
+                                                                expense['id']
+                                                            );
+                                                            setTodayExpenses(
+                                                                await getExpensesFromDay(
+                                                                    getCurrentDateString()
+                                                                )
+                                                            );
+                                                        },
+                                                    },
+                                                ]
+                                            );
+                                        }}>
                                         <View>
-                                            <Text style={{color: 'red'}}> X </Text>
+                                            <Text style={{ color: 'red' }}> X </Text>
                                         </View>
                                     </TouchableOpacity>
                                     {/* End expense deletion code */}
@@ -107,19 +125,27 @@ const styles = StyleSheet.create({
         backgroundColor: primaryColor,
         // figure out fontStyles
     },
-    topTitle: {
-        paddingTop: 80,
-        margin: 'auto',
+    titleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 60,
+        width: 270,
+        height: 80,
+        backgroundColor: 'white',
+        borderRadius: 15,
     },
     title: {
         fontWeight: 'bold',
-        fontSize: 36,
+        fontSize: 48,
         color: secondaryColor,
+        marginRight: 15,
     },
     totalExpensesContainer: {
         backgroundColor: 'white',
         borderRadius: 15,
-        margin: 20,
+        marginTop: 20,
+        marginBottom: 20,
         height: 100,
         width: 270,
         alignItems: 'center',
@@ -135,15 +161,12 @@ const styles = StyleSheet.create({
     textInput: {
         fontSize: 50,
         margin: 'auto',
-        paddingLeft: 10,
-        paddingBottom: 5,
     },
     expensesContainer: {
-        backgroundColor: 'green',
+        // backgroundColor: 'green',
         flex: 1 / 2,
         width: '70%',
-        borderRadius: 15,
-        borderWidth: 2,
+        borderRadius: 10,
     },
     scrollableContent: {
         flex: 1,
@@ -158,7 +181,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        borderRadius: 15,
+        borderRadius: 10,
         borderWidth: 2,
         borderColor: secondaryColor,
     },
@@ -170,5 +193,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
+    },
+    arrowsAndTotalExpenseContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    arrows: {
+        color: secondaryColor,
     },
 });
