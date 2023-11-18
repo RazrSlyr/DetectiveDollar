@@ -18,6 +18,7 @@ import {
     createExpenseInsertWithReacurringId,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
+import { ALBUMNNAME } from '../constants/ImageConstants';
 
 const dataDir = FileSystem.documentDirectory + 'SQLite';
 const databaseName = 'DetectiveDollar.db';
@@ -147,4 +148,43 @@ export async function getExpensesbyCategory() {
         }
     }
     return categoryDict;
+}
+
+async function getImageDirectory() {
+    const specificDirectory = ALBUMNNAME;
+    const directory = `${FileSystem.documentDirectory}${specificDirectory}/`;
+
+    // Check if the directory exists, if not, create it
+    const directoryInfo = await FileSystem.getInfoAsync(directory);
+
+    if (!directoryInfo.exists) {
+        await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
+    }
+    return directory;
+}
+export async function addImage(imageURI) {
+    const dir = await getImageDirectory();
+    const fileName = `IMG_${Date.now()}.jpg`;
+    const newImageUri = `${dir}${fileName}`;
+    try {
+        await FileSystem.moveAsync({
+            from: imageURI,
+            to: newImageUri,
+        });
+
+        console.log('Image saved:', newImageUri);
+        return newImageUri;
+    } catch (error) {
+        console.error('Error saving image:', error);
+        return null;
+    }
+}
+
+export async function deleteImage(imageURI) {
+    try {
+        await FileSystem.deleteAsync(imageURI, { intermediates: true });
+        console.log('Image deleted');
+    } catch (error) {
+        console.error('Error deleting image:', error);
+    }
 }

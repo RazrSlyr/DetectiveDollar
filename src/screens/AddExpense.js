@@ -1,6 +1,5 @@
 import { AntDesign, Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
@@ -13,19 +12,18 @@ import {
     SafeAreaView,
 } from 'react-native';
 
-import CameraComponent from '../components/CameraComponent';
 import DropdownSelector from '../components/Dropdown';
-import { pickImage, captureImage, deleteImageAsset } from '../components/ImagePickerComponent';
+import { pickImage, captureImage } from '../components/ImagePickerComponent';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToExpenseTable } from '../util/FileSystemUtils';
+import { addRowToExpenseTable, addImage } from '../util/FileSystemUtils';
 export default function App({ navigation }) {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
     const [frequency, setFrequency] = useState(NO_REPETION);
-    const [imageAsset, setImageAsset] = useState(null);
+    const [previewURI, setImageURI] = useState(null);
     const handleButtonPress = async () => {
         // Add your button click logic here
         if (name === '' || amount === '' || category === '') {
@@ -33,14 +31,18 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
-        const image_uri = imageAsset.uri ? imageAsset.uri : null;
+        let imageURI = null;
+        if (previewURI) {
+            imageURI = await addImage(previewURI);
+        }
+        //const image_uri = imageURI.uri ? imageURI.uri : null;
         await addRowToExpenseTable(
             name,
             category,
             parseFloat(amount),
             dateString,
             frequency,
-            image_uri
+            imageURI
         );
     };
     const formattedAmount = amount.toLocaleString('en-US', {
@@ -49,8 +51,8 @@ export default function App({ navigation }) {
     });
     const clearImage = async () => {
         console.log('remove photo');
-        deleteImageAsset(imageAsset);
-        setImageAsset(null);
+        //deleteImageAsset(imageURI);
+        setImageURI(null);
     };
     return (
         <View style={styles.container}>
@@ -99,9 +101,9 @@ export default function App({ navigation }) {
                     }}
                     dropdownLabel="Expense Frequency"
                 />
-                {imageAsset ? (
+                {previewURI ? (
                     <SafeAreaView style={styles.container}>
-                        <Image style={styles.preview} source={{ uri: imageAsset.uri }} />
+                        <Image style={styles.preview} source={{ uri: previewURI }} />
                         <TouchableOpacity
                             style={{ position: 'absolute', right: -30, alignSelf: 'center' }}
                             onPress={async () => {
@@ -115,18 +117,18 @@ export default function App({ navigation }) {
                         <TouchableOpacity
                             style={styles.rowItem}
                             onPress={async () => {
-                                const asset = await captureImage();
-                                console.log('uri from imagepicker: ', asset);
-                                setImageAsset(asset);
+                                const imageURI = await captureImage();
+                                console.log('uri from imagepicker: ', imageURI);
+                                setImageURI(imageURI);
                             }}>
                             <Feather name="camera" size={40} color="black" />
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.rowItem}
                             onPress={async () => {
-                                const asset = await pickImage();
-                                console.log('uri from imagepicker: ', asset);
-                                setImageAsset(asset);
+                                const imageURI = await pickImage();
+                                console.log('uri from imagepicker: ', imageURI);
+                                setImageURI(imageURI);
                             }}>
                             <AntDesign name="upload" size={40} color="black" />
                         </TouchableOpacity>

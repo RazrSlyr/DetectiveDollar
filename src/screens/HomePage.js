@@ -15,7 +15,11 @@ import {
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
+import {
+    deleteRowFromExpenseTable,
+    getExpensesFromDay,
+    deleteImage,
+} from '../util/FileSystemUtils';
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
@@ -99,14 +103,7 @@ export default function HomePage({ navigation }) {
                                                     {
                                                         text: 'YES',
                                                         onPress: async () => {
-                                                            try {
-                                                                await FileSystem.deleteAsync(
-                                                                    expense['picture'],
-                                                                    { idempotent: true }
-                                                                );
-                                                            } catch (error) {
-                                                                console.error(error);
-                                                            }
+                                                            deleteImage(expense['picture']);
                                                             await deleteRowFromExpenseTable(
                                                                 expense['id']
                                                             );

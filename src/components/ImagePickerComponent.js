@@ -12,8 +12,7 @@ const pickImage = async () => {
     if (result.canceled) {
         return null;
     }
-    const assetURI = await moveImage(result.assets[0].uri, false);
-    return assetURI;
+    return result.assets[0].uri;
 };
 const captureImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -24,43 +23,24 @@ const captureImage = async () => {
     if (result.canceled) {
         return null;
     }
-    const asset = await moveImage(result.assets[0].uri, false);
-    return asset;
+    return result.assets[0].uri;
 };
-const deleteImageAsset = async (asset) => {
-    try {
-        await MediaLibrary.deleteAssetsAsync(asset);
-        console.log('deleted image Asset');
-    } catch (error) {
-        console.log(error);
-    }
-};
-const moveImage = async (imageURI, copy = true) => {
-    console.log('Moving to Album: ', imageURI);
+const saveToCameraRoll = async (imageURI, album = null) => {
     const assetRef = await MediaLibrary.createAssetAsync(imageURI);
-    const albumRef = await MediaLibrary.getAlbumAsync(ALBUMNNAME);
-    //copy asset to album
-    try {
-        if (albumRef === null) {
-            await MediaLibrary.createAlbumAsync(ALBUMNNAME, assetRef, copy);
-        } else {
-            await MediaLibrary.addAssetsToAlbumAsync(assetRef, albumRef, copy);
+
+    if (album) {
+        try {
+            const albumRef = await MediaLibrary.getAlbumAsync(album);
+            if (albumRef === null) {
+                await MediaLibrary.createAlbumAsync(ALBUMNNAME, assetRef, false);
+            } else {
+                await MediaLibrary.addAssetsToAlbumAsync(assetRef, albumRef, false);
+            }
+            console.log('Image moved succesfully');
+        } catch (error) {
+            console.log(error);
+            return null;
         }
-        console.log('Image moved succesfully');
-    } catch (error) {
-        console.log(error);
-        return null;
     }
-    //get latest asset in album
-    const albumAssets = await MediaLibrary.getAssetsAsync({
-        album: albumRef,
-        first: 1,
-        sortBy: [MediaLibrary.SortBy.creationTime],
-    });
-    if ((albumAssets !== undefined || albumAssets !== null) && albumAssets.assets.length > 0) {
-        return albumAssets.assets[0];
-    }
-    console.error('not assets in album: ', albumAssets);
-    return null;
 };
-export { pickImage, captureImage, deleteImageAsset };
+export { pickImage, captureImage, saveToCameraRoll };
