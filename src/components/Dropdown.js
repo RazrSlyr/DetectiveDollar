@@ -4,7 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 
 import { secondaryColor, textColor } from '../constants/Colors';
 
-function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
+function DropdownSelector({ data, onChange, dropdownLabel }) {
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
@@ -32,7 +32,7 @@ function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? placeholderLabel : '...'}
+                placeholder={!isFocus ? 'Expense Frequency' : '...'}
                 searchPlaceholder="Search..."
                 value={value}
                 onFocus={() => setIsFocus(true)}
