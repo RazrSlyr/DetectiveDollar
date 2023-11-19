@@ -13,11 +13,12 @@ import {
 } from 'react-native';
 
 import DropdownSelector from '../components/Dropdown';
-import { pickImage, captureImage } from '../util/ImagePickerUtil';
+import { pickImage, captureImage, addImage } from '../util/ImagePickerUtil';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToExpenseTable, addImage } from '../util/FileSystemUtils';
+import { addRowToCategoryTable, addRowToExpenseTable } from '../util/FileSystemUtils';
+
 export default function App({ navigation }) {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
@@ -31,6 +32,7 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
+        await addRowToCategoryTable(category);
         let imageURI = null;
         if (previewURI) {
             imageURI = await addImage(previewURI);
@@ -100,6 +102,7 @@ export default function App({ navigation }) {
                         setFrequency(item.value);
                     }}
                     dropdownLabel="Expense Frequency"
+                    placeholderLabel="Expense Frequency"
                 />
                 {previewURI ? (
                     <SafeAreaView style={styles.container}>

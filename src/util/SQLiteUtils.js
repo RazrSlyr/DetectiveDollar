@@ -1,13 +1,19 @@
 import { incrementDateByFrequency } from './DatetimeUtils';
 
-const CREATE_REACCURING_TABLE = `CREATE TABLE reacurring (
+const CREATE_REACCURING_TABLE = `CREATE TABLE IF NOT EXISTS reacurring (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     frequency TEXT NOT NULL,
     start DATETIME NOT NULL,
     next_trigger DATETIME
 );`;
 
-const CREATE_EXPENSES_TABLE = `CREATE TABLE expenses (
+const CREATE_CATEGORY_TABLE = `CREATE TABLE IF NOT EXISTS categories (
+    name TEXT PRIMARY KEY,
+    icon TEXT,
+    color TEXT
+);`;
+
+const CREATE_EXPENSES_TABLE = `CREATE TABLE IF NOT EXISTS expenses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     category TEXT NOT NULL,
@@ -18,7 +24,8 @@ const CREATE_EXPENSES_TABLE = `CREATE TABLE expenses (
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     day TEXT NOT NULL,
     reacurring_id INTEGER,
-    FOREIGN KEY (reacurring_id) REFERENCES reacurring (id)
+    FOREIGN KEY (reacurring_id) REFERENCES reacurring (id),
+    FOREIGN KEY (category) REFERENCES categories (name)
 );`;
 
 const SET_EXPENSE_CATERGORY_AS_INDEX = `CREATE INDEX idx_category 
@@ -31,18 +38,16 @@ const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses';
 
 const GET_CATEGORY_QUERY = 'SELECT DISTINCT category FROM expenses';
 
-const createExpenseInsert = (name, category, amount, day, image_uri) => {
-    if (image_uri) {
-        return `INSERT INTO expenses (name, category, amount, day, picture)
-        VALUES ('${name}', '${category}', ${amount}, '${day}', '${image_uri}');`;
-    }
+const GET_ALL_CATEGORIES_QUERY = 'SELECT * FROM categories;';
+
+const createExpenseInsert = (name, category, amount, day) => {
     return `INSERT INTO expenses (name, category, amount, day)
     VALUES ('${name}', '${category}', ${amount}, '${day}');`;
 };
 
 const deleteExpense = (row) => {
     return `DELETE FROM expenses WHERE id = ${row}`;
-};
+}
 
 const createExpenseInsertWithReacurringId = (
     name,
@@ -68,6 +73,12 @@ const createReacurringInsert = (frequency) => {
     VALUES ('${frequency}', datetime(${start.getTime() / 1000}, 'unixepoch'), datetime(${
         next / 1000
     }, 'unixepoch'));`;
+    return command;
+};
+
+const createCategoryInsert = (category) => {
+    const command = `INSERT OR IGNORE INTO categories (name)
+    VALUES ('${category}');`;
     return command;
 };
 
@@ -102,7 +113,10 @@ export {
     SET_EXPENSE_DAY_AS_INDEX,
     GET_EXPENSES_TABLE_QUERY,
     GET_CATEGORY_QUERY,
+    CREATE_CATEGORY_TABLE,
+    GET_ALL_CATEGORIES_QUERY,
     createExpenseInsert,
+    createCategoryInsert,
     deleteExpense,
     createExpenseByDayQuery,
     createExpenseByTimeframeQuery,
