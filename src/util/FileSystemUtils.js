@@ -72,12 +72,12 @@ export async function addRowToExpenseTable(
     amount,
     day,
     expenseFrequency,
-    image_uri = null
+    imageURI = null
 ) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         if (expenseFrequency === NO_REPETION) {
-            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day, image_uri));
+            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day, imageURI));
             return;
         }
         const reacurringInsertId = (
@@ -93,7 +93,7 @@ export async function addRowToExpenseTable(
                 amount,
                 day,
                 reacurringEntryTimestamp,
-                image_uri,
+                imageURI,
                 reacurringInsertId
             )
         );
@@ -182,7 +182,7 @@ async function getImageDirectory() {
 }
 export async function addImage(imageURI) {
     if (!imageURI) {
-        return;
+        return null;
     }
     const dir = await getImageDirectory();
     const fileName = `IMG_${Date.now()}.jpg`;

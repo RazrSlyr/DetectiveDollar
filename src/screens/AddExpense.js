@@ -13,11 +13,11 @@ import {
 } from 'react-native';
 
 import DropdownSelector from '../components/Dropdown';
-import { pickImage, captureImage, addImage } from '../util/ImagePickerUtil';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToCategoryTable, addRowToExpenseTable } from '../util/FileSystemUtils';
+import { addRowToCategoryTable, addRowToExpenseTable, addImage } from '../util/FileSystemUtils';
+import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
@@ -37,7 +37,6 @@ export default function App({ navigation }) {
         if (previewURI) {
             imageURI = await addImage(previewURI);
         }
-        //const image_uri = imageURI.uri ? imageURI.uri : null;
         await addRowToExpenseTable(
             name,
             category,
