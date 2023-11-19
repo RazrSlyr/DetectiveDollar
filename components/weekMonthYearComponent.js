@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 
-import { primaryColor, secondaryColor, textColor } from '../src/constants/Colors.js';
-import {
-    YEARLY,
-    MONTHLY,
-    WEEKLY,
-} from '../src/constants/FrequencyConstants';
+import { secondaryColor } from '../src/constants/Colors.js';
+import { YEARLY, MONTHLY, WEEKLY } from '../src/constants/FrequencyConstants';
 
 const WeekMonthYearButtons = ({ onSelect }) => {
     const [selection, setSelection] = useState(0);
@@ -72,8 +68,6 @@ const styles = StyleSheet.create({
         flex: 1,
         borderWidth: 1,
         borderColor: '#37c871',
-        // borderRightWidth: 0.25,
-        // borderLeftWidth: 0.25,
         backgroundColor: '#f9f9f9',
         borderRadius: 10,
         marginTop: 20,
