@@ -1,14 +1,29 @@
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
+import {
+    TouchableOpacity,
+    StyleSheet,
+    View,
+    Text,
+    ScrollView,
+    Alert,
+    SafeAreaView,
+} from 'react-native';
 
-import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
+import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
+import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
-
+import {
+    deleteRowFromExpenseTable,
+    getExpensesFromDay,
+    deleteImage,
+} from '../util/FileSystemUtils';
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
+    const [showExpenseInfo, setShowExpenseInfo] = useState(false);
+    const [selectedExpense, setSelectedExpense] = useState();
+
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
             return 0;
@@ -24,10 +39,6 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
-    const goToAddPage = () => {
-        navigation.navigate('AddExpense'); // change TEMPORARY to actual page
-    };
-
     useEffect(() => {
         const getExpenses = async () => {
             setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
@@ -37,10 +48,18 @@ export default function HomePage({ navigation }) {
         });
     }, []);
 
+    const openInfo = async () => {
+        setShowExpenseInfo(true);
+    };
+    const closeInfo = () => {
+        setSelectedExpense(null);
+        setShowExpenseInfo(false);
+    };
     return (
-        <View style={styles.container}>
-            <Text style={[styles.title, styles.topTitle]}>Daily</Text>
-            <Text style={styles.title}>Summary</Text>
+        <SafeAreaView style={styles.container}>
+            <StatusBar style="auto" />
+
+            <Text style={[styles.title, styles.topTitle]}>Daily Summary</Text>
             <View style={styles.totalExpensesContainer}>
                 <Text style={styles.subHeading}>Today's Expenses</Text>
                 <Text style={styles.textInput}>{`${spending}`}</Text>
@@ -60,27 +79,45 @@ export default function HomePage({ navigation }) {
                                             <FontAwesome
                                                 name="repeat"
                                                 size={24}
-                                                color={secondaryColor}
+                                                color={Colors.secondaryColor}
                                             />
                                         )}
                                     </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
                                     {/* This code handles the expense deletion */}
-                                    <TouchableOpacity  onPress={ async() => {
-                                        Alert.alert(
-                                            'Deleting Expense',
-                                            'Are you sure you want to delete this expense? This cannot be undone.',
-                                            [
-                                                {text: 'NO'},
-                                                {text: 'YES', onPress: async() => {
-                                                    await deleteRowFromExpenseTable(expense['id'])
-                                                    setTodayExpenses(await getExpensesFromDay(getCurrentDateString()))
-                                                }},
-                                            ]
-                                        )
-                                    }}>
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            setSelectedExpense(expense);
+                                            openInfo();
+                                        }}>
+                                        <Entypo name="info-with-circle" size={40} color="black" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            Alert.alert(
+                                                'Deleting Expense',
+                                                'Are you sure you want to delete this expense? This cannot be undone.',
+                                                [
+                                                    { text: 'NO' },
+                                                    {
+                                                        text: 'YES',
+                                                        onPress: async () => {
+                                                            deleteImage(expense['picture']);
+                                                            await deleteRowFromExpenseTable(
+                                                                expense['id']
+                                                            );
+                                                            setTodayExpenses(
+                                                                await getExpensesFromDay(
+                                                                    getCurrentDateString()
+                                                                )
+                                                            );
+                                                        },
+                                                    },
+                                                ]
+                                            );
+                                        }}>
                                         <View>
-                                            <Text style={{color: 'red'}}> X </Text>
+                                            <Text style={{ color: 'red' }}> X </Text>
                                         </View>
                                     </TouchableOpacity>
                                     {/* End expense deletion code */}
@@ -91,12 +128,12 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
-            {/* This will add the add button to the home page. I have not set up the naviagtion for it 
-            so when it is added back it will produce an error  */}
-            {/* <AddButton onPress={goToAddPage} /> */}
-
-            <StatusBar style="auto" />
-        </View>
+            <ExpenseInfoComponent
+                isVisable={showExpenseInfo}
+                onClose={closeInfo}
+                expense={selectedExpense}
+            />
+        </SafeAreaView>
     );
 }
 
@@ -104,30 +141,30 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: primaryColor,
+        backgroundColor: Colors.primaryColor,
         // figure out fontStyles
     },
     topTitle: {
-        paddingTop: 80,
+        paddingTop: 60,
         margin: 'auto',
     },
     title: {
         fontWeight: 'bold',
         fontSize: 36,
-        color: secondaryColor,
+        color: Colors.secondaryColor,
     },
     totalExpensesContainer: {
         backgroundColor: 'white',
-        borderRadius: 15,
-        margin: 20,
-        height: 100,
+        height: 'auto',
         width: 270,
         alignItems: 'center',
         justifyContent: 'center',
+        margin: 30,
+        borderRadius: 15,
     },
     subHeading: {
-        color: subHeadingColor,
-        fontSize: 24,
+        color: Colors.subHeadingColor,
+        fontSize: 13,
         margin: 'auto',
         paddingLeft: 10,
         paddingTop: 10,
@@ -160,7 +197,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 15,
         borderWidth: 2,
-        borderColor: secondaryColor,
+        borderColor: Colors.secondaryColor,
     },
     expenseData: {
         textAlign: 'center',

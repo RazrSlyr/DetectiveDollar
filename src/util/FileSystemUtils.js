@@ -19,6 +19,7 @@ import {
     GET_ALL_CATEGORIES_QUERY,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
+import { ALBUMNNAME } from '../constants/ImageConstants';
 
 const dataDir = FileSystem.documentDirectory + 'SQLite';
 const databaseName = 'DetectiveDollar.db';
@@ -65,11 +66,18 @@ export async function getExpenseTable() {
     return rows;
 }
 
-export async function addRowToExpenseTable(name, category, amount, day, expenseFrequency) {
+export async function addRowToExpenseTable(
+    name,
+    category,
+    amount,
+    day,
+    expenseFrequency,
+    imageURI = null
+) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         if (expenseFrequency === NO_REPETION) {
-            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day));
+            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day, imageURI));
             return;
         }
         const reacurringInsertId = (
@@ -85,6 +93,7 @@ export async function addRowToExpenseTable(name, category, amount, day, expenseF
                 amount,
                 day,
                 reacurringEntryTimestamp,
+                imageURI,
                 reacurringInsertId
             )
         );
@@ -157,4 +166,49 @@ export async function getExpensesbyCategory() {
         }
     }
     return categoryDict;
+}
+
+async function getImageDirectory() {
+    const specificDirectory = ALBUMNNAME;
+    const directory = `${FileSystem.documentDirectory}${specificDirectory}/`;
+
+    // Check if the directory exists, if not, create it
+    const directoryInfo = await FileSystem.getInfoAsync(directory);
+
+    if (!directoryInfo.exists) {
+        await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
+    }
+    return directory;
+}
+export async function addImage(imageURI) {
+    if (!imageURI) {
+        return null;
+    }
+    const dir = await getImageDirectory();
+    const fileName = `IMG_${Date.now()}.jpg`;
+    const newImageUri = `${dir}${fileName}`;
+    try {
+        await FileSystem.moveAsync({
+            from: imageURI,
+            to: newImageUri,
+        });
+
+        console.log('Image saved:', newImageUri);
+        return newImageUri;
+    } catch (error) {
+        console.error('Error saving image:', error);
+        return null;
+    }
+}
+
+export async function deleteImage(imageURI) {
+    if (!imageURI) {
+        return;
+    }
+    try {
+        await FileSystem.deleteAsync(imageURI, { intermediates: true });
+        console.log('Image deleted');
+    } catch (error) {
+        console.error('Error deleting image:', error);
+    }
 }
