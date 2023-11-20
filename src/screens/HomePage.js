@@ -31,6 +31,7 @@ export default function HomePage({ navigation }) {
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
 
+    const [date, setCurrentDate] = useState(getCurrentDateString());
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
             return 0;
@@ -61,16 +62,52 @@ export default function HomePage({ navigation }) {
         await Promise.all(promises);
         setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
     };
+    const getExpenses = async () => {
+        // console.log(date);
+        setTodayExpenses(await getExpensesFromDay(date));
+    };
+
+    // Get new date when date picker is called
+    const handleDateChange = (newDate) => {
+        setCurrentDate(newDate);
+        // fetch expenses for new date
+        getExpenses();
+    };
 
     useEffect(() => {
-        const getExpenses = async () => {
+        // initial fetch
+        getExpenses();
+
             await applyRecurringExpenses();
-            setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
-        };
-        navigation.addListener('focus', () => {
-            getExpenses();
-        });
-    }, []);
+        // Listener to fetch expenses when screen in focus
+        if (navigation && navigation.addListener) {
+            const focusListener = navigation.addListener('focus', () => {
+                getExpenses();
+            });
+
+            // error when trying to remove
+            // // cleanup listener
+            // return () => {
+            //     focusListener.remove();
+            // };
+        }
+    }, [navigation]);
+
+    // make date more readable
+    const parts = date.split('-');
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
+
+    // Format the date as "month/day/year"
+    const formattedDate = `${month}/${day}/${year}`;
+
+    // error says too many re-renders
+    // // for arrow buttons
+    // const dayPlusOne = Number(day) + 1;
+    // const datePlusOne = `${year}-${month}-${dayPlusOne}`;
+    // const dayMinusOne = Number(day) - 1;
+    // const dateMinusOne = `${year}-${month}-${dayMinusOne}`;
 
     const openInfo = async () => {
         setShowExpenseInfo(true);
@@ -83,16 +120,24 @@ export default function HomePage({ navigation }) {
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
             <View style={styles.titleContainer}>
-                <Text style={[styles.title, styles.topTitle]}>Today</Text>
+                <Text style={[styles.title, styles.topTitle]}>{formattedDate}</Text>
                 {/* Date Selector */}
-                <MyDateTimePicker onDateChange={}/>
+                <MyDateTimePicker onDateChange={handleDateChange} />
             </View>
             <View style={styles.arrowsAndTotalExpenseContainer}>
-                <Entypo name="triangle-left" size={52} style={styles.arrows} />
+                {/* Need to add onPress={handleDateChange(dateMinusOne)}, 
+                but gives error too many re-renders.
+                */}
+                <TouchableOpacity>
+                    <Entypo name="triangle-left" size={52} style={styles.arrows} />
+                </TouchableOpacity>
                 <View style={styles.totalExpensesContainer}>
+                    <Text>Total Spending for {formattedDate}</Text>
                     <Text style={styles.textInput}>{`${spending}`}</Text>
                 </View>
-                <Entypo name="triangle-right" size={52} style={styles.arrows} />
+                <TouchableOpacity>
+                    <Entypo name="triangle-right" size={52} style={styles.arrows} />
+                </TouchableOpacity>
             </View>
             <View style={styles.expensesContainer}>
                 <Text style={styles.subHeading}>History</Text>
@@ -167,6 +212,7 @@ const styles = StyleSheet.create({
     topTitle: {
         paddingTop: 60,
         margin: 'auto',
+    },
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -179,7 +225,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        fontSize: 48,
+        fontSize: 36,
         color: secondaryColor,
         marginRight: 15,
         fontSize: 36,
@@ -246,6 +292,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     arrows: {
-        color: secondaryColor,
+        color: Colors.secondaryColor,
     },
 });
