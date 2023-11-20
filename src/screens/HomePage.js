@@ -1,16 +1,29 @@
 import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
+import {
+    TouchableOpacity,
+    StyleSheet,
+    View,
+    Text,
+    ScrollView,
+    Alert,
+    SafeAreaView,
+} from 'react-native';
 
-import MyDateTimePicker from '../components/DatePickerComponent';
-import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
+import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
+import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
-
+import {
+    deleteRowFromExpenseTable,
+    getExpensesFromDay,
+    deleteImage,
+} from '../util/FileSystemUtils';
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
-    const [date, setCurrentDate] = useState(getCurrentDateString());
+    const [showExpenseInfo, setShowExpenseInfo] = useState(false);
+    const [selectedExpense, setSelectedExpense] = useState();
+
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
             return 0;
@@ -26,73 +39,30 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
-    const getExpenses = async () => {
-        // console.log(date);
-        setTodayExpenses(await getExpensesFromDay(date));
-    };
-
-    // Get new date when date picker is called
-    const handleDateChange = (newDate) => {
-        setCurrentDate(newDate);
-        // fetch expenses for new date
-        getExpenses();
-    };
-
     useEffect(() => {
-        // initial fetch
-        getExpenses();
+        const getExpenses = async () => {
+            setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
+        };
+        navigation.addListener('focus', () => {
+            getExpenses();
+        });
+    }, []);
 
-        // Listener to fetch expenses when screen in focus
-        if (navigation && navigation.addListener) {
-            const focusListener = navigation.addListener('focus', () => {
-                getExpenses();
-            });
-
-            // error when trying to remove
-            // // cleanup listener
-            // return () => {
-            //     focusListener.remove();
-            // };
-        }
-    }, [navigation]);
-
-    // make date more readable
-    const parts = date.split('-');
-    const year = parts[0];
-    const month = parts[1];
-    const day = parts[2];
-
-    // Format the date as "month/day/year"
-    const formattedDate = `${month}/${day}/${year}`;
-
-    // error says too many re-renders
-    // // for arrow buttons
-    // const dayPlusOne = Number(day) + 1;
-    // const datePlusOne = `${year}-${month}-${dayPlusOne}`;
-    // const dayMinusOne = Number(day) - 1;
-    // const dateMinusOne = `${year}-${month}-${dayMinusOne}`;
-
+    const openInfo = async () => {
+        setShowExpenseInfo(true);
+    };
+    const closeInfo = () => {
+        setSelectedExpense(null);
+        setShowExpenseInfo(false);
+    };
     return (
-        <View style={styles.container}>
-            <View style={styles.titleContainer}>
-                <Text style={[styles.title, styles.topTitle]}>{formattedDate}</Text>
-                {/* Date Selector */}
-                <MyDateTimePicker onDateChange={handleDateChange} />
-            </View>
-            <View style={styles.arrowsAndTotalExpenseContainer}>
-                {/* Need to add onPress={handleDateChange(dateMinusOne)}, 
-                but gives error too many re-renders.
-                */}
-                <TouchableOpacity>
-                    <Entypo name="triangle-left" size={52} style={styles.arrows} />
-                </TouchableOpacity>
-                <View style={styles.totalExpensesContainer}>
-                    <Text>Total Spending for {formattedDate}</Text>
-                    <Text style={styles.textInput}>{`${spending}`}</Text>
-                </View>
-                <TouchableOpacity>
-                    <Entypo name="triangle-right" size={52} style={styles.arrows} />
-                </TouchableOpacity>
+        <SafeAreaView style={styles.container}>
+            <StatusBar style="auto" />
+
+            <Text style={[styles.title, styles.topTitle]}>Daily Summary</Text>
+            <View style={styles.totalExpensesContainer}>
+                <Text style={styles.subHeading}>Today's Expenses</Text>
+                <Text style={styles.textInput}>{`${spending}`}</Text>
             </View>
             <View style={styles.expensesContainer}>
                 <Text style={styles.subHeading}>History</Text>
@@ -109,12 +79,19 @@ export default function HomePage({ navigation }) {
                                             <FontAwesome
                                                 name="repeat"
                                                 size={24}
-                                                color={secondaryColor}
+                                                color={Colors.secondaryColor}
                                             />
                                         )}
                                     </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
                                     {/* This code handles the expense deletion */}
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            setSelectedExpense(expense);
+                                            openInfo();
+                                        }}>
+                                        <Entypo name="info-with-circle" size={40} color="black" />
+                                    </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={async () => {
                                             Alert.alert(
@@ -125,6 +102,7 @@ export default function HomePage({ navigation }) {
                                                     {
                                                         text: 'YES',
                                                         onPress: async () => {
+                                                            deleteImage(expense['picture']);
                                                             await deleteRowFromExpenseTable(
                                                                 expense['id']
                                                             );
@@ -150,9 +128,12 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
-
-            <StatusBar style="auto" />
-        </View>
+            <ExpenseInfoComponent
+                isVisable={showExpenseInfo}
+                onClose={closeInfo}
+                expense={selectedExpense}
+            />
+        </SafeAreaView>
     );
 }
 
@@ -160,38 +141,30 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: primaryColor,
+        backgroundColor: Colors.primaryColor,
         // figure out fontStyles
     },
-    titleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 60,
-        width: 270,
-        height: 80,
-        backgroundColor: 'white',
-        borderRadius: 15,
+    topTitle: {
+        paddingTop: 60,
+        margin: 'auto',
     },
     title: {
         fontWeight: 'bold',
         fontSize: 36,
-        color: secondaryColor,
-        marginRight: 15,
+        color: Colors.secondaryColor,
     },
     totalExpensesContainer: {
         backgroundColor: 'white',
-        borderRadius: 15,
-        marginTop: 20,
-        marginBottom: 20,
-        height: 100,
+        height: 'auto',
         width: 270,
         alignItems: 'center',
         justifyContent: 'center',
+        margin: 30,
+        borderRadius: 15,
     },
     subHeading: {
-        color: subHeadingColor,
-        fontSize: 24,
+        color: Colors.subHeadingColor,
+        fontSize: 13,
         margin: 'auto',
         paddingLeft: 10,
         paddingTop: 10,
@@ -199,12 +172,15 @@ const styles = StyleSheet.create({
     textInput: {
         fontSize: 50,
         margin: 'auto',
+        paddingLeft: 10,
+        paddingBottom: 5,
     },
     expensesContainer: {
-        // backgroundColor: 'green',
+        backgroundColor: 'green',
         flex: 1 / 2,
         width: '70%',
-        borderRadius: 10,
+        borderRadius: 15,
+        borderWidth: 2,
     },
     scrollableContent: {
         flex: 1,
@@ -219,9 +195,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        borderRadius: 10,
+        borderRadius: 15,
         borderWidth: 2,
-        borderColor: secondaryColor,
+        borderColor: Colors.secondaryColor,
     },
     expenseData: {
         textAlign: 'center',
@@ -231,12 +207,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
-    },
-    arrowsAndTotalExpenseContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    arrows: {
-        color: secondaryColor,
     },
 });

@@ -7,17 +7,19 @@ import {
     GET_EXPENSES_TABLE_QUERY,
     SET_EXPENSE_CATERGORY_AS_INDEX,
     SET_EXPENSE_DAY_AS_INDEX,
-    GET_CATEGORY_QUERY,
     createExpenseByDayQuery,
     deleteExpense,
     createExpenseInsert,
     createExpenseByTimeframeQuery,
-    createExpenseByIdQuery,
     createReacurringInsert,
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
+    createCategoryInsert,
+    CREATE_CATEGORY_TABLE,
+    GET_ALL_CATEGORIES_QUERY,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
+import { ALBUMNNAME } from '../constants/ImageConstants';
 
 const dataDir = FileSystem.documentDirectory + 'SQLite';
 const databaseName = 'DetectiveDollar.db';
@@ -34,6 +36,7 @@ async function getDatabase() {
     if (!firstTime) return db;
     await db.transactionAsync(async (tx) => {
         await tx.executeSqlAsync(CREATE_REACCURING_TABLE);
+        await tx.executeSqlAsync(CREATE_CATEGORY_TABLE);
         await tx.executeSqlAsync(CREATE_EXPENSES_TABLE);
         const promises = [
             tx.executeSqlAsync(SET_EXPENSE_CATERGORY_AS_INDEX),
@@ -42,6 +45,15 @@ async function getDatabase() {
         await Promise.all(promises);
     });
     return db;
+}
+
+export async function getCategoryTable() {
+    const db = await getDatabase();
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        rows = (await tx.executeSqlAsync(GET_ALL_CATEGORIES_QUERY)).rows;
+    });
+    return rows;
 }
 
 export async function getExpenseTable() {
@@ -54,11 +66,18 @@ export async function getExpenseTable() {
     return rows;
 }
 
-export async function addRowToExpenseTable(name, category, amount, day, expenseFrequency) {
+export async function addRowToExpenseTable(
+    name,
+    category,
+    amount,
+    day,
+    expenseFrequency,
+    imageURI = null
+) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         if (expenseFrequency === NO_REPETION) {
-            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day));
+            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day, imageURI));
             return;
         }
         const reacurringInsertId = (
@@ -74,9 +93,17 @@ export async function addRowToExpenseTable(name, category, amount, day, expenseF
                 amount,
                 day,
                 reacurringEntryTimestamp,
+                imageURI,
                 reacurringInsertId
             )
         );
+    });
+}
+
+export async function addRowToCategoryTable(category) {
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(createCategoryInsert(category));
     });
 }
 
@@ -139,4 +166,49 @@ export async function getExpensesbyCategory() {
         }
     }
     return categoryDict;
+}
+
+async function getImageDirectory() {
+    const specificDirectory = ALBUMNNAME;
+    const directory = `${FileSystem.documentDirectory}${specificDirectory}/`;
+
+    // Check if the directory exists, if not, create it
+    const directoryInfo = await FileSystem.getInfoAsync(directory);
+
+    if (!directoryInfo.exists) {
+        await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
+    }
+    return directory;
+}
+export async function addImage(imageURI) {
+    if (!imageURI) {
+        return null;
+    }
+    const dir = await getImageDirectory();
+    const fileName = `IMG_${Date.now()}.jpg`;
+    const newImageUri = `${dir}${fileName}`;
+    try {
+        await FileSystem.moveAsync({
+            from: imageURI,
+            to: newImageUri,
+        });
+
+        console.log('Image saved:', newImageUri);
+        return newImageUri;
+    } catch (error) {
+        console.error('Error saving image:', error);
+        return null;
+    }
+}
+
+export async function deleteImage(imageURI) {
+    if (!imageURI) {
+        return;
+    }
+    try {
+        await FileSystem.deleteAsync(imageURI, { intermediates: true });
+        console.log('Image deleted');
+    } catch (error) {
+        console.error('Error deleting image:', error);
+    }
 }
