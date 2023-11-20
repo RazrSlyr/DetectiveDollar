@@ -10,6 +10,7 @@ import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSyste
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
+    const [date, setCurrentDate] = useState(getCurrentDateString());
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
             return 0;
@@ -25,33 +26,73 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
-    // was used for original add button
-    // const goToAddPage = () => {
-    //     navigation.navigate('AddExpense'); // change TEMPORARY to actual page
-    // };
+    const getExpenses = async () => {
+        // console.log(date);
+        setTodayExpenses(await getExpensesFromDay(date));
+    };
+
+    // Get new date when date picker is called
+    const handleDateChange = (newDate) => {
+        setCurrentDate(newDate);
+        // fetch expenses for new date
+        getExpenses();
+    };
 
     useEffect(() => {
-        const getExpenses = async () => {
-            setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
-        };
-        navigation.addListener('focus', () => {
-            getExpenses();
-        });
-    }, []);
+        // initial fetch
+        getExpenses();
+
+        // Listener to fetch expenses when screen in focus
+        if (navigation && navigation.addListener) {
+            const focusListener = navigation.addListener('focus', () => {
+                getExpenses();
+            });
+
+            // error when trying to remove
+            // // cleanup listener
+            // return () => {
+            //     focusListener.remove();
+            // };
+        }
+    }, [navigation]);
+
+    // make date more readable
+    const parts = date.split('-');
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
+
+    // Format the date as "month/day/year"
+    const formattedDate = `${month}/${day}/${year}`;
+
+    // error says too many re-renders
+    // // for arrow buttons
+    // const dayPlusOne = Number(day) + 1;
+    // const datePlusOne = `${year}-${month}-${dayPlusOne}`;
+    // const dayMinusOne = Number(day) - 1;
+    // const dateMinusOne = `${year}-${month}-${dayMinusOne}`;
 
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
-                <Text style={[styles.title, styles.topTitle]}>Today</Text>
+                <Text style={[styles.title, styles.topTitle]}>{formattedDate}</Text>
                 {/* Date Selector */}
-                <MyDateTimePicker onDateChange={}/>
+                <MyDateTimePicker onDateChange={handleDateChange} />
             </View>
             <View style={styles.arrowsAndTotalExpenseContainer}>
-                <Entypo name="triangle-left" size={52} style={styles.arrows} />
+                {/* Need to add onPress={handleDateChange(dateMinusOne)}, 
+                but gives error too many re-renders.
+                */}
+                <TouchableOpacity>
+                    <Entypo name="triangle-left" size={52} style={styles.arrows} />
+                </TouchableOpacity>
                 <View style={styles.totalExpensesContainer}>
+                    <Text>Total Spending for {formattedDate}</Text>
                     <Text style={styles.textInput}>{`${spending}`}</Text>
                 </View>
-                <Entypo name="triangle-right" size={52} style={styles.arrows} />
+                <TouchableOpacity>
+                    <Entypo name="triangle-right" size={52} style={styles.arrows} />
+                </TouchableOpacity>
             </View>
             <View style={styles.expensesContainer}>
                 <Text style={styles.subHeading}>History</Text>
@@ -109,9 +150,6 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
-            {/* This will add the add button to the home page. I have not set up the naviagtion for it 
-            so when it is added back it will produce an error  */}
-            {/* <AddButton onPress={goToAddPage} /> */}
 
             <StatusBar style="auto" />
         </View>
@@ -137,7 +175,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        fontSize: 48,
+        fontSize: 36,
         color: secondaryColor,
         marginRight: 15,
     },

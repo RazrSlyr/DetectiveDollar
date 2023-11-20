@@ -22,11 +22,18 @@ const MyDateTimePicker = ({ onDateChange }) => {
         setModalVisibility(Platform.OS === 'ios');
         if (selectedDate) {
             setDate(selectedDate);
-            // onDateChange(selectedDate); // this notify's parent component about date change
-            // TODO: pull data from selectedDate
+            // Extract year, month, and day
+            const year = selectedDate.getFullYear();
+            const month = selectedDate.getMonth() + 1; // Months are zero-based, so add 1
+            let day = selectedDate.getDate();
+            if (day < 10) {
+                day = '0' + day;
+            }
+            const formattedDate = `${year}-${month}-${day}`;
+            // console.log("date selected ", formattedDate);
 
+            onDateChange(formattedDate); // this notify's parent component about date change
             hideDatePicker();
-            console.log(selectedDate);
         }
     };
 
@@ -43,11 +50,9 @@ const MyDateTimePicker = ({ onDateChange }) => {
                 onRequestClose={hideDatePicker}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <View style={styles.cancelButton}>
-                            <TouchableOpacity onPress={hideDatePicker}>
-                                <MaterialIcons name="cancel" size={30} color="red" />
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity style={styles.cancelButtonContainer} onPress={hideDatePicker}>
+                            <MaterialIcons name="cancel" color="red" size={20} />
+                        </TouchableOpacity>
                         <DateTimePicker
                             value={date}
                             mode="date"
@@ -73,9 +78,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
     },
-    cancelButton: {
-        marginLeft: 'auto',
-    }
+    cancelButtonContainer: {
+        height: 'auto',
+        width: 'auto',
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        // marginLeft: 'auto',
+    },
 });
 
 export default MyDateTimePicker;
