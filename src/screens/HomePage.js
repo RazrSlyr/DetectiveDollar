@@ -123,7 +123,7 @@ export default function HomePage({ navigation }) {
                                                     { text: 'NO' },
                                                     {
                                                         text: 'YES',
-                                                        onPress: async () => {},
+                                                        onPress: async () => handleDelete(expense),
                                                     },
                                                 ]
                                             );
