@@ -42,7 +42,10 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const weekLabel = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 const updatedData = transactions.reduce((accumulator, expense) => {
                     const date = new Date(expense.day);
-                    const dayOfWeekIndex = date.getDay() + 1;
+                    let dayOfWeekIndex = date.getDay() + 1;
+                    if (dayOfWeekIndex === 7) {
+                        dayOfWeekIndex = 0;
+                    }
                     const dayOfWeek = weekLabel[dayOfWeekIndex];
 
                     const amount = expense.amount;
@@ -52,7 +55,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 }, {});
                 const lineGraphData = weekLabel.map((dayOfWeek) => ({
                     label: dayOfWeek,
-                    value: updatedData[dayOfWeek] || 0, // Use an empty array if no data for the day
+                    value: updatedData[dayOfWeek] || 0, // Use an empty value if no data for the day
                 }));
                 setlineGraphData(lineGraphData);
             } else if (timeFrame === MONTHLY) {
@@ -74,7 +77,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 }, {});
                 const lineGraphData = monthLabel.map((dayOfMonth) => ({
                     label: dayOfMonth,
-                    value: updatedData[dayOfMonth] || 0, // Use an empty array if no data for the day
+                    value: updatedData[dayOfMonth] || 0, // Use an empty value if no data for the day
                 }));
                 setlineGraphData(lineGraphData);
             } else if (timeFrame === YEARLY) {
@@ -109,7 +112,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 }, {});
                 const lineGraphData = yearLabel.map((monthOfYear) => ({
                     label: monthOfYear,
-                    value: updatedData[monthOfYear] || 0, // Use an empty array if no data for the day
+                    value: updatedData[monthOfYear] || 0, // Use an empty value if no data for the day
                 }));
                 setlineGraphData(lineGraphData);
             }
