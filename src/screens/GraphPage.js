@@ -115,7 +115,7 @@ const GraphPage = ({ navigation }) => {
                 </View>
                 <WeekMonthYearButtons onSelect={handleTimeframeSelect} />
                 <View style={styles.scrollableContent}>
-                    <View style={styles.chartContainer}>
+                    <View style={styles.lineChartContainer}>
                         <LineGraphComponent
                             startDate={selectedTimeframeDates[0]}
                             endDate={selectedTimeframeDates[1]}
@@ -163,6 +163,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'white',
         borderRadius: 20,
+    },
+    lineChartContainer: {
+        margin: 5,
+        height: 280,
+        width: 290,
+        alignContent: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        paddingTop: 40,
     },
     dateContainer: {
         flex: 1,
