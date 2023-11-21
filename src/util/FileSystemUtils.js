@@ -2,6 +2,13 @@ import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 import {
+    getCurrentDateString,
+    getCurrentUTCDatetimeString,
+    getDateFromDatetimeString,
+    getDateStringFromDate,
+    incrementDateByFrequency,
+} from './DatetimeUtils';
+import {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
     GET_EXPENSES_TABLE_QUERY,
@@ -17,11 +24,19 @@ import {
     createCategoryInsert,
     CREATE_CATEGORY_TABLE,
     GET_ALL_CATEGORIES_QUERY,
+    GET_ALL_REACURRING_EXPENSES,
+    createReacurringExpenseNextTriggerUpdate,
+    createLastReacurrenceQuery,
+    createExpenseByIdQuery,
+    createExpenseDeleteById,
+    createReacurringDeleteById,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
 
 const dataDir = FileSystem.documentDirectory + 'SQLite';
 const databaseName = 'DetectiveDollar.db';
+
+let appliedReacurring = false;
 
 // Gets the database if it exists. If not, creates it
 async function getDatabase() {
@@ -61,7 +76,6 @@ export async function getExpenseTable() {
     await db.transactionAsync(async (tx) => {
         rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
     });
-    console.log(rows);
     return rows;
 }
 
@@ -98,10 +112,26 @@ export async function addRowToCategoryTable(category) {
     });
 }
 
+export async function getRowFromExpenseTable(row) {
+    const db = await getDatabase();
+    let rowData = null;
+    await db.transactionAsync(async (tx) => {
+        rowData = await tx.executeSqlAsync(createExpenseByIdQuery(row));
+    });
+    return rowData.rows[0];
+}
+
 export async function deleteRowFromExpenseTable(row) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         await tx.executeSqlAsync(deleteExpense(row));
+    });
+}
+
+export async function deleteRowFromReacurringTable(row) {
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(createReacurringDeleteById(row));
     });
 }
 
@@ -157,4 +187,57 @@ export async function getExpensesbyCategory() {
         }
     }
     return categoryDict;
+}
+
+export async function applyRecurringExpenses() {
+    if (appliedReacurring) {
+        return;
+    }
+    const db = await getDatabase();
+    let recurringExpenses = null;
+    await db.transactionAsync(async (tx) => {
+        try {
+            recurringExpenses = (await tx.executeSqlAsync(GET_ALL_REACURRING_EXPENSES)).rows;
+        } catch (error) {
+            console.warn(`applyRecurringExpenses error ${error}`);
+        }
+    });
+    const currentDate = new Date();
+    for (let i = 0; i < recurringExpenses?.length; i++) {
+        const element = recurringExpenses[i];
+        let recurrenceDate = getDateFromDatetimeString(element['next_trigger']);
+        while (recurrenceDate < currentDate) {
+            await db.transactionAsync(async (tx) => {
+                try {
+                    // Get last expense to get data
+                    const lastRecurrance = (
+                        await tx.executeSqlAsync(createLastReacurrenceQuery(element['id']))
+                    ).rows[0];
+                    const newRecurranceDay = getDateStringFromDate(recurrenceDate);
+                    // Add expense using obtained data
+                    await tx.executeSqlAsync(
+                        createExpenseInsertWithReacurringId(
+                            lastRecurrance['name'],
+                            lastRecurrance['category'],
+                            lastRecurrance['amount'],
+                            newRecurranceDay,
+                            getCurrentUTCDatetimeString(recurrenceDate),
+                            lastRecurrance['reacurring_id']
+                        )
+                    );
+                    // Advance recurrence to next date
+                    recurrenceDate = new Date(
+                        incrementDateByFrequency(recurrenceDate, element['frequency'])
+                    );
+                    // Update the next trigger time
+                    await tx.executeSqlAsync(
+                        createReacurringExpenseNextTriggerUpdate(element['id'], recurrenceDate)
+                    );
+                } catch (error) {
+                    console.warn(`applyRecurringExpenses error ${error}`);
+                }
+            });
+        }
+    }
+    appliedReacurring = true;
 }

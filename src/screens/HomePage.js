@@ -5,7 +5,14 @@ import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'rea
 
 import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { deleteRowFromExpenseTable, getExpensesFromDay } from '../util/FileSystemUtils';
+import {
+    applyRecurringExpenses,
+    deleteRowFromExpenseTable,
+    deleteRowFromReacurringTable,
+    getCategoryTable,
+    getExpensesFromDay,
+    getRowFromExpenseTable,
+} from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
@@ -28,8 +35,18 @@ export default function HomePage({ navigation }) {
         navigation.navigate('AddExpense'); // change TEMPORARY to actual page
     };
 
+    const handleDelete = async (expenseId) => {
+        const rowData = await getRowFromExpenseTable(expenseId);
+        await deleteRowFromExpenseTable(expenseId);
+        if (rowData['reacurring_id'] != null) {
+            await deleteRowFromReacurringTable(rowData['reacurring_id']);
+        }
+        setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
+    };
+
     useEffect(() => {
         const getExpenses = async () => {
+            await applyRecurringExpenses();
             setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
         };
         navigation.addListener('focus', () => {
@@ -66,21 +83,22 @@ export default function HomePage({ navigation }) {
                                     </View>
                                     <Text style={styles.expenseData}>{expense['amount']}</Text>
                                     {/* This code handles the expense deletion */}
-                                    <TouchableOpacity  onPress={ async() => {
-                                        Alert.alert(
-                                            'Deleting Expense',
-                                            'Are you sure you want to delete this expense? This cannot be undone.',
-                                            [
-                                                {text: 'NO'},
-                                                {text: 'YES', onPress: async() => {
-                                                    await deleteRowFromExpenseTable(expense['id'])
-                                                    setTodayExpenses(await getExpensesFromDay(getCurrentDateString()))
-                                                }},
-                                            ]
-                                        )
-                                    }}>
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            Alert.alert(
+                                                'Deleting Expense',
+                                                'Are you sure you want to delete this expense? This cannot be undone.',
+                                                [
+                                                    { text: 'NO' },
+                                                    {
+                                                        text: 'YES',
+                                                        onPress: () => handleDelete(expense['id']),
+                                                    },
+                                                ]
+                                            );
+                                        }}>
                                         <View>
-                                            <Text style={{color: 'red'}}> X </Text>
+                                            <Text style={{ color: 'red' }}> X </Text>
                                         </View>
                                     </TouchableOpacity>
                                     {/* End expense deletion code */}

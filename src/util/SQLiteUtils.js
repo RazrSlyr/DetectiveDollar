@@ -34,11 +34,13 @@ ON expenses (category);`;
 const SET_EXPENSE_DAY_AS_INDEX = `CREATE INDEX idx_day 
 ON expenses (day);`;
 
-const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses';
+const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses;';
 
-const GET_CATEGORY_QUERY = 'SELECT DISTINCT category FROM expenses';
+const GET_CATEGORY_QUERY = 'SELECT DISTINCT category FROM expenses;';
 
 const GET_ALL_CATEGORIES_QUERY = 'SELECT * FROM categories;';
+
+const GET_ALL_REACURRING_EXPENSES = 'SELECT * FROM reacurring';
 
 const createExpenseInsert = (name, category, amount, day) => {
     return `INSERT INTO expenses (name, category, amount, day)
@@ -48,6 +50,10 @@ const createExpenseInsert = (name, category, amount, day) => {
 const deleteExpense = (row) => {
     return `DELETE FROM expenses WHERE id = ${row}`;
 };
+
+const createReacurringDeleteById = (row) => {
+    return `DELETE FROM reacurring WHERE id = ${row};`;
+}
 
 const createExpenseInsertWithReacurringId = (
     name,
@@ -101,6 +107,16 @@ const createExpenseByCategoryandTimeframeQuery = (category, startTimestamp, endT
     return `SELECT * FROM expenses WHERE category = "${category}" AND timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY category, timestamp;`;
 };
 
+const createReacurringExpenseNextTriggerUpdate = (id, next_update) => {
+    return `UPDATE reacurring
+    SET next_trigger = datetime(${next_update / 1000}, 'unixepoch')
+    WHERE id = ${id};`;
+};
+
+const createLastReacurrenceQuery = (id) => {
+    return `SELECT * FROM expenses WHERE reacurring_id = ${id} ORDER BY timestamp DESC LIMIT 1;`;
+}
+
 export {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
@@ -110,6 +126,7 @@ export {
     GET_CATEGORY_QUERY,
     CREATE_CATEGORY_TABLE,
     GET_ALL_CATEGORIES_QUERY,
+    GET_ALL_REACURRING_EXPENSES,
     createExpenseInsert,
     createCategoryInsert,
     deleteExpense,
@@ -121,4 +138,7 @@ export {
     createExpenseInsertWithReacurringId,
     createExpenseByCategoryQuery,
     createExpenseByCategoryandTimeframeQuery,
+    createReacurringExpenseNextTriggerUpdate,
+    createLastReacurrenceQuery,
+    createReacurringDeleteById,
 };
