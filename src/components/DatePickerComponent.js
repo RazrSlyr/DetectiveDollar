@@ -5,8 +5,9 @@ import { View, TouchableOpacity, Platform, Modal, StyleSheet, Text } from 'react
 
 import { secondaryColor } from '../constants/Colors';
 
-const MyDateTimePicker = ({ onDateChange }) => {
-    const [date, setDate] = useState(new Date());
+const DatePickerComponent = ({ onDateChange }) => {
+    const isIOS = Platform.OS === 'ios';
+    const [selectedDate, setSelectedDate] = useState(new Date());
     const [isModalVisible, setModalVisibility] = useState(false);
 
     const showDatePicker = () => {
@@ -18,19 +19,19 @@ const MyDateTimePicker = ({ onDateChange }) => {
         setModalVisibility(false);
     };
 
-    const handleDateChange = (event, selectedDate) => {
-        setModalVisibility(Platform.OS === 'ios');
-        if (selectedDate) {
-            setDate(selectedDate);
+    const handleDateChange = (event, newSelectedDate) => {
+        setModalVisibility(true);
+        if (newSelectedDate) {
+            setSelectedDate(newSelectedDate);
             // Extract year, month, and day
-            const year = selectedDate.getFullYear();
-            const month = selectedDate.getMonth() + 1; // Months are zero-based, so add 1
-            let day = selectedDate.getDate();
+            const year = newSelectedDate.getFullYear();
+            const month = newSelectedDate.getMonth() + 1; // Months are zero-based, so add 1
+            let day = newSelectedDate.getDate();
             if (day < 10) {
                 day = '0' + day;
             }
             const formattedDate = `${year}-${month}-${day}`;
-            // console.log("date selected ", formattedDate);
+            console.log("date selected ", formattedDate);
 
             onDateChange(formattedDate); // this notify's parent component about date change
             hideDatePicker();
@@ -50,15 +51,19 @@ const MyDateTimePicker = ({ onDateChange }) => {
                 onRequestClose={hideDatePicker}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <TouchableOpacity style={styles.cancelButtonContainer} onPress={hideDatePicker}>
-                            <MaterialIcons name="cancel" color="red" size={20} />
-                        </TouchableOpacity>
                         <DateTimePicker
-                            value={date}
+                            value={selectedDate}
                             mode="date"
-                            display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
+                            display="inline"
                             onChange={handleDateChange}
                         />
+                        {isIOS && (
+                            <TouchableOpacity
+                                style={styles.cancelButtonContainer}
+                                onPress={hideDatePicker}>
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 </View>
             </Modal>
@@ -68,24 +73,34 @@ const MyDateTimePicker = ({ onDateChange }) => {
 
 const styles = StyleSheet.create({
     modalContainer: {
+        height: 'auto',
+        width: 'auto',
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
+        height: 'auto',
+        width: 'auto',
         backgroundColor: 'rgba(0, 0, 0, 1)',
         borderRadius: 10,
         alignItems: 'center',
     },
     cancelButtonContainer: {
-        height: 'auto',
-        width: 'auto',
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        // marginLeft: 'auto',
+        marginTop: 10,
+        marginBottom: 2,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        alignItems: 'center',
+        top: -15,
+        backgroundColor: '#0a84ff',
+    },
+    cancelButtonText: {
+        color: 'white',
+        fontSize: 16,
     },
 });
 
-export default MyDateTimePicker;
+export default DatePickerComponent;

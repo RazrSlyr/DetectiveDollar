@@ -11,6 +11,7 @@ import {
     SafeAreaView,
 } from 'react-native';
 
+import DatePickerComponent from '../components/DatePickerComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
@@ -19,10 +20,54 @@ import {
     getExpensesFromDay,
     deleteImage,
 } from '../util/FileSystemUtils';
+
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
+    const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
+
+    // useEffect(() => {
+    //     const getExpenses = async () => {
+    //         setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
+    //     };
+    //     navigation.addListener('focus', () => {
+    //         getExpenses();
+    //     });
+    // }, []);
+
+    useEffect(() => {
+        const getExpenses = async () => {
+            try {
+                // Fetch expenses for today and set to state
+                const expenses = await getExpensesFromDay(targetDate);
+                setTodayExpenses(expenses);
+                // console.log('expenses set!');
+            } catch (error) {
+                console.error('Error fetching expenses:', error);
+            }
+        };
+
+        // Call getExpenses when the component mounts
+        getExpenses();
+
+        // Add an event listener for focus to re-fetch expenses when the component comes into focus
+        const unsubscribe = navigation.addListener('focus', getExpenses);
+
+        // Clean up the event listener when the component unmounts
+        return () => unsubscribe();
+    }, [targetDate, navigation]);
+
+    const handleDateChange = async (newDate) => {
+        try {
+            // Fetch expenses for new date and set to new state
+            const expenses = await getExpensesFromDay(newDate);
+            setTodayExpenses(expenses);
+            setTargetDate(newDate)
+        } catch (error) {
+            console.error('Error fetching expenses for new date:', error);
+        }
+    };
 
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
@@ -39,15 +84,6 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
-    useEffect(() => {
-        const getExpenses = async () => {
-            setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
-        };
-        navigation.addListener('focus', () => {
-            getExpenses();
-        });
-    }, []);
-
     const openInfo = async () => {
         setShowExpenseInfo(true);
     };
@@ -55,13 +91,25 @@ export default function HomePage({ navigation }) {
         setSelectedExpense(null);
         setShowExpenseInfo(false);
     };
+
+    // make date more readable
+    const parts = targetDate.split('-');
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
+
+    // Format the date as "month/day/year"
+    const formattedDate = `${month}/${day}/${year}`;
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-
-            <Text style={[styles.title, styles.topTitle]}>Daily Summary</Text>
+            <Text style={[styles.title, styles.topTitle]}>Daily Spending</Text>
+            <TouchableOpacity style={styles.calendarContainer}>
+                <DatePickerComponent onDateChange={handleDateChange} />
+            </TouchableOpacity>
             <View style={styles.totalExpensesContainer}>
-                <Text style={styles.subHeading}>Today's Expenses</Text>
+                <Text style={styles.subHeading}>Expenses for {formattedDate}</Text>
                 <Text style={styles.textInput}>{`${spending}`}</Text>
             </View>
             <View style={styles.expensesContainer}>
