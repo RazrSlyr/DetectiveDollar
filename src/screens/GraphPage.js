@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import ChartWithInteractivity from '../components/ChartWithInteractivity';
 import PieChartComponent from '../components/PieChartComponent';
 import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
 
@@ -9,10 +8,7 @@ const GraphPage = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Stats</Text>
-            <View style={styles.chartContainer}>
-                {/* put line chart here later */}
-                <ChartWithInteractivity />
-            </View>
+            <View style={styles.chartContainer}>{/* put line chart here later */}</View>
             <View style={styles.chartContainer}>
                 <PieChartComponent />
             </View>

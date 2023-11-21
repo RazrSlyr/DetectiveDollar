@@ -31,7 +31,7 @@ const DatePickerComponent = ({ onDateChange }) => {
                 day = '0' + day;
             }
             const formattedDate = `${year}-${month}-${day}`;
-            console.log("date selected ", formattedDate);
+            // console.log("date selected ", formattedDate);
 
             onDateChange(formattedDate); // this notify's parent component about date change
             hideDatePicker();
