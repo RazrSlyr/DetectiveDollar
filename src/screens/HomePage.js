@@ -64,7 +64,7 @@ export default function HomePage({ navigation }) {
             console.error('Error fetching expenses for new date:', error);
         }
     };
-    
+
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
             return 0;
@@ -95,10 +95,6 @@ export default function HomePage({ navigation }) {
         await Promise.all(promises);
         setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
     };
-    const getExpenses = async () => {
-        // console.log(date);
-        setTodayExpenses(await getExpensesFromDay(date));
-    };
 
     // make date more readable
     const parts = targetDate.split('-');
@@ -123,15 +119,6 @@ export default function HomePage({ navigation }) {
         setSelectedExpense(null);
         setShowExpenseInfo(false);
     };
-
-    // make date more readable
-    const parts = targetDate.split('-');
-    const year = parts[0];
-    const month = parts[1];
-    const day = parts[2];
-
-    // Format the date as "month/day/year"
-    const formattedDate = `${month}/${day}/${year}`;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -231,23 +218,19 @@ const styles = StyleSheet.create({
     title: {
         fontWeight: 'bold',
         fontSize: 36,
-        color: secondaryColor,
-        marginRight: 15,
-        fontSize: 36,
         color: Colors.secondaryColor,
+        marginRight: 15,
     },
     totalExpensesContainer: {
         backgroundColor: 'white',
         borderRadius: 15,
         marginTop: 20,
         marginBottom: 20,
-        height: 100,
         height: 'auto',
         width: 270,
         alignItems: 'center',
         justifyContent: 'center',
         margin: 30,
-        borderRadius: 15,
     },
     subHeading: {
         color: Colors.subHeadingColor,
