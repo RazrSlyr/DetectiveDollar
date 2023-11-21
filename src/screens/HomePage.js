@@ -48,12 +48,15 @@ export default function HomePage({ navigation }) {
         navigation.navigate('AddExpense'); // change TEMPORARY to actual page
     };
 
-    const handleDelete = async (expenseId) => {
-        const rowData = await getRowFromExpenseTable(expenseId);
-        await deleteRowFromExpenseTable(expenseId);
+    const handleDelete = async (expense) => {
+        deleteImage(expense['picture']);
+
+        const rowData = await getRowFromExpenseTable(expense['id']);
+        const promises = [deleteRowFromExpenseTable(expense['id'])];
         if (rowData['reacurring_id'] != null) {
-            await deleteRowFromReacurringTable(rowData['reacurring_id']);
+            promises.push(deleteRowFromReacurringTable(rowData['reacurring_id']));
         }
+        await Promise.all(promises);
         setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
     };
 
@@ -120,17 +123,7 @@ export default function HomePage({ navigation }) {
                                                     { text: 'NO' },
                                                     {
                                                         text: 'YES',
-                                                        onPress: async () => {
-                                                            deleteImage(expense['picture']);
-                                                            await deleteRowFromExpenseTable(
-                                                                expense['id']
-                                                            );
-                                                            setTodayExpenses(
-                                                                await getExpensesFromDay(
-                                                                    getCurrentDateString()
-                                                                )
-                                                            );
-                                                        },
+                                                        onPress: async () => {},
                                                     },
                                                 ]
                                             );
