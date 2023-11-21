@@ -1,19 +1,30 @@
+import { AntDesign, Feather } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { TouchableOpacity, StyleSheet, Text, TextInput, View, Dimensions } from 'react-native';
+import {
+    TouchableOpacity,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+    Dimensions,
+    SafeAreaView,
+} from 'react-native';
 
 import DropdownSelector from '../components/Dropdown';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToCategoryTable, addRowToExpenseTable } from '../util/FileSystemUtils';
+import { addRowToCategoryTable, addRowToExpenseTable, addImage } from '../util/FileSystemUtils';
+import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
     const [frequency, setFrequency] = useState(NO_REPETION);
-
+    const [previewURI, setImageURI] = useState(null);
     const handleButtonPress = async () => {
         // Add your button click logic here
         if (name === '' || amount === '' || category === '') {
@@ -22,15 +33,28 @@ export default function App({ navigation }) {
         }
         const dateString = getCurrentDateString();
         await addRowToCategoryTable(category);
-        await addRowToExpenseTable(name, category, parseFloat(amount), dateString, frequency);
-        // navigation.navigate('Home');
+        let imageURI = null;
+        if (previewURI) {
+            imageURI = await addImage(previewURI);
+        }
+        await addRowToExpenseTable(
+            name,
+            category,
+            parseFloat(amount),
+            dateString,
+            frequency,
+            imageURI
+        );
     };
-
     const formattedAmount = amount.toLocaleString('en-US', {
         style: 'currency',
         currency: 'USD',
     });
-
+    const clearImage = async () => {
+        console.log('remove photo');
+        //deleteImageAsset(imageURI);
+        setImageURI(null);
+    };
     return (
         <View style={styles.container}>
             <Text style={[styles.title, styles.topTitle]}>Add{'\n'}Expense</Text>
@@ -79,7 +103,41 @@ export default function App({ navigation }) {
                     dropdownLabel="Expense Frequency"
                     placeholderLabel="Expense Frequency"
                 />
+                {previewURI ? (
+                    <SafeAreaView style={styles.container}>
+                        <Image style={styles.preview} source={{ uri: previewURI }} />
+                        <TouchableOpacity
+                            style={{ position: 'absolute', right: -30, alignSelf: 'center' }}
+                            onPress={async () => {
+                                await clearImage();
+                            }}>
+                            <Feather name="x-circle" size={30} color="red" />
+                        </TouchableOpacity>
+                    </SafeAreaView>
+                ) : (
+                    <View style={styles.rowContainer}>
+                        <TouchableOpacity
+                            style={styles.rowItem}
+                            onPress={async () => {
+                                const imageURI = await captureImage();
+                                console.log('uri from imagepicker: ', imageURI);
+                                setImageURI(imageURI);
+                            }}>
+                            <Feather name="camera" size={40} color="black" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.rowItem}
+                            onPress={async () => {
+                                const imageURI = await pickImage();
+                                console.log('uri from imagepicker: ', imageURI);
+                                setImageURI(imageURI);
+                            }}>
+                            <AntDesign name="upload" size={40} color="black" />
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
+
             <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
                 <View style={styles.buttonContainer}>
                     <Text
@@ -159,5 +217,17 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         height: 60,
+    },
+    preview: {
+        height: '100%',
+        aspectRatio: 1,
+    },
+    rowContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    rowItem: {
+        margin: 10,
     },
 });

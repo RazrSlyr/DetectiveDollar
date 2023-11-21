@@ -42,9 +42,10 @@ const GET_ALL_CATEGORIES_QUERY = 'SELECT * FROM categories;';
 
 const GET_ALL_REACURRING_EXPENSES = 'SELECT * FROM reacurring';
 
-const createExpenseInsert = (name, category, amount, day) => {
-    return `INSERT INTO expenses (name, category, amount, day)
-    VALUES ('${name}', '${category}', ${amount}, '${day}');`;
+const createExpenseInsert = (name, category, amount, day, imageURI) => {
+    return `INSERT INTO expenses (name, category, amount, day, picture)
+    VALUES ('${name}', '${category}', ${amount}, '${day}', 
+    ${imageURI !== null ? `'${imageURI}'` : null});`;
 };
 
 const deleteExpense = (row) => {
@@ -61,10 +62,16 @@ const createExpenseInsertWithReacurringId = (
     amount,
     day,
     timestamp,
-    reacurring_id
+    imageURI,
+    reacurringID
 ) => {
-    return `INSERT INTO expenses (name, category, amount, day, timestamp, reacurring_id)
-    VALUES ('${name}', '${category}', ${amount}, '${day}', '${timestamp}', ${reacurring_id});`;
+    //if (image_uri) {
+    //    return `INSERT INTO expenses (name, category, amount, day, timestamp, picture, reacurring_id)
+    //    VALUES ('${name}', '${category}', ${amount}, '${day}', '${timestamp}', '${image_uri}', ${reacurring_id});`;
+    //}
+    return `INSERT INTO expenses (name, category, amount, day, timestamp, picture, reacurring_id)
+    VALUES ('${name}', '${category}', ${amount}, '${day}', '${timestamp}', 
+    ${imageURI !== null ? `'${imageURI}'` : null}, ${reacurringID});`;
 };
 
 const createReacurringInsert = (frequency) => {
