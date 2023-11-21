@@ -12,7 +12,7 @@ import {
 } from '../src/util/DatetimeUtils';
 import { getExpensesFromTimeframe } from '../src/util/FileSystemUtils';
 
-const LineGraphComponent = ({ startDate, endDate, step }) => {
+const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const [lineGraphData, setlineGraphData] = useState([]);
 
 
@@ -30,9 +30,9 @@ const LineGraphComponent = ({ startDate, endDate, step }) => {
 
     const updateLineGraphData = async () => {
         try {
-            step = step || WEEKLY;
+            timeFrame = timeFrame || WEEKLY;
 
-            if (step === WEEKLY) {
+            if (timeFrame === WEEKLY) {
                 const week = getWeekStartEndDate(getCurrentDateString());
                 startDate = startDate || week[0];
                 endDate = endDate || week[1];
@@ -55,7 +55,7 @@ const LineGraphComponent = ({ startDate, endDate, step }) => {
                     value: updatedData[dayOfWeek] || 0, // Use an empty array if no data for the day
                 }));
                 setlineGraphData(lineGraphData);
-            } else if (step === MONTHLY) {
+            } else if (timeFrame === MONTHLY) {
                 const month = getMonthStartEndDate(getCurrentDateString());
                 startDate = startDate || month[0];
                 endDate = endDate || month[1];
@@ -77,7 +77,7 @@ const LineGraphComponent = ({ startDate, endDate, step }) => {
                     value: updatedData[dayOfMonth] || 0, // Use an empty array if no data for the day
                 }));
                 setlineGraphData(lineGraphData);
-            } else if (step === YEARLY) {
+            } else if (timeFrame === YEARLY) {
                 const year = getYearStartEndDate(getCurrentDateString());
                 startDate = startDate || year[0];
                 endDate = endDate || year[1];
@@ -121,7 +121,7 @@ const LineGraphComponent = ({ startDate, endDate, step }) => {
     useFocusEffect(
         React.useCallback(() => {
             updateLineGraphData();
-        }, [step, startDate, endDate])
+        }, [timeFrame, startDate, endDate])
     );
 
     return (
@@ -130,10 +130,17 @@ const LineGraphComponent = ({ startDate, endDate, step }) => {
                 <LineChart
                     data={lineGraphData}
                     color="#37c871"
-                    thickness={3}
+                    thickness={4}
                     spacing={35}
+                    noOfSections={5}
                     yAxisLabelPrefix="$ "
                     width={230}
+                    height={220}
+                    focusEnabled
+                    showTextOnFocus
+                    focusedDataPointShape
+                    focusedDataPointColor="#FFE081"
+                    yAxisThickness={0}
                 />
             ) : (
                 <Text>Loading...</Text>

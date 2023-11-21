@@ -32,6 +32,7 @@ const incrementDateByFrequency = (date, frequency) => {
     }
 };
 
+/* Formates the inputted date as YYYY-MM-DD */
 const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');

@@ -1,14 +1,14 @@
 import { AntDesign } from '@expo/vector-icons';
 import * as React from 'react';
 import { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ChartWithInteractivity from '../../components/ChartWithInteractivity';
 import LineGraphComponent from '../../components/LineGraphComponent';
 import PieChartComponent from '../../components/PieChartComponent';
 import WeekMonthYearButtons from '../../components/weekMonthYearComponent';
-import { primaryColor, secondaryColor } from '../constants/Colors';
+import { secondaryColor } from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
     getCurrentDateString,
@@ -24,7 +24,6 @@ import {
 } from '../util/DatetimeUtils';
 
 const GraphPage = ({ navigation }) => {
-
     const [selectedTimeframe, setSelectedTimeframe] = useState(WEEKLY);
     const [selectedTimeframeDates, setSelectedTimeframeDates] = useState(
         getWeekStartEndDate(getCurrentDateString())
@@ -71,51 +70,67 @@ const GraphPage = ({ navigation }) => {
         }
     };
 
-    return (
-/*         <SafeAreaView style={styles.container}> */
-        <ScrollView>
-            <Text style={styles.title}>Reports</Text>
-            <View style={styles.dateContainer}>
-                <View style={styles.dateRange}>
-                    <AntDesign.Button
-                        name="leftcircle"
-                        color="#37c871"
-                        backgroundColor="#f2f2f2"
-                        size={30}
-                        onPress={handleDecrementTimeFrame}
-                    />
-                    <Text style={styles.date}>{`${selectedTimeframeDates[0]}`}</Text>
-                    <Text> _ </Text>
-                    <Text style={styles.date}>{`${selectedTimeframeDates[1]}`}</Text>
-                    <AntDesign.Button
-                        name="rightcircle"
-                        color="#37c871"
-                        backgroundColor="#f2f2f2"
-                        size={30}
-                        onPress={handleIncrementTimeFrame}
-                    />
-                </View>
-            </View>
-            <WeekMonthYearButtons onSelect={handleTimeframeSelect} />
-            <View style={styles.scrollableContent}>
-                <View style={styles.chartContainer}>
-                    <LineGraphComponent
-                        startDate={selectedTimeframeDates[0]}
-                        endDate={selectedTimeframeDates[1]}
-                        step={selectedTimeframe}
-                    />
-                </View>
-                <View style={styles.chartContainer}>
-                    {/* put line chart here later */}
-                    <ChartWithInteractivity />
-                </View>
-                <View style={styles.chartContainer}>
-                    <PieChartComponent />
-                </View>
-            </View>
-        </ScrollView> 
-        /*         </SafeAreaView> */
+    const formatDateforDisplay = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${month}/${day}/${year}`;
+    };
 
+    return (
+        <SafeAreaView style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <Text style={styles.title}>Reports</Text>
+                <View style={styles.dateContainer}>
+                    <View style={styles.dateRange}>
+                        <TouchableOpacity onPress={handleDecrementTimeFrame}>
+                            <View style={styles.arrow}>
+                                <AntDesign
+                                    name="leftcircle"
+                                    color="#37c871"
+                                    backgroundColor="#f2f2f2"
+                                    size={30}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                        <Text style={styles.date}>
+                            {`${formatDateforDisplay(selectedTimeframeDates[0])}`}
+                        </Text>
+                        <Text> _ </Text>
+                        <Text style={styles.date}>
+                            {`${formatDateforDisplay(selectedTimeframeDates[1])}`}
+                        </Text>
+                        <TouchableOpacity onPress={handleIncrementTimeFrame}>
+                            <View style={styles.arrow}>
+                                <AntDesign
+                                    name="rightcircle"
+                                    color="#37c871"
+                                    backgroundColor="#f2f2f2"
+                                    size={30}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <WeekMonthYearButtons onSelect={handleTimeframeSelect} />
+                <View style={styles.scrollableContent}>
+                    <View style={styles.chartContainer}>
+                        <LineGraphComponent
+                            startDate={selectedTimeframeDates[0]}
+                            endDate={selectedTimeframeDates[1]}
+                            timeFrame={selectedTimeframe}
+                        />
+                    </View>
+                    <View style={styles.chartContainer}>
+                        <ChartWithInteractivity />
+                    </View>
+                    <View style={styles.chartContainer}>
+                        <PieChartComponent />
+                    </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
@@ -125,11 +140,11 @@ const styles = StyleSheet.create({
     // Need to figure out why there is a big gab at the top of the screen
     container: {
         paddingTop: StatusBar.currentHeight,
-        flex: 1,
+        flex: 0.94,
         alignItems: 'center',
     },
     scrollableContent: {
-        flex: 1,
+        flex: 0.9,
         width: '100%', // Adjust the width as needed
         alignItems: 'center',
     },
@@ -153,11 +168,16 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
     },
+    arrow: {
+        alignSelf: 'center',
+        alignItem: 'center',
+        margin: 5,
+        paddingTop: 15,
+    },
     dateRange: {
         flexDirection: 'row',
         alignItems: 'center',
         width: 310,
-
     },
     date: {
         textAlign: 'center',
