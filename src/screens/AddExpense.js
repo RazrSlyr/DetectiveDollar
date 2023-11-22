@@ -27,6 +27,8 @@ export default function App({ navigation }) {
     const [category, setCategory] = useState('');
     const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
+    const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
+    const [hasCameraPermission, setHasCameraPermission] = useState();
 
     const handleButtonPress = async () => {
         // Add your button click logic here
@@ -123,16 +125,18 @@ export default function App({ navigation }) {
                             onPress={async () => {
                                 const cameraPermission =
                                     await ImagePicker.requestCameraPermissionsAsync();
-                                if (cameraPermission.status === 'granted') {
-                                    const imageURI = await captureImage();
-                                    console.log('uri from imagepicker: ', imageURI);
-                                    setImageURI(imageURI);
-                                } else {
+                                setHasCameraPermission(cameraPermission.status === 'granted');
+
+                                if (!hasCameraPermission) {
                                     Alert.alert(
                                         'Camera Permission Not Set',
                                         'Please change app permission in settings',
                                         [{ text: 'OK' }]
                                     );
+                                } else {
+                                    const imageURI = await captureImage();
+                                    console.log('uri from imagepicker: ', imageURI);
+                                    setImageURI(imageURI);
                                 }
                             }}>
                             <Feather name="camera" size={40} color="black" />
@@ -142,16 +146,17 @@ export default function App({ navigation }) {
                             onPress={async () => {
                                 const mediaLibaryPermission =
                                     await ImagePicker.requestMediaLibraryPermissionsAsync();
-                                if (mediaLibaryPermission.status === 'granted') {
-                                    const imageURI = await pickImage();
-                                    console.log('uri from imagepicker: ', imageURI);
-                                    setImageURI(imageURI);
-                                } else {
+                                setHasMediaLibraryPermission(mediaLibaryPermission);
+                                if (!hasMediaLibraryPermission) {
                                     Alert.alert(
                                         'Media Library Permission Not Set',
                                         'Please change app permission in settings',
                                         [{ text: 'OK' }]
                                     );
+                                } else {
+                                    const imageURI = await pickImage();
+                                    console.log('uri from imagepicker: ', imageURI);
+                                    setImageURI(imageURI);
                                 }
                             }}>
                             <AntDesign name="upload" size={40} color="black" />
