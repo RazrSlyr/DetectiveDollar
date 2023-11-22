@@ -96,11 +96,11 @@ const createReacurringByIdQuery = (id) => {
     return `SELECT * FROM reacurring WHERE id = ${id};`;
 };
 
-/* const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
-    return `SELECT * FROM expenses WHERE timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY timestamp`;
-}; */
-
 const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
+    return `SELECT * FROM expenses WHERE timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY timestamp`;
+};
+
+/* const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
     return `
         SELECT * 
         FROM expenses 
@@ -108,7 +108,7 @@ const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
           AND timestamp < date("${endTimestamp}", '+1 day') 
         ORDER BY timestamp;
     `;
-};
+}; */
 
 
 const createExpenseByCategoryQuery = (category) => {

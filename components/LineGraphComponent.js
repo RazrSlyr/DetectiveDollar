@@ -15,7 +15,6 @@ import { getExpensesFromTimeframe } from '../src/util/FileSystemUtils';
 const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const [lineGraphData, setlineGraphData] = useState([]);
 
-
     const getDaysInMonth = (currentDateString) => {
         const currentDate = new Date(currentDateString);
         const year = currentDate.getFullYear();
@@ -37,7 +36,10 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 startDate = startDate || week[0];
                 endDate = endDate || week[1];
 
-                const transactions = await getExpensesFromTimeframe(startDate, endDate);
+                const transactions = await getExpensesFromTimeframe(
+                    startDate,
+                    `${endDate} 23:59:59`
+                );
 
                 const weekLabel = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 const updatedData = transactions.reduce((accumulator, expense) => {
@@ -62,7 +64,10 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const month = getMonthStartEndDate(getCurrentDateString());
                 startDate = startDate || month[0];
                 endDate = endDate || month[1];
-                const transactions = await getExpensesFromTimeframe(startDate, endDate);
+                const transactions = await getExpensesFromTimeframe(
+                    startDate,
+                    `${endDate} 23:59:59`
+                );
 
                 const monthLabel = getDaysInMonth(getCurrentDateString());
                 const updatedData = transactions.reduce((accumulator, expense) => {
@@ -84,7 +89,10 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const year = getYearStartEndDate(getCurrentDateString());
                 startDate = startDate || year[0];
                 endDate = endDate || year[1];
-                const transactions = await getExpensesFromTimeframe(startDate, endDate);
+                const transactions = await getExpensesFromTimeframe(
+                    startDate,
+                    `${endDate} 23:59:59`
+                );
 
                 const yearLabel = [
                     'Jan',
@@ -144,6 +152,8 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                     focusedDataPointShape
                     focusedDataPointColor="#FFE081"
                     yAxisThickness={0}
+                    scrollToIndex={-1}
+                    showScrollIndicator
                 />
             ) : (
                 <Text>Loading...</Text>
