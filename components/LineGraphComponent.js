@@ -30,16 +30,16 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const updateLineGraphData = async () => {
         try {
             timeFrame = timeFrame || WEEKLY;
-            console.log(startDate, endDate, timeFrame);
+            //console.log(startDate, endDate, timeFrame);
 
             if (timeFrame === WEEKLY) {
                 const week = getWeekStartEndDate(getCurrentDateString());
-                console.log(week);
+                //console.log(week);
                 startDate = startDate || week[0];
                 endDate = endDate || week[1];
 
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
-                console.log(transactions);
+                //console.log(transactions);
                 const weekLabel = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 const updatedData = transactions.reduce((accumulator, expense) => {
                     const date = new Date(expense.day);
