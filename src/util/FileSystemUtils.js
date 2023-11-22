@@ -11,6 +11,7 @@ import {
     deleteExpense,
     createExpenseInsert,
     createExpenseByTimeframeQuery,
+    createExpenseByDayFrameQuery,
     createReacurringInsert,
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
@@ -138,6 +139,26 @@ export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
             rows = (
                 await tx.executeSqlAsync(createExpenseByTimeframeQuery(startDateStr, endDateStr))
             ).rows;
+        } catch (error) {
+            console.warn(`getExpensesFromTimeframe error ${error}`);
+        }
+    });
+    return rows;
+}
+
+export async function getExpensesFromDayframe(startDay, endDay) {
+    //params: ISO format strings: YYYY-MM-DD or YYYY-MM-DD hh:mm:ss
+    const db = await getDatabase();
+    //const startTimestamp = Date.parse(startDay);
+    //const endTimestamp = Date.parse(endDay);
+    //if (isNaN(startTimestamp) || isNaN(endTimestamp)) {
+    //    console.warn(`malformed ISO strings to get timestamp ${startDay} ${endDay}`);
+    //    return [];
+    //}
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        try {
+            rows = (await tx.executeSqlAsync(createExpenseByDayFrameQuery(startDay, endDay))).rows;
         } catch (error) {
             console.warn(`getExpensesFromTimeframe error ${error}`);
         }

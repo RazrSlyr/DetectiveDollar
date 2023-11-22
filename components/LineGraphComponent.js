@@ -10,7 +10,7 @@ import {
     getMonthStartEndDate,
     getYearStartEndDate,
 } from '../src/util/DatetimeUtils';
-import { getExpensesFromTimeframe } from '../src/util/FileSystemUtils';
+import { getExpensesFromTimeframe, getExpensesFromDayframe } from '../src/util/FileSystemUtils';
 
 const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const [lineGraphData, setlineGraphData] = useState([]);
@@ -30,17 +30,16 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const updateLineGraphData = async () => {
         try {
             timeFrame = timeFrame || WEEKLY;
+            console.log(startDate, endDate, timeFrame);
 
             if (timeFrame === WEEKLY) {
                 const week = getWeekStartEndDate(getCurrentDateString());
+                console.log(week);
                 startDate = startDate || week[0];
                 endDate = endDate || week[1];
 
-                const transactions = await getExpensesFromTimeframe(
-                    startDate,
-                    `${endDate} 23:59:59`
-                );
-
+                const transactions = await getExpensesFromDayframe(startDate, endDate);
+                console.log(transactions);
                 const weekLabel = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 const updatedData = transactions.reduce((accumulator, expense) => {
                     const date = new Date(expense.day);
@@ -53,6 +52,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                     const amount = expense.amount;
 
                     accumulator[dayOfWeek] = (accumulator[dayOfWeek] || 0) + amount;
+                    //console.log(date, dayOfWeekIndex, accumulator);
                     return accumulator;
                 }, {});
                 const lineGraphData = weekLabel.map((dayOfWeek) => ({
@@ -64,10 +64,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const month = getMonthStartEndDate(getCurrentDateString());
                 startDate = startDate || month[0];
                 endDate = endDate || month[1];
-                const transactions = await getExpensesFromTimeframe(
-                    startDate,
-                    `${endDate} 23:59:59`
-                );
+                const transactions = await getExpensesFromDayframe(startDate, endDate);
 
                 const monthLabel = getDaysInMonth(getCurrentDateString());
                 const updatedData = transactions.reduce((accumulator, expense) => {
@@ -89,10 +86,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const year = getYearStartEndDate(getCurrentDateString());
                 startDate = startDate || year[0];
                 endDate = endDate || year[1];
-                const transactions = await getExpensesFromTimeframe(
-                    startDate,
-                    `${endDate} 23:59:59`
-                );
+                const transactions = await getExpensesFromDayframe(startDate, endDate);
 
                 const yearLabel = [
                     'Jan',

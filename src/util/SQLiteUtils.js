@@ -100,6 +100,9 @@ const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
     return `SELECT * FROM expenses WHERE timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY timestamp`;
 };
 
+const createExpenseByDayFrameQuery = (startDay, endDay) => {
+    return `SELECT * FROM expenses WHERE DAY BETWEEN "${startDay}" AND "${endDay}" ORDER BY DAY`;
+};
 /* const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
     return `
         SELECT * 
@@ -136,4 +139,5 @@ export {
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
     createExpenseByCategoryQuery,
+    createExpenseByDayFrameQuery,
 };
