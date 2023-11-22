@@ -15,10 +15,15 @@ import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import {
+    applyRecurringExpenses,
     deleteRowFromExpenseTable,
+    deleteRowFromReacurringTable,
+    getCategoryTable,
     getExpensesFromDay,
+    getRowFromExpenseTable,
     deleteImage,
 } from '../util/FileSystemUtils';
+
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
@@ -39,8 +44,25 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
+    const goToAddPage = () => {
+        navigation.navigate('AddExpense'); // change TEMPORARY to actual page
+    };
+
+    const handleDelete = async (expense) => {
+        deleteImage(expense['picture']);
+
+        const rowData = await getRowFromExpenseTable(expense['id']);
+        const promises = [deleteRowFromExpenseTable(expense['id'])];
+        if (rowData['reacurring_id'] != null) {
+            promises.push(deleteRowFromReacurringTable(rowData['reacurring_id']));
+        }
+        await Promise.all(promises);
+        setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
+    };
+
     useEffect(() => {
         const getExpenses = async () => {
+            await applyRecurringExpenses();
             setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
         };
         navigation.addListener('focus', () => {
@@ -101,17 +123,7 @@ export default function HomePage({ navigation }) {
                                                     { text: 'NO' },
                                                     {
                                                         text: 'YES',
-                                                        onPress: async () => {
-                                                            deleteImage(expense['picture']);
-                                                            await deleteRowFromExpenseTable(
-                                                                expense['id']
-                                                            );
-                                                            setTodayExpenses(
-                                                                await getExpensesFromDay(
-                                                                    getCurrentDateString()
-                                                                )
-                                                            );
-                                                        },
+                                                        onPress: async () => handleDelete(expense),
                                                     },
                                                 ]
                                             );

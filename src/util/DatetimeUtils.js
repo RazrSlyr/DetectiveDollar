@@ -1,7 +1,7 @@
 import { DAILY, DAY_LENGTH, MONTHLY, WEEKLY, WEEK_LENGTH } from '../constants/FrequencyConstants';
+import { TIMESTAMP_REGEX } from '../constants/Regex';
 
-const getCurrentDateString = () => {
-    const date = new Date();
+const getDateStringFromDate = (date) => {
     let month = date.getMonth() + 1;
     if (month < 10) {
         month = '0' + month;
@@ -11,6 +11,36 @@ const getCurrentDateString = () => {
         day = '0' + day;
     }
     return `${date.getFullYear()}-${month}-${day}`;
+}
+
+const getCurrentDateString = () => {
+    const date = new Date();
+    return getDateStringFromDate(date);
+}
+
+const getCurrentUTCDatetimeString = () => {
+    const date = new Date();
+    let month = date.getUTCMonth() + 1;
+    if (month < 10) {
+        month = '0' + month;
+    }
+    let day = date.getUTCDate();
+    if (day < 10) {
+        day = '0' + day;
+    }
+    let hour = date.getUTCHours();
+    if (hour < 10) {
+        hour = '0' + hour;
+    }
+    let minute = date.getUTCMinutes();
+    if (minute < 10) {
+        minute = '0' + minute;
+    }
+    let second = date.getUTCSeconds();
+    if (second < 10) {
+        second = '0' + second;
+    }
+    return `${date.getFullYear()}-${month}-${day} ${hour}:${minute}:${second}`;
 };
 
 const getCurrentUTCTimestamp = () => {
@@ -129,6 +159,18 @@ const getNextYearStartEndDate = (currentDateString) => {
     ];
 };
 
+const getDateFromDatetimeString = (datetimeString) => {
+    const datetimeParts = TIMESTAMP_REGEX.exec(datetimeString);
+    const date = new Date();
+    date.setUTCFullYear(parseInt(datetimeParts[1], 10));
+    date.setUTCMonth(parseInt(datetimeParts[2], 10) - 1);
+    date.setUTCDate(parseInt(datetimeParts[3], 10));
+    date.setUTCHours(parseInt(datetimeParts[4], 10));
+    date.setUTCMinutes(parseInt(datetimeParts[5], 10));
+    date.setUTCMinutes(parseInt(datetimeParts[6], 10));
+    return date;
+};
+
 export {
     getCurrentDateString,
     getCurrentUTCTimestamp,
@@ -142,4 +184,7 @@ export {
     getYearStartEndDate,
     getPreviousYearStartEndDate,
     getNextYearStartEndDate,
+    getCurrentUTCDatetimeString,
+    getDateFromDatetimeString,
+    getDateStringFromDate,
 };
