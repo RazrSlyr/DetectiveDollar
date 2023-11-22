@@ -214,13 +214,26 @@ export async function applyRecurringExpenses() {
     for (let i = 0; i < recurringExpenses?.length; i++) {
         const element = recurringExpenses[i];
         let recurrenceDate = getDateFromUTCDatetimeString(element['next_trigger']);
-        while (recurrenceDate < currentDate) {
+        // Get last expense to get data
+        let lastRecurrance = null;
+        await db.transactionAsync(async (tx) => {
+            try {
+                // Get last expense to get data
+                const lastRecurranceData = await tx.executeSqlAsync(
+                    createLastReacurrenceQuery(element['id'])
+                );
+                if (lastRecurranceData?.rows?.length === 0) {
+                    return;
+                }
+                lastRecurrance = lastRecurranceData.rows[0];
+            } catch (error) {
+                console.warn(`applyRecurringExpenses error ${error}`);
+            }
+        });
+
+        while (lastRecurrance != null && recurrenceDate < currentDate) {
             await db.transactionAsync(async (tx) => {
                 try {
-                    // Get last expense to get data
-                    const lastRecurrance = (
-                        await tx.executeSqlAsync(createLastReacurrenceQuery(element['id']))
-                    ).rows[0];
                     const newRecurranceDay = getDateStringFromDate(recurrenceDate);
                     // Add expense using obtained data
                     await tx.executeSqlAsync(
