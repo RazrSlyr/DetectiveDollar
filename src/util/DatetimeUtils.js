@@ -11,11 +11,35 @@ const getDateStringFromDate = (date) => {
         day = '0' + day;
     }
     return `${date.getFullYear()}-${month}-${day}`;
-}
+};
 
 const getCurrentDateString = () => {
     const date = new Date();
     return getDateStringFromDate(date);
+};
+
+const getDatetimeString = (date) => {
+    let month = date.getMonth() + 1;
+    if (month < 10) {
+        month = '0' + month;
+    }
+    let day = date.getDate();
+    if (day < 10) {
+        day = '0' + day;
+    }
+    let hour = date.getHours();
+    if (hour < 10) {
+        hour = '0' + hour;
+    }
+    let minute = date.getMinutes();
+    if (minute < 10) {
+        minute = '0' + minute;
+    }
+    let second = date.getSeconds();
+    if (second < 10) {
+        second = '0' + second;
+    }
+    return `${date.getFullYear()}-${month}-${day} ${hour}:${minute}:${second}`;
 }
 
 const getCurrentUTCDatetimeString = () => {
@@ -40,7 +64,7 @@ const getCurrentUTCDatetimeString = () => {
     if (second < 10) {
         second = '0' + second;
     }
-    return `${date.getFullYear()}-${month}-${day} ${hour}:${minute}:${second}`;
+    return `${date.getUTCFullYear()}-${month}-${day} ${hour}:${minute}:${second}`;
 };
 
 const getCurrentUTCTimestamp = () => {
@@ -62,7 +86,7 @@ const incrementDateByFrequency = (date, frequency) => {
     }
 };
 
-const getDateFromDatetimeString = (datetimeString) => {
+const getDateFromUTCDatetimeString = (datetimeString) => {
     const datetimeParts = TIMESTAMP_REGEX.exec(datetimeString);
     const date = new Date();
     date.setUTCFullYear(parseInt(datetimeParts[1], 10));
@@ -70,7 +94,7 @@ const getDateFromDatetimeString = (datetimeString) => {
     date.setUTCDate(parseInt(datetimeParts[3], 10));
     date.setUTCHours(parseInt(datetimeParts[4], 10));
     date.setUTCMinutes(parseInt(datetimeParts[5], 10));
-    date.setUTCMinutes(parseInt(datetimeParts[6], 10));
+    date.setUTCSeconds(parseInt(datetimeParts[6], 10));
     return date;
 };
 
@@ -79,6 +103,7 @@ export {
     getCurrentUTCTimestamp,
     incrementDateByFrequency,
     getCurrentUTCDatetimeString,
-    getDateFromDatetimeString,
+    getDateFromUTCDatetimeString,
     getDateStringFromDate,
+    getDatetimeString,
 };
