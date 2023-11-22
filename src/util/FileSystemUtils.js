@@ -231,6 +231,7 @@ export async function applyRecurringExpenses() {
                             lastRecurrance['amount'],
                             newRecurranceDay,
                             getCurrentUTCDatetimeString(recurrenceDate),
+                            lastRecurrance['picture'],
                             lastRecurrance['reacurring_id']
                         )
                     );
