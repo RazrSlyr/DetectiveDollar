@@ -29,12 +29,15 @@
     "react-native": "0.72.6",
     "react-native-dialog": "^9.3.0",
     "react-native-element-dropdown": "^2.10.0",
+    "react-native-gifted-charts": "^1.3.16",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-popup-menu": "^0.16.1",
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
     "react-native-svg": "13.9.0",
     "react-native-svg-charts": "^5.4.0",
-    "react-native-web": "~0.19.6"
+    "react-native-web": "~0.19.6",
+    "svg-charts": "^1.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
