@@ -59,7 +59,7 @@ export default function HomePage({ navigation }) {
             // Fetch expenses for new date and set to new state
             const expenses = await getExpensesFromDay(newDate);
             setTodayExpenses(expenses);
-            setTargetDate(newDate)
+            setTargetDate(newDate);
         } catch (error) {
             console.error('Error fetching expenses for new date:', error);
         }
@@ -124,7 +124,7 @@ export default function HomePage({ navigation }) {
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
             <Text style={[styles.title, styles.topTitle]}>Daily Spending</Text>
-            <TouchableOpacity style={styles.calendarContainer}>
+            <TouchableOpacity style={styles.calendarContainer} activeOpacity={0.7}>
                 <DatePickerComponent onDateChange={handleDateChange} />
             </TouchableOpacity>
             <View style={styles.totalExpensesContainer}>
@@ -274,6 +274,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
+    },
+    calendarContainer: {
+        borderRadius: 35,
+        backgroundColor: 'white',
+        padding: 15,
     },
     arrowsAndTotalExpenseContainer: {
         flexDirection: 'row',

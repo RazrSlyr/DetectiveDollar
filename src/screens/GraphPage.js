@@ -22,6 +22,8 @@ import {
     getPreviousYearStartEndDate,
     getNextYearStartEndDate,
 } from '../util/DatetimeUtils';
+import * as Colors from '../constants/Colors';
+import NewPieChartComponent from '../components/NewPieChartComponent';
 
 const GraphPage = ({ navigation }) => {
     const [selectedTimeframe, setSelectedTimeframe] = useState(WEEKLY);
@@ -146,13 +148,14 @@ const styles = StyleSheet.create({
     scrollableContent: {
         flex: 0.9,
         width: '100%', // Adjust the width as needed
+        height: '100%',
         alignItems: 'center',
     },
     title: {
         fontWeight: 'bold',
         fontSize: 36,
         textAlign: 'center',
-        color: secondaryColor,
+        color: Colors.secondaryColor,
         marginTop: 95,
     },
     chartContainer: {
@@ -163,6 +166,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'white',
         borderRadius: 20,
+        flex: 1,
     },
     lineChartContainer: {
         margin: 5,

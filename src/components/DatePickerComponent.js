@@ -54,8 +54,10 @@ const DatePickerComponent = ({ onDateChange }) => {
                         <DateTimePicker
                             value={selectedDate}
                             mode="date"
+                            //display="default"
                             display="inline"
                             onChange={handleDateChange}
+                            themeVariant="light"
                         />
                         {isIOS && (
                             <TouchableOpacity
@@ -83,9 +85,11 @@ const styles = StyleSheet.create({
     modalContent: {
         height: 'auto',
         width: 'auto',
-        backgroundColor: 'rgba(0, 0, 0, 1)',
+        backgroundColor: 'white',
+        // backgroundColor: 'rgba(0, 0, 0, 1)',
         borderRadius: 10,
         alignItems: 'center',
+        zIndex: 100,
     },
     cancelButtonContainer: {
         marginTop: 10,
