@@ -27,7 +27,6 @@ import {
     createReacurringExpenseNextTriggerUpdate,
     createLastReacurrenceQuery,
     createExpenseByIdQuery,
-    createExpenseDeleteById,
     createReacurringDeleteById,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
@@ -231,7 +230,7 @@ export async function applyRecurringExpenses() {
             }
         });
 
-        while (lastRecurrance != null && recurrenceDate < currentDate) {
+        while (lastRecurrance != null && recurrenceDate <= currentDate) {
             await db.transactionAsync(async (tx) => {
                 try {
                     const newRecurranceDay = getDateStringFromDate(recurrenceDate);
