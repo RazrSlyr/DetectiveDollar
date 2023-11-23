@@ -146,7 +146,9 @@ export default function App({ navigation }) {
                             onPress={async () => {
                                 const mediaLibaryPermission =
                                     await ImagePicker.requestMediaLibraryPermissionsAsync();
-                                setHasMediaLibraryPermission(mediaLibaryPermission);
+                                setHasMediaLibraryPermission(
+                                    mediaLibaryPermission.status === 'granted'
+                                );
                                 if (!hasMediaLibraryPermission) {
                                     Alert.alert(
                                         'Media Library Permission Not Set',
