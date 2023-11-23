@@ -31,6 +31,7 @@ const PieChartLegend = ({ chartData }) => {
 
 const styles = StyleSheet.create({
     legendGrid: {
+        flexGrow: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',

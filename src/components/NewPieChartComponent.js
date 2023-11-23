@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 
-import { getExpensesbyCategory } from '../util/FileSystemUtils';
 import PieChartLegend from './PieChartLegend';
+import { getExpensesbyCategory } from '../util/FileSystemUtils';
 
 const NewPieChartComponent = () => {
     const [pieChartData, setPieChartData] = useState([]);

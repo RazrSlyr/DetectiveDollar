@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
         // figure out fontStyles
     },
     topTitle: {
-        paddingTop: 60,
+        paddingTop: 20,
         margin: 'auto',
     },
     titleContainer: {
