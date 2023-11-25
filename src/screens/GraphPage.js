@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import LineGraphComponent from '../components/LineGraphComponent';
 import NewPieChartComponent from '../components/NewPieChartComponent';
-import PieChartComponent from '../components/PieChartComponent';
 import WeekMonthYearButtons from '../components/weekMonthYearComponent';
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
@@ -124,9 +123,6 @@ const GraphPage = ({ navigation }) => {
                     </View>
                     <View style={styles.chartContainer}>
                         <NewPieChartComponent />
-                    </View>
-                    <View style={styles.chartContainer}>
-                        <PieChartComponent />
                     </View>
                 </View>
             </ScrollView>
