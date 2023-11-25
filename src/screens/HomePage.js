@@ -120,15 +120,6 @@ export default function HomePage({ navigation }) {
         setShowExpenseInfo(false);
     };
 
-    // make date more readable
-    const parts = targetDate.split('-');
-    const year = parts[0];
-    const month = parts[1];
-    const day = parts[2];
-
-    // Format the date as "month/day/year"
-    const formattedDate = `${month}/${day}/${year}`;
-
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
