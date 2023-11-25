@@ -101,6 +101,8 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
 
                 const monthLabel = getDaysInMonth(endDate);
+                const totalDays = monthLabel.length;
+                const step = Math.floor(totalDays / 4);
                 const updatedData = transactions.reduce((accumulator, expense) => {
                     const date = new Date(expense.day);
                     const dayOfMonthIndex = date.getDate();
@@ -112,11 +114,26 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                     return accumulator;
                 }, {});
 
-                const lineGraphData = monthLabel.map((dayOfMonth) => ({
+/*                 const lineGraphData = monthLabel.map((dayOfMonth) => ({
                     label: dayOfMonth,
                     value: updatedData[dayOfMonth] || 0, // Use an empty value if no data for the day
                     date: `${startMonth}/${dayOfMonth}/${startYear}`,
+                })); */
+                const labelMapping = {
+                    [totalDays]: totalDays,
+                    [totalDays - step]: totalDays - step,
+                    [totalDays - 2 * step]: totalDays - 2 * step,
+                    [totalDays - 3 * step]: totalDays - 3 * step,
+                    [totalDays - 4 * step]: totalDays - 4 * step,
+                };
+                //console.log(labelMapping);
+            
+                const lineGraphData = monthLabel.map((dayOfMonth) => ({
+                    label: labelMapping[dayOfMonth],
+                    value: updatedData[dayOfMonth] || 0, // Use an empty value if no data for the day
+                    date: `${startMonth}/${dayOfMonth}/${startYear}`,
                 }));
+                //console.log(lineGraphData);
                 const maxDataValue = lineGraphData.reduce(
                     (max, current) => (current.value > max ? current.value : max),
                     0
@@ -155,7 +172,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 }, {});
 
                 const lineGraphData = yearLabel.map((monthOfYear) => ({
-                    label: monthOfYear,
+                    label: monthOfYear[0],
                     value: updatedData[monthOfYear] || 0, // Use an empty value if no data for the day
                     date: `${monthOfYear} ${startYear}`,
                 }));
@@ -177,10 +194,25 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
         }, [timeFrame, startDate, endDate])
     );
 
+    let spacing;
+
+    // Conditionally set the spacing based on the selected timeframe
+    if (timeFrame === WEEKLY) {
+        spacing = 38; // or whatever value is appropriate for weekly spacing
+    } else if (timeFrame === MONTHLY) {
+        spacing = 8; // or whatever value is appropriate for monthly spacing
+    } else if (timeFrame === YEARLY) {
+        spacing = 21; // or whatever value is appropriate for yearly spacing
+    } else {
+        // Default value for other cases
+        spacing = 20;
+    }
+
     return (
         <View>
             {lineGraphData.length > 0 ? (
                 <LineChart
+                    hideDataPoints
                     areaChart
                     data={lineGraphData}
                     startFillColor="#37C871"
@@ -191,33 +223,32 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                     dataPointsColor="#2F4858"
                     color="#37c871"
                     thickness={4}
-                    spacing={35}
-                    noOfSections={5}
-                    yAxisLabelPrefix="$"
-                    width={300}
+                    width={310}
                     height={220}
+                    scrollToIndex={-1}
+                    //showXAxisIndices
                     //disableScroll
+                    spacing={spacing} // 38 for weekly, 20/21 for yearly, and 8 for monthly
                     initialSpacing={40}
-                    //endSpacing={20}
+                    endSpacing={0}
+                    label={['0', '30']}
+                    //showVerticalLines
                     xAxisLabelTextStyle={{
                         color: '#545454',
-                        fontSize: 14,
+                        fontSize: 12,
                         textAlign: 'left',
-                        //marginBottom: 8,
-                        paddingHorizontal:-100,
-                        //paddingRight: 100,
+                        marginRight: -15,
+                        //paddingHorizontal:-100,
+                        //paddingRight: 1000,
                     }}
                     yAxisTextStyle={{
                         color: '#545454',
                         fontSize: 12,
                         textAlign: 'left',
-                        //marginBottom: 8,
-                        //paddingHorizontal:-100,
-                        //paddingRight: 100,
                     }}
+                    noOfSections={5}
+                    yAxisLabelPrefix="$"
                     yAxisThickness={0}
-                    scrollToIndex={-1}
-                    showScrollIndicator
                     yAxisLabelWidth={45}
                     maxValue={Math.ceil(maxDataValue * 2)}
                     formatYLabel={(label) => {
@@ -235,9 +266,9 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                         radius: 6,
                         pointerLabelWidth: 100,
                         pointerLabelHeight: 90,
-                        activatePointersOnLongPress: true,
+                        activatePointersOnLongPress: false,
                         autoAdjustPointerLabelPosition: false,
-                        activatePointersDelay: 100,
+                        activatePointersDelay: 2,
                         hidePointer: true,
                         pointerLabelComponent: (items) => {
                             return (
