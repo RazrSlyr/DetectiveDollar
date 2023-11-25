@@ -16,25 +16,21 @@ import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import {
+    applyRecurringExpenses,
     deleteRowFromExpenseTable,
+    deleteRowFromReacurringTable,
+    getCategoryTable,
     getExpensesFromDay,
+    getRowFromExpenseTable,
     deleteImage,
 } from '../util/FileSystemUtils';
+
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
-
-    // useEffect(() => {
-    //     const getExpenses = async () => {
-    //         setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
-    //     };
-    //     navigation.addListener('focus', () => {
-    //         getExpenses();
-    //     });
-    // }, []);
 
     useEffect(() => {
         const getExpenses = async () => {
@@ -63,7 +59,7 @@ export default function HomePage({ navigation }) {
             // Fetch expenses for new date and set to new state
             const expenses = await getExpensesFromDay(newDate);
             setTodayExpenses(expenses);
-            setTargetDate(newDate)
+            setTargetDate(newDate);
         } catch (error) {
             console.error('Error fetching expenses for new date:', error);
         }
@@ -83,6 +79,38 @@ export default function HomePage({ navigation }) {
         });
         return todaySpending;
     }, [todayExpenses]);
+
+    const goToAddPage = () => {
+        navigation.navigate('AddExpense'); // change TEMPORARY to actual page
+    };
+
+    const handleDelete = async (expense) => {
+        deleteImage(expense['picture']);
+
+        const rowData = await getRowFromExpenseTable(expense['id']);
+        const promises = [deleteRowFromExpenseTable(expense['id'])];
+        if (rowData['reacurring_id'] != null) {
+            promises.push(deleteRowFromReacurringTable(rowData['reacurring_id']));
+        }
+        await Promise.all(promises);
+        setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
+    };
+
+    // make date more readable
+    const parts = targetDate.split('-');
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
+
+    // Format the date as "month/day/year"
+    const formattedDate = `${month}/${day}/${year}`;
+
+    // error says too many re-renders
+    // // for arrow buttons
+    // const dayPlusOne = Number(day) + 1;
+    // const datePlusOne = `${year}-${month}-${dayPlusOne}`;
+    // const dayMinusOne = Number(day) - 1;
+    // const dateMinusOne = `${year}-${month}-${dayMinusOne}`;
 
     const openInfo = async () => {
         setShowExpenseInfo(true);
@@ -105,7 +133,7 @@ export default function HomePage({ navigation }) {
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
             <Text style={[styles.title, styles.topTitle]}>Daily Spending</Text>
-            <TouchableOpacity style={styles.calendarContainer}>
+            <TouchableOpacity style={styles.calendarContainer} activeOpacity={0.7}>
                 <DatePickerComponent onDateChange={handleDateChange} />
             </TouchableOpacity>
             <View style={styles.totalExpensesContainer}>
@@ -149,17 +177,7 @@ export default function HomePage({ navigation }) {
                                                     { text: 'NO' },
                                                     {
                                                         text: 'YES',
-                                                        onPress: async () => {
-                                                            deleteImage(expense['picture']);
-                                                            await deleteRowFromExpenseTable(
-                                                                expense['id']
-                                                            );
-                                                            setTodayExpenses(
-                                                                await getExpensesFromDay(
-                                                                    getCurrentDateString()
-                                                                )
-                                                            );
-                                                        },
+                                                        onPress: async () => handleDelete(expense),
                                                     },
                                                 ]
                                             );
@@ -193,22 +211,35 @@ const styles = StyleSheet.create({
         // figure out fontStyles
     },
     topTitle: {
-        paddingTop: 60,
+        paddingTop: 20,
         margin: 'auto',
+    },
+    titleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 60,
+        width: 270,
+        height: 80,
+        backgroundColor: 'white',
+        borderRadius: 15,
     },
     title: {
         fontWeight: 'bold',
         fontSize: 36,
         color: Colors.secondaryColor,
+        marginRight: 15,
     },
     totalExpensesContainer: {
         backgroundColor: 'white',
+        borderRadius: 15,
+        marginTop: 20,
+        marginBottom: 20,
         height: 'auto',
         width: 270,
         alignItems: 'center',
         justifyContent: 'center',
         margin: 30,
-        borderRadius: 15,
     },
     subHeading: {
         color: Colors.subHeadingColor,
@@ -220,15 +251,12 @@ const styles = StyleSheet.create({
     textInput: {
         fontSize: 50,
         margin: 'auto',
-        paddingLeft: 10,
-        paddingBottom: 5,
     },
     expensesContainer: {
-        backgroundColor: 'green',
+        // backgroundColor: 'green',
         flex: 1 / 2,
         width: '70%',
-        borderRadius: 15,
-        borderWidth: 2,
+        borderRadius: 10,
     },
     scrollableContent: {
         flex: 1,
@@ -243,7 +271,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        borderRadius: 15,
+        borderRadius: 10,
         borderWidth: 2,
         borderColor: Colors.secondaryColor,
     },
@@ -255,5 +283,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
+    },
+    calendarContainer: {
+        borderRadius: 35,
+        backgroundColor: 'white',
+        padding: 15,
+    },
+    arrowsAndTotalExpenseContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    arrows: {
+        color: Colors.secondaryColor,
     },
 });
