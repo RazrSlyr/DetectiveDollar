@@ -122,7 +122,11 @@ const GraphPage = ({ navigation }) => {
                         />
                     </View>
                     <View style={styles.chartContainer}>
-                        <NewPieChartComponent />
+                        <NewPieChartComponent 
+                            startDate={selectedTimeframeDates[0]}
+                            endDate={selectedTimeframeDates[1]}
+                            timeFrame={selectedTimeframe}
+                        />
                     </View>
                 </View>
             </ScrollView>
