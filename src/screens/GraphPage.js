@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
     },
     lineChartContainer: {
         margin: 5,
-        height: 280,
-        width: 290,
+        height: 300,
+        width: 360,
         alignContent: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',

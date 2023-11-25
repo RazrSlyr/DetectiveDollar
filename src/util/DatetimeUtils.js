@@ -75,12 +75,13 @@ const formatDate = (date) => {
 // Current issue is that if the currentDateString is the start date
 // of a week it will return the previous week end and start date
 const getWeekStartEndDate = (currentDateString) => {
-    const currentDate = new Date(currentDateString);
+    const [currentDateYear, currentDateMonth, currentDateDay] = currentDateString.split('-');
+    const currentDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
 
-    const weekStartDate = new Date(currentDate);
+    const weekStartDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
     weekStartDate.setDate(currentDate.getDate() - currentDate.getDay());
 
-    const weekEndDate = new Date(currentDate);
+    const weekEndDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
     weekEndDate.setDate(currentDate.getDate() + (6 - currentDate.getDay()));
 
     return [`${formatDate(weekStartDate)}`, `${formatDate(weekEndDate)}`];
@@ -103,7 +104,8 @@ const getNextWeekStartEndDate = (inputDate) => {
 };
 
 const getMonthStartEndDate = (currentDateString) => {
-    const currentDate = new Date(currentDateString);
+    const [currentDateYear, currentDateMonth, currentDateDay] = currentDateString.split('-');
+    const currentDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
 
     // Get the first day of the month
     const monthStartDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -115,7 +117,8 @@ const getMonthStartEndDate = (currentDateString) => {
 };
 
 const getPreviousMonthStartEndDate = (currentDateString) => {
-    const currentDate = new Date(currentDateString);
+    const [currentDateYear, currentDateMonth, currentDateDay] = currentDateString.split('-');
+    const currentDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
 
     // Calculate the first day of the previous month
     const firstDayOfPreviousMonth = new Date(
@@ -129,22 +132,25 @@ const getPreviousMonthStartEndDate = (currentDateString) => {
 };
 
 const getNextMonthStartEndDate = (currentDateString) => {
-    const currentDate = new Date(currentDateString);
+    const [currentDateYear, currentDateMonth, currentDateDay] = currentDateString.split('-');
+    const currentDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
     currentDate.setMonth(currentDate.getMonth() + 1, 1);
-    const nextMonthStartDate = new Date(currentDate);
-    const nextMonthEndDate = new Date(currentDate);
+    const nextMonthStartDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
+    const nextMonthEndDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
     nextMonthEndDate.setMonth(nextMonthEndDate.getMonth() + 1, 0);
 
     return [`${formatDate(nextMonthStartDate)}`, `${formatDate(nextMonthEndDate)}`];
 };
 
 const getYearStartEndDate = (currentDateString) => {
-    const currentDate = new Date(currentDateString);
+    const [currentDateYear, currentDateMonth, currentDateDay] = currentDateString.split('-');
+    const currentDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
     return [`${currentDate.getUTCFullYear()}-01-01`, `${currentDate.getUTCFullYear()}-12-31`];
 };
 
 const getPreviousYearStartEndDate = (currentDateString) => {
-    const currentDate = new Date(currentDateString);
+    const [currentDateYear, currentDateMonth, currentDateDay] = currentDateString.split('-');
+    const currentDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
     return [
         `${currentDate.getUTCFullYear() - 1}-01-01`,
         `${currentDate.getUTCFullYear() - 1}-12-31`,
@@ -152,7 +158,8 @@ const getPreviousYearStartEndDate = (currentDateString) => {
 };
 
 const getNextYearStartEndDate = (currentDateString) => {
-    const currentDate = new Date(currentDateString);
+    const [currentDateYear, currentDateMonth, currentDateDay] = currentDateString.split('-');
+    const currentDate = new Date(currentDateYear, currentDateMonth - 1, currentDateDay);
     return [
         `${currentDate.getUTCFullYear() + 1}-01-01`,
         `${currentDate.getUTCFullYear() + 1}-12-31`,
