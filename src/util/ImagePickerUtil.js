@@ -15,7 +15,6 @@ const pickImage = async () => {
     return result.assets[0].uri;
 };
 const captureImage = async () => {
-    // No permissions request is necessary for launching the image library
     const result = await ImagePicker.launchCameraAsync(CAPTUREOPTIONS);
 
     console.log(result);
