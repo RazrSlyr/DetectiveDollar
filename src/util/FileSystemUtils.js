@@ -298,7 +298,7 @@ async function getImageDirectory() {
     }
     return directory;
 }
-export async function addImage(imageURI) {
+export async function saveImage(imageURI) {
     if (!imageURI) {
         return null;
     }
