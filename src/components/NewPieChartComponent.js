@@ -38,7 +38,7 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
                 startDate = getCurrentDateString();
                 endDate = getCurrentDateString();
             }
-            
+
             const categoryDict = await getExpensesbyCategory(startDate, endDate);
             // console.log("categoryDict: ", categoryDict);
             let totalSpending = 0;
@@ -74,7 +74,7 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     useFocusEffect(
         React.useCallback(() => {
             updatePieChartData();
-        }, [])
+        }, [timeFrame, startDate, endDate])
     );
 
     const [totalSpending, setTotalSpending] = useState(0);
@@ -97,23 +97,40 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            <PieChart
-                style={{ height: 200, width: 200 }}
-                data={pieChartData}
-                donut
-                radius={90}
-                innerRadius={60}
-                centerLabelComponent={() => {
-                    return (
-                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 22, color: 'black', fontWeight: 'bold' }}>
-                                {formattedTotal}
-                            </Text>
-                        </View>
-                    );
-                }}
-            />
-            <PieChartLegend chartData={pieChartData} />
+            {Object.keys(pieChartData).length > 0 ? (
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: 20,
+                    }}>
+                    <PieChart
+                        style={{ height: 200, width: 200 }}
+                        data={pieChartData}
+                        donut
+                        radius={90}
+                        innerRadius={60}
+                        centerLabelComponent={() => {
+                            return (
+                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text
+                                        style={{
+                                            fontSize: 22,
+                                            color: 'black',
+                                            fontWeight: 'bold',
+                                        }}>
+                                        {formattedTotal}
+                                    </Text>
+                                </View>
+                            );
+                        }}
+                    />
+                    <PieChartLegend chartData={pieChartData} />
+                </View>
+            ) : (
+                <Text>No Data Available</Text>
+            )}
         </View>
     );
 };
