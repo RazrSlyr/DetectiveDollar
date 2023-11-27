@@ -11,6 +11,7 @@ import {
     SafeAreaView,
 } from 'react-native';
 
+import DatePickerComponent from '../components/DatePickerComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
@@ -24,10 +25,45 @@ import {
     deleteImage,
 } from '../util/FileSystemUtils';
 
+
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
+    const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
+
+    useEffect(() => {
+        const getExpenses = async () => {
+            try {
+                // Fetch expenses for today and set to state
+                const expenses = await getExpensesFromDay(targetDate);
+                setTodayExpenses(expenses);
+                // console.log('expenses set!');
+            } catch (error) {
+                console.error('Error fetching expenses:', error);
+            }
+        };
+
+        // Call getExpenses when the component mounts
+        getExpenses();
+
+        // Add an event listener for focus to re-fetch expenses when the component comes into focus
+        const unsubscribe = navigation.addListener('focus', getExpenses);
+
+        // Clean up the event listener when the component unmounts
+        return () => unsubscribe();
+    }, [targetDate, navigation]);
+
+    const handleDateChange = async (newDate) => {
+        try {
+            // Fetch expenses for new date and set to new state
+            const expenses = await getExpensesFromDay(newDate);
+            setTodayExpenses(expenses);
+            setTargetDate(newDate);
+        } catch (error) {
+            console.error('Error fetching expenses for new date:', error);
+        }
+    };
 
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
@@ -60,15 +96,21 @@ export default function HomePage({ navigation }) {
         setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
     };
 
-    useEffect(() => {
-        const getExpenses = async () => {
-            await applyRecurringExpenses();
-            setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
-        };
-        navigation.addListener('focus', () => {
-            getExpenses();
-        });
-    }, []);
+    // make date more readable
+    const parts = targetDate.split('-');
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
+
+    // Format the date as "month/day/year"
+    const formattedDate = `${month}/${day}/${year}`;
+
+    // error says too many re-renders
+    // // for arrow buttons
+    // const dayPlusOne = Number(day) + 1;
+    // const datePlusOne = `${year}-${month}-${dayPlusOne}`;
+    // const dayMinusOne = Number(day) - 1;
+    // const dateMinusOne = `${year}-${month}-${dayMinusOne}`;
 
     const openInfo = async () => {
         setShowExpenseInfo(true);
@@ -77,13 +119,16 @@ export default function HomePage({ navigation }) {
         setSelectedExpense(null);
         setShowExpenseInfo(false);
     };
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-
-            <Text style={[styles.title, styles.topTitle]}>Daily Summary</Text>
+            <Text style={[styles.title, styles.topTitle]}>Daily Spending</Text>
+            <TouchableOpacity style={styles.calendarContainer} activeOpacity={0.7}>
+                <DatePickerComponent onDateChange={handleDateChange} />
+            </TouchableOpacity>
             <View style={styles.totalExpensesContainer}>
-                <Text style={styles.subHeading}>Today's Expenses</Text>
+                <Text style={styles.subHeading}>Expenses for {formattedDate}</Text>
                 <Text style={styles.textInput}>{`${spending}`}</Text>
             </View>
             <View style={styles.expensesContainer}>
@@ -157,22 +202,35 @@ const styles = StyleSheet.create({
         // figure out fontStyles
     },
     topTitle: {
-        paddingTop: 60,
+        paddingTop: 20,
         margin: 'auto',
+    },
+    titleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 60,
+        width: 270,
+        height: 80,
+        backgroundColor: 'white',
+        borderRadius: 15,
     },
     title: {
         fontWeight: 'bold',
         fontSize: 36,
         color: Colors.secondaryColor,
+        marginRight: 15,
     },
     totalExpensesContainer: {
         backgroundColor: 'white',
+        borderRadius: 15,
+        marginTop: 20,
+        marginBottom: 20,
         height: 'auto',
         width: 270,
         alignItems: 'center',
         justifyContent: 'center',
         margin: 30,
-        borderRadius: 15,
     },
     subHeading: {
         color: Colors.subHeadingColor,
@@ -184,15 +242,12 @@ const styles = StyleSheet.create({
     textInput: {
         fontSize: 50,
         margin: 'auto',
-        paddingLeft: 10,
-        paddingBottom: 5,
     },
     expensesContainer: {
-        backgroundColor: 'green',
+        // backgroundColor: 'green',
         flex: 1 / 2,
         width: '70%',
-        borderRadius: 15,
-        borderWidth: 2,
+        borderRadius: 10,
     },
     scrollableContent: {
         flex: 1,
@@ -207,7 +262,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        borderRadius: 15,
+        borderRadius: 10,
         borderWidth: 2,
         borderColor: Colors.secondaryColor,
     },
@@ -219,5 +274,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
+    },
+    calendarContainer: {
+        borderRadius: 35,
+        backgroundColor: 'white',
+        padding: 15,
+    },
+    arrowsAndTotalExpenseContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    arrows: {
+        color: Colors.secondaryColor,
     },
 });

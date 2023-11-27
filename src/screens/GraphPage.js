@@ -4,11 +4,10 @@ import { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ChartWithInteractivity from '../../components/ChartWithInteractivity';
-import LineGraphComponent from '../../components/LineGraphComponent';
-import PieChartComponent from '../../components/PieChartComponent';
-import WeekMonthYearButtons from '../../components/weekMonthYearComponent';
-import { secondaryColor } from '../constants/Colors';
+import LineGraphComponent from '../components/LineGraphComponent';
+import NewPieChartComponent from '../components/NewPieChartComponent';
+import WeekMonthYearButtons from '../components/weekMonthYearComponent';
+import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
     getCurrentDateString,
@@ -123,10 +122,11 @@ const GraphPage = ({ navigation }) => {
                         />
                     </View>
                     <View style={styles.chartContainer}>
-                        <ChartWithInteractivity />
-                    </View>
-                    <View style={styles.chartContainer}>
-                        <PieChartComponent />
+                        <NewPieChartComponent 
+                            startDate={selectedTimeframeDates[0]}
+                            endDate={selectedTimeframeDates[1]}
+                            timeFrame={selectedTimeframe}
+                        />
                     </View>
                 </View>
             </ScrollView>
@@ -140,29 +140,32 @@ const styles = StyleSheet.create({
     // Need to figure out why there is a big gab at the top of the screen
     container: {
         paddingTop: StatusBar.currentHeight,
-        flex: 0.94,
+        flex: 1,
         alignItems: 'center',
     },
     scrollableContent: {
-        flex: 0.9,
+        flex: 1,
         width: '100%', // Adjust the width as needed
+        height: '100%',
         alignItems: 'center',
+        marginTop: -20,
     },
     title: {
         fontWeight: 'bold',
         fontSize: 36,
         textAlign: 'center',
-        color: secondaryColor,
-        marginTop: 95,
+        color: Colors.secondaryColor,
+        marginTop: 20,
     },
     chartContainer: {
         margin: 5,
-        height: 280,
+        height: 320,
         width: 290,
         alignContent: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',
         borderRadius: 20,
+        flex: 1,
     },
     lineChartContainer: {
         margin: 5,

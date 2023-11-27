@@ -5,7 +5,7 @@ import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Platform } from 'react-native';
 
-import { HomePage, AddExpense, GraphPage } from '../../src/screens';
+import { HomePage, AddExpense, GraphPage } from '../../screens';
 
 const Tab = createBottomTabNavigator();
 

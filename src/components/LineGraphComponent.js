@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 
-import { YEARLY, MONTHLY, WEEKLY } from '../src/constants/FrequencyConstants';
+import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
     getCurrentDateString,
     getWeekStartEndDate,
     getMonthStartEndDate,
     getYearStartEndDate,
-} from '../src/util/DatetimeUtils';
-import { getExpensesFromTimeframe, getExpensesFromDayframe } from '../src/util/FileSystemUtils';
+} from '../util/DatetimeUtils';
+import { getExpensesFromTimeframe, getExpensesFromDayframe } from '../util/FileSystemUtils';
 
 const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const [lineGraphData, setlineGraphData] = useState([]);
@@ -136,10 +136,10 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                     data={lineGraphData}
                     color="#37c871"
                     thickness={4}
-                    spacing={35}
+                    spacing={30}
                     noOfSections={5}
-                    yAxisLabelPrefix="$ "
-                    width={230}
+                    yAxisLabelPrefix="$"
+                    width={210}
                     height={220}
                     focusEnabled
                     showTextOnFocus
@@ -148,6 +148,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                     yAxisThickness={0}
                     scrollToIndex={-1}
                     showScrollIndicator
+                    yAxisLabelWidth={50}
                 />
             ) : (
                 <Text>Loading...</Text>

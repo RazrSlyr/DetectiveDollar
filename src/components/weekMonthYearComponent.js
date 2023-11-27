@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 
-import { secondaryColor } from '../src/constants/Colors.js';
-import { YEARLY, MONTHLY, WEEKLY } from '../src/constants/FrequencyConstants';
+import * as Colors from '../constants/Colors';
+import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 
 const WeekMonthYearButtons = ({ onSelect }) => {
     const [selection, setSelection] = useState(0);
@@ -21,7 +21,7 @@ const WeekMonthYearButtons = ({ onSelect }) => {
                 <TouchableOpacity
                     style={[
                         styles.btn,
-                        selection === 0 ? { backgroundColor: secondaryColor } : null,
+                        selection === 0 ? { backgroundColor: Colors.secondaryColor } : null,
                     ]}
                     onPress={() => handlePress(0)}>
                     <Text style={[styles.btnText, selection === 0 ? { color: 'white' } : null]}>
@@ -31,7 +31,7 @@ const WeekMonthYearButtons = ({ onSelect }) => {
                 <TouchableOpacity
                     style={[
                         styles.btn,
-                        selection === 1 ? { backgroundColor: secondaryColor } : null,
+                        selection === 1 ? { backgroundColor: Colors.secondaryColor } : null,
                     ]}
                     onPress={() => handlePress(1)}>
                     <Text style={[styles.btnText, selection === 1 ? { color: 'white' } : null]}>
@@ -41,7 +41,7 @@ const WeekMonthYearButtons = ({ onSelect }) => {
                 <TouchableOpacity
                     style={[
                         styles.btn,
-                        selection === 2 ? { backgroundColor: secondaryColor } : null,
+                        selection === 2 ? { backgroundColor: Colors.secondaryColor } : null,
                     ]}
                     onPress={() => handlePress(2)}>
                     <Text style={[styles.btnText, selection === 2 ? { color: 'white' } : null]}>
@@ -57,6 +57,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
+        margin: 'auto',
+        height: 100,
     },
     btnGroup: {
         flexDirection: 'row',
