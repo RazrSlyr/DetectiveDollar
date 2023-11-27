@@ -198,9 +198,9 @@ export async function getExpensesFromDayframe(startDay, endDay) {
 
 export async function getExpensesbyCategory(startDate, endDate) {
     const categoryDict = {};
-
     const rows = await getExpensesFromDayframe(startDate, endDate);
-
+    console.log("inside getExpenses", startDate, endDate);
+    
     for (const row of rows) {
         if (row['category'] in categoryDict) {
             categoryDict[row['category']].push(row);
@@ -209,7 +209,6 @@ export async function getExpensesbyCategory(startDate, endDate) {
         }
     }
 
-    // console.log("inside getExpenses", startDate, endDate);
     // if (startDate && endDate) {
     //     // if startDate and endDate are provided
     //     for (const row of rows) {
