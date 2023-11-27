@@ -199,8 +199,7 @@ export async function getExpensesFromDayframe(startDay, endDay) {
 export async function getExpensesbyCategory(startDate, endDate) {
     const categoryDict = {};
     const rows = await getExpensesFromDayframe(startDate, endDate);
-    console.log("inside getExpenses", startDate, endDate);
-    
+
     for (const row of rows) {
         if (row['category'] in categoryDict) {
             categoryDict[row['category']].push(row);
@@ -208,30 +207,6 @@ export async function getExpensesbyCategory(startDate, endDate) {
             categoryDict[row['category']] = [row];
         }
     }
-
-    // if (startDate && endDate) {
-    //     // if startDate and endDate are provided
-    //     for (const row of rows) {
-    //         const expenseDate = row['day'];
-
-    //         if (expenseDate >= startDate && expenseDate <= endDate) {
-    //             if (row['category'] in categoryDict) {
-    //                 categoryDict[row['category']].push(row);
-    //             } else {
-    //                 categoryDict[row['category']] = [row];
-    //             }
-    //         }
-    //     }
-    // } else {
-    //     // no date range is specified
-    //     for (const row of rows) {
-    //         if (row['category'] in categoryDict) {
-    //             categoryDict[row['category']].push(row);
-    //         } else {
-    //             categoryDict[row['category']] = [row];
-    //         }
-    //     }
-    // }
 
     return categoryDict;
 }
