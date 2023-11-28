@@ -196,18 +196,9 @@ export async function getExpensesFromDayframe(startDay, endDay) {
     return rows;
 }
 
-export async function getExpensesbyCategory() {
-    const db = await getDatabase();
+export async function getExpensesbyCategory(startDate, endDate) {
     const categoryDict = {};
-
-    let rows = [];
-    await db.transactionAsync(async (tx) => {
-        try {
-            rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
-        } catch (error) {
-            console.warn(`getExpensesbyCategory error ${error}`);
-        }
-    });
+    const rows = await getExpensesFromDayframe(startDate, endDate);
 
     for (const row of rows) {
         if (row['category'] in categoryDict) {
@@ -216,6 +207,7 @@ export async function getExpensesbyCategory() {
             categoryDict[row['category']] = [row];
         }
     }
+
     return categoryDict;
 }
 
@@ -298,7 +290,7 @@ async function getImageDirectory() {
     }
     return directory;
 }
-export async function addImage(imageURI) {
+export async function saveImage(imageURI) {
     if (!imageURI) {
         return null;
     }

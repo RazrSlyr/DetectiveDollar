@@ -119,12 +119,9 @@ const createExpenseByDayFrameQuery = (startDay, endDay) => {
     `;
 }; */
 
-
 const createExpenseByCategoryQuery = (category) => {
     return `SELECT * FROM expenses WHERE category = "${category}";`;
 };
-
-
 
 const createReacurringExpenseNextTriggerUpdate = (id, next_update) => {
     return `UPDATE reacurring
@@ -134,7 +131,7 @@ const createReacurringExpenseNextTriggerUpdate = (id, next_update) => {
 
 const createLastReacurrenceQuery = (id) => {
     return `SELECT * FROM expenses WHERE reacurring_id = ${id} ORDER BY timestamp DESC LIMIT 1;`;
-}
+};
 
 export {
     CREATE_EXPENSES_TABLE,

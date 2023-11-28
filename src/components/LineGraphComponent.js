@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 
-import { YEARLY, MONTHLY, WEEKLY } from '../src/constants/FrequencyConstants';
+import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
     getCurrentDateString,
     getWeekStartEndDate,
