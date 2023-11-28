@@ -40,7 +40,7 @@ const getDatetimeString = (date) => {
         second = '0' + second;
     }
     return `${date.getFullYear()}-${month}-${day} ${hour}:${minute}:${second}`;
-}
+};
 
 const getCurrentUTCDatetimeString = () => {
     const date = new Date();
