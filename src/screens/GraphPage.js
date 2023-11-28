@@ -80,7 +80,7 @@ const GraphPage = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <Text style={styles.title}>Reports</Text>
+                <Text style={styles.title}>Statistics</Text>
                 <View style={styles.dateContainer}>
                     <View style={styles.dateRange}>
                         <TouchableOpacity onPress={handleDecrementTimeFrame}>

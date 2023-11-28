@@ -9,8 +9,8 @@ import {
     getWeekStartEndDate,
     getMonthStartEndDate,
     getYearStartEndDate,
-} from '../src/util/DatetimeUtils';
-import { getExpensesFromDayframe } from '../src/util/FileSystemUtils';
+} from '../util/DatetimeUtils';
+import { getExpensesFromDayframe } from '../util/FileSystemUtils';
 
 const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const [lineGraphData, setlineGraphData] = useState([]);
