@@ -1,5 +1,6 @@
 import { AntDesign, Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
@@ -10,13 +11,14 @@ import {
     View,
     Dimensions,
     SafeAreaView,
+    Alert,
 } from 'react-native';
 
 import DropdownSelector from '../components/Dropdown';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToCategoryTable, addRowToExpenseTable, addImage } from '../util/FileSystemUtils';
+import { addRowToCategoryTable, addRowToExpenseTable, saveImage } from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
 export default function App({ navigation }) {
@@ -25,6 +27,7 @@ export default function App({ navigation }) {
     const [category, setCategory] = useState('');
     const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
+
     const handleButtonPress = async () => {
         // Add your button click logic here
         if (name === '' || amount === '' || category === '') {
@@ -35,7 +38,7 @@ export default function App({ navigation }) {
         await addRowToCategoryTable(category);
         let imageURI = null;
         if (previewURI) {
-            imageURI = await addImage(previewURI);
+            imageURI = await saveImage(previewURI);
         }
         await addRowToExpenseTable(
             name,
@@ -51,8 +54,7 @@ export default function App({ navigation }) {
         currency: 'USD',
     });
     const clearImage = async () => {
-        console.log('remove photo');
-        //deleteImageAsset(imageURI);
+        console.log('removed photo');
         setImageURI(null);
     };
     return (
@@ -119,18 +121,38 @@ export default function App({ navigation }) {
                         <TouchableOpacity
                             style={styles.rowItem}
                             onPress={async () => {
-                                const imageURI = await captureImage();
-                                console.log('uri from imagepicker: ', imageURI);
-                                setImageURI(imageURI);
+                                const cameraPermission =
+                                    await ImagePicker.requestCameraPermissionsAsync();
+                                if (cameraPermission.status === 'granted') {
+                                    const imageURI = await captureImage();
+                                    console.log('uri from imagepicker: ', imageURI);
+                                    setImageURI(imageURI);
+                                } else {
+                                    Alert.alert(
+                                        'Camera Permission Not Set',
+                                        'Please change app permission in settings',
+                                        [{ text: 'OK' }]
+                                    );
+                                }
                             }}>
                             <Feather name="camera" size={40} color="black" />
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.rowItem}
                             onPress={async () => {
-                                const imageURI = await pickImage();
-                                console.log('uri from imagepicker: ', imageURI);
-                                setImageURI(imageURI);
+                                const mediaLibaryPermission =
+                                    await ImagePicker.requestMediaLibraryPermissionsAsync();
+                                if (mediaLibaryPermission.status === 'granted') {
+                                    const imageURI = await pickImage();
+                                    console.log('uri from imagepicker: ', imageURI);
+                                    setImageURI(imageURI);
+                                } else {
+                                    Alert.alert(
+                                        'Media Library Permission Not Set',
+                                        'Please change app permission in settings',
+                                        [{ text: 'OK' }]
+                                    );
+                                }
                             }}>
                             <AntDesign name="upload" size={40} color="black" />
                         </TouchableOpacity>

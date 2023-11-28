@@ -17,6 +17,7 @@ import {
     deleteExpense,
     createExpenseInsert,
     createExpenseByTimeframeQuery,
+    createExpenseByDayFrameQuery,
     createReacurringInsert,
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
@@ -174,18 +175,29 @@ export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
     return rows;
 }
 
-export async function getExpensesbyCategory() {
+export async function getExpensesFromDayframe(startDay, endDay) {
+    //params: ISO format strings: YYYY-MM-DD or YYYY-MM-DD hh:mm:ss
     const db = await getDatabase();
-    const categoryDict = {};
-
+    //const startTimestamp = Date.parse(startDay);
+    //const endTimestamp = Date.parse(endDay);
+    //if (isNaN(startTimestamp) || isNaN(endTimestamp)) {
+    //    console.warn(`malformed ISO strings to get timestamp ${startDay} ${endDay}`);
+    //    return [];
+    //}
     let rows = [];
     await db.transactionAsync(async (tx) => {
         try {
-            rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
+            rows = (await tx.executeSqlAsync(createExpenseByDayFrameQuery(startDay, endDay))).rows;
         } catch (error) {
-            console.warn(`getExpensesbyCategory error ${error}`);
+            console.warn(`getExpensesFromTimeframe error ${error}`);
         }
     });
+    return rows;
+}
+
+export async function getExpensesbyCategory(startDate, endDate) {
+    const categoryDict = {};
+    const rows = await getExpensesFromDayframe(startDate, endDate);
 
     for (const row of rows) {
         if (row['category'] in categoryDict) {
@@ -194,6 +206,7 @@ export async function getExpensesbyCategory() {
             categoryDict[row['category']] = [row];
         }
     }
+
     return categoryDict;
 }
 
@@ -213,14 +226,27 @@ export async function applyRecurringExpenses() {
     const currentDate = new Date();
     for (let i = 0; i < recurringExpenses?.length; i++) {
         const element = recurringExpenses[i];
-        let recurrenceDate = getDateFromUTCDatetimeString(element['next_trigger']);
-        while (recurrenceDate < currentDate) {
+        let recurrenceDate = getDateFromDatetimeString(element['next_trigger']);
+        // Get last expense to get data
+        let lastRecurrance = null;
+        await db.transactionAsync(async (tx) => {
+            try {
+                // Get last expense to get data
+                const lastRecurranceData = await tx.executeSqlAsync(
+                    createLastReacurrenceQuery(element['id'])
+                );
+                if (lastRecurranceData?.rows?.length === 0) {
+                    return;
+                }
+                lastRecurrance = lastRecurranceData.rows[0];
+            } catch (error) {
+                console.warn(`applyRecurringExpenses error ${error}`);
+            }
+        });
+
+        while (lastRecurrance != null && recurrenceDate < currentDate) {
             await db.transactionAsync(async (tx) => {
                 try {
-                    // Get last expense to get data
-                    const lastRecurrance = (
-                        await tx.executeSqlAsync(createLastReacurrenceQuery(element['id']))
-                    ).rows[0];
                     const newRecurranceDay = getDateStringFromDate(recurrenceDate);
                     // Add expense using obtained data
                     await tx.executeSqlAsync(
@@ -263,7 +289,7 @@ async function getImageDirectory() {
     }
     return directory;
 }
-export async function addImage(imageURI) {
+export async function saveImage(imageURI) {
     if (!imageURI) {
         return null;
     }
