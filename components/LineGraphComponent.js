@@ -10,7 +10,7 @@ import {
     getMonthStartEndDate,
     getYearStartEndDate,
 } from '../src/util/DatetimeUtils';
-import { getExpensesFromTimeframe, getExpensesFromDayframe } from '../src/util/FileSystemUtils';
+import { getExpensesFromDayframe } from '../src/util/FileSystemUtils';
 
 const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const [lineGraphData, setlineGraphData] = useState([]);
@@ -51,11 +51,6 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 return current.toISOString().split('T')[0];
             }
         }
-    };
-    const getDateFromDayOfMonth = (startDate, dayOfMonth) => {
-        const [startYear, startMonth, startDay] = startDate.split('-');
-        return `${startYear}-${startMonth}-${dayOfMonth}`;
-
     };
 
     const updateLineGraphData = async () => {
@@ -114,26 +109,20 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                     return accumulator;
                 }, {});
 
-/*                 const lineGraphData = monthLabel.map((dayOfMonth) => ({
-                    label: dayOfMonth,
-                    value: updatedData[dayOfMonth] || 0, // Use an empty value if no data for the day
-                    date: `${startMonth}/${dayOfMonth}/${startYear}`,
-                })); */
                 const labelMapping = {
                     [totalDays]: totalDays,
-                    [totalDays - step]: totalDays - step,
-                    [totalDays - 2 * step]: totalDays - 2 * step,
-                    [totalDays - 3 * step]: totalDays - 3 * step,
-                    [totalDays - 4 * step]: totalDays - 4 * step,
+                    [totalDays - step]: totalDays - step + 1,
+                    [totalDays - 2 * step]: totalDays - 2 * step + 1,
+                    [totalDays - 3 * step]: totalDays - 3 * step + 1,
+
+                    [totalDays - 4 * step]: totalDays - 4 * step + 1,
                 };
-                //console.log(labelMapping);
-            
+
                 const lineGraphData = monthLabel.map((dayOfMonth) => ({
                     label: labelMapping[dayOfMonth],
                     value: updatedData[dayOfMonth] || 0, // Use an empty value if no data for the day
                     date: `${startMonth}/${dayOfMonth}/${startYear}`,
                 }));
-                //console.log(lineGraphData);
                 const maxDataValue = lineGraphData.reduce(
                     (max, current) => (current.value > max ? current.value : max),
                     0
@@ -195,17 +184,27 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     );
 
     let spacing;
+    let initialSpacing;
+    let fontSize;
 
     // Conditionally set the spacing based on the selected timeframe
     if (timeFrame === WEEKLY) {
-        spacing = 38; // or whatever value is appropriate for weekly spacing
+        spacing = 38;
+        initialSpacing = 40;
+        fontSize = 14;
     } else if (timeFrame === MONTHLY) {
-        spacing = 8; // or whatever value is appropriate for monthly spacing
+        spacing = 8.5;
+        initialSpacing = 35;
+        fontSize = 12;
     } else if (timeFrame === YEARLY) {
-        spacing = 21; // or whatever value is appropriate for yearly spacing
+        spacing = 22;
+        initialSpacing = 30;
+        fontSize = 14;
     } else {
         // Default value for other cases
-        spacing = 20;
+        spacing = 38;
+        initialSpacing = 40;
+        fontSize = 14;
     }
 
     return (
@@ -219,27 +218,20 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                     startOpacity={0.8}
                     endFillColor="#D5FADD"
                     endOpacity={0.3}
-                    dataPointsRadius={3}
-                    dataPointsColor="#2F4858"
                     color="#37c871"
                     thickness={4}
                     width={310}
                     height={220}
                     scrollToIndex={-1}
-                    //showXAxisIndices
-                    //disableScroll
-                    spacing={spacing} // 38 for weekly, 20/21 for yearly, and 8 for monthly
-                    initialSpacing={40}
+                    spacing={spacing}
+                    initialSpacing={initialSpacing}
                     endSpacing={0}
                     label={['0', '30']}
-                    //showVerticalLines
                     xAxisLabelTextStyle={{
                         color: '#545454',
-                        fontSize: 12,
+                        fontSize: fontSize,
                         textAlign: 'left',
-                        marginRight: -15,
-                        //paddingHorizontal:-100,
-                        //paddingRight: 1000,
+                        marginRight: -9,
                     }}
                     yAxisTextStyle={{
                         color: '#545454',
