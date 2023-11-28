@@ -106,12 +106,21 @@ const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
     return `SELECT * FROM expenses WHERE timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY timestamp`;
 };
 
+const createExpenseByDayFrameQuery = (startDay, endDay) => {
+    return `SELECT * FROM expenses WHERE DAY BETWEEN "${startDay}" AND "${endDay}" ORDER BY DAY`;
+};
+/* const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
+    return `
+        SELECT * 
+        FROM expenses 
+        WHERE timestamp >= "${startTimestamp}" 
+          AND timestamp < date("${endTimestamp}", '+1 day') 
+        ORDER BY timestamp;
+    `;
+}; */
+
 const createExpenseByCategoryQuery = (category) => {
     return `SELECT * FROM expenses WHERE category = "${category}";`;
-};
-
-const createExpenseByCategoryandTimeframeQuery = (category, startTimestamp, endTimestamp) => {
-    return `SELECT * FROM expenses WHERE category = "${category}" AND timestamp BETWEEN "${startTimestamp}" AND "${endTimestamp}" ORDER BY category, timestamp;`;
 };
 
 const createReacurringExpenseNextTriggerUpdate = (id, next_update) => {
@@ -122,7 +131,7 @@ const createReacurringExpenseNextTriggerUpdate = (id, next_update) => {
 
 const createLastReacurrenceQuery = (id) => {
     return `SELECT * FROM expenses WHERE reacurring_id = ${id} ORDER BY timestamp DESC LIMIT 1;`;
-}
+};
 
 export {
     CREATE_EXPENSES_TABLE,
@@ -144,8 +153,8 @@ export {
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
     createExpenseByCategoryQuery,
-    createExpenseByCategoryandTimeframeQuery,
     createReacurringExpenseNextTriggerUpdate,
     createLastReacurrenceQuery,
     createReacurringDeleteById,
+    createExpenseByDayFrameQuery,
 };

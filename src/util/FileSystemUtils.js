@@ -17,6 +17,7 @@ import {
     deleteExpense,
     createExpenseInsert,
     createExpenseByTimeframeQuery,
+    createExpenseByDayFrameQuery,
     createReacurringInsert,
     createReacurringByIdQuery,
     createExpenseInsertWithReacurringId,
@@ -173,18 +174,29 @@ export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
     return rows;
 }
 
-export async function getExpensesbyCategory() {
+export async function getExpensesFromDayframe(startDay, endDay) {
+    //params: ISO format strings: YYYY-MM-DD or YYYY-MM-DD hh:mm:ss
     const db = await getDatabase();
-    const categoryDict = {};
-
+    //const startTimestamp = Date.parse(startDay);
+    //const endTimestamp = Date.parse(endDay);
+    //if (isNaN(startTimestamp) || isNaN(endTimestamp)) {
+    //    console.warn(`malformed ISO strings to get timestamp ${startDay} ${endDay}`);
+    //    return [];
+    //}
     let rows = [];
     await db.transactionAsync(async (tx) => {
         try {
-            rows = (await tx.executeSqlAsync(GET_EXPENSES_TABLE_QUERY)).rows;
+            rows = (await tx.executeSqlAsync(createExpenseByDayFrameQuery(startDay, endDay))).rows;
         } catch (error) {
-            console.warn(`getExpensesbyCategory error ${error}`);
+            console.warn(`getExpensesFromTimeframe error ${error}`);
         }
     });
+    return rows;
+}
+
+export async function getExpensesbyCategory(startDate, endDate) {
+    const categoryDict = {};
+    const rows = await getExpensesFromDayframe(startDate, endDate);
 
     for (const row of rows) {
         if (row['category'] in categoryDict) {
@@ -193,6 +205,7 @@ export async function getExpensesbyCategory() {
             categoryDict[row['category']] = [row];
         }
     }
+
     return categoryDict;
 }
 
@@ -275,7 +288,7 @@ async function getImageDirectory() {
     }
     return directory;
 }
-export async function addImage(imageURI) {
+export async function saveImage(imageURI) {
     if (!imageURI) {
         return null;
     }
