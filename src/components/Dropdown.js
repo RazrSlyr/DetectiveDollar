@@ -52,23 +52,18 @@ export default DropdownSelector;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
-        padding: 16,
+        flex: 1,
+        width: '84%',
     },
     dropdown: {
-        width: 200,
-        height: 50,
-        borderColor: 'gray',
-        borderWidth: 0.5,
-        borderRadius: 8,
-        paddingHorizontal: 8,
+        width: '100%',
+        height: 20,
     },
     icon: {
         marginRight: 5,
     },
     label: {
         position: 'absolute',
-        backgroundColor: 'white',
         left: 22,
         top: 8,
         zIndex: 999,
@@ -79,7 +74,7 @@ const styles = StyleSheet.create({
     placeholderStyle: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: textColor,
+        color: '#ccc',
     },
     selectedTextStyle: {
         fontSize: 16,
