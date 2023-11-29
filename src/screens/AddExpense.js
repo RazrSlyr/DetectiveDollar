@@ -90,7 +90,7 @@ export default function App({ navigation }) {
                     </Text>
                 </View>
                 <View style={styles.box2}>
-                    <View style={styles.inputContainer}>
+                    <View style={[styles.inputContainer, styles.firstInput]}>
                         <Text style={styles.inputHeading}>Name</Text>
                         <TextInput
                             style={styles.input}
@@ -143,6 +143,15 @@ export default function App({ navigation }) {
                         />
                     </View>
                     <GreenLine />
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputHeading}>Memo</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Notes about spending"
+                            /* Need to add logic to connect to backend */
+                        />
+                    </View>
+                    <GreenLine />
                     <View style={[styles.inputContainer, styles.cameraBtnsContainer]}>
                         {previewURI ? (
                             <SafeAreaView style={styles.container}>
@@ -178,7 +187,11 @@ export default function App({ navigation }) {
                                             );
                                         }
                                     }}>
-                                    <Feather name="camera" size={40} color="black" />
+                                    <Feather
+                                        name="camera"
+                                        size={36}
+                                        color={Colors.secondaryColor}
+                                    />
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={styles.rowItem}
@@ -197,7 +210,11 @@ export default function App({ navigation }) {
                                             );
                                         }
                                     }}>
-                                    <AntDesign name="upload" size={40} color="black" />
+                                    <AntDesign
+                                        name="upload"
+                                        size={36}
+                                        color={Colors.secondaryColor}
+                                    />
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -252,7 +269,7 @@ const styles = StyleSheet.create({
     },
     box2: {
         width: 300,
-        height: '65%',
+        height: '66%',
         // height: Dimensions.get('window').height * 0.4,
         backgroundColor: '#ffffff',
         borderRadius: 10,
@@ -262,7 +279,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         //flex: 1,
-        height: 50,
+        height: 60,
         width: '100%',
         alignItems: 'center',
         textAlign: 'left',
@@ -272,13 +289,13 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto-Bold',
         color: Colors.secondaryColor,
         width: '84%',
-        marginTop: 10,
+        marginTop: 15,
     },
     input: {
         width: '84%',
         color: Colors.textColor,
         fontFamily: 'Roboto-Bold',
-        fontSize: 16,
+        fontSize: 18,
         textAlign: 'left',
     },
     button: {
@@ -296,18 +313,18 @@ const styles = StyleSheet.create({
         aspectRatio: 1,
     },
     rowContainer: {
-        backgroundColor: 'red',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        color: Colors.secondaryColor,
     },
     rowItem: {
         margin: 10,
     },
     cameraBtnsContainer: {
         height: 100,
-        backgroundColor: 'blue',
-        marginTop: 80,
+        marginTop: 10,
+    },
+    firstInput: {
+        marginTop: 0,
     },
 });
