@@ -2,7 +2,7 @@ import { AntDesign, Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     TouchableOpacity,
     StyleSheet,
@@ -19,8 +19,8 @@ import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
-import { getCurrentDateString, getDateStringFromDate } from '../util/DatetimeUtils';
-import { addRowToCategoryTable, addRowToExpenseTable, saveImage } from '../util/FileSystemUtils';
+import { getCurrentDateString } from '../util/DatetimeUtils';
+import { addRowToCategoryTable, addRowToExpenseTable, saveImage, getExpensesFromDay } from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
 export default function App({ navigation }) {
@@ -29,6 +29,32 @@ export default function App({ navigation }) {
     const [category, setCategory] = useState('');
     const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
+    const [todayExpenses, setTodayExpenses] = useState([]);
+    
+    const spending = useMemo(() => {
+        if (todayExpenses?.length === 0) {
+            return '$0.00';
+        }
+        let newSpending = 0;
+        todayExpenses.forEach((expense) => {
+            newSpending += parseFloat(expense['amount']);
+        });
+        const todaySpending = newSpending.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+        });
+        return todaySpending;
+    }, [todayExpenses]);
+
+    useEffect(() => {
+        const getExpenses = async () => {
+            setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
+        };
+        navigation.addListener('focus', () => {
+            getExpenses();
+        });
+    }, []);
 
     const handleButtonPress = async () => {
         // Add your button click logic here
@@ -57,10 +83,6 @@ export default function App({ navigation }) {
             frequency
         );
     };
-    const formattedAmount = amount.toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    });
     const clearImage = async () => {
         console.log('removed photo');
         setImageURI(null);
@@ -85,9 +107,7 @@ export default function App({ navigation }) {
                         }}>
                         Today's Spending
                     </Text>
-                    <Text style={{ ...styles.title, fontSize: 40, top: 10 }}>
-                        ${formattedAmount}
-                    </Text>
+                    <Text style={{ fontSize: 50, paddingTop: 15, left: -5 }}>{`${spending}`}</Text>
                 </View>
                 <View style={styles.box2}>
                     <View style={[styles.inputContainer, styles.firstInput]}>
@@ -266,6 +286,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         borderRadius: 10,
         margin: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     box2: {
         width: 300,
