@@ -150,7 +150,7 @@ export default function HomePage({ navigation }) {
                                             />
                                         )}
                                     </View>
-                                    <Text style={styles.expenseData}>{expense['amount']}</Text>
+                                    <Text style={styles.expenseData}>{parseFloat(expense['amount']).toFixed(2)}</Text>
                                     {/* This code handles the expense deletion */}
                                     <TouchableOpacity
                                         onPress={async () => {
