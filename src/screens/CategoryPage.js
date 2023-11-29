@@ -1,24 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useMemo, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
-import {
-    SafeAreaView,
-    SafeAreaProvider,
-    SafeAreaInsetsContext,
-    useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import { Button } from 'react-native-web';
+import { useEffect, useState } from 'react';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
+import CategoryEditComponent from '../components/CategoryEditComponent';
 import * as Colors from '../constants/Colors';
 import { getCategoryTable } from '../util/FileSystemUtils';
 export default function CategoryPage({ navigation }) {
     const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [showEditor, setShowEditor] = useState(false);
     useEffect(() => {
         const getCategories = async () => {
             try {
                 // Fetch expenses for today and set to state
                 const categories = await getCategoryTable();
-                console.log(categories);
                 setCategories(categories);
                 console.log('Categories set!');
             } catch (error) {
@@ -35,6 +31,15 @@ export default function CategoryPage({ navigation }) {
         // Clean up the event listener when the component unmounts
         return () => unsubscribe();
     }, [navigation]);
+
+    const openCategoryEditor = async () => {
+        setShowEditor(true);
+    };
+    const closeCategoryEditor = () => {
+        setSelectedCategory(null);
+        setShowEditor(false);
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
@@ -56,23 +61,35 @@ export default function CategoryPage({ navigation }) {
                                 },
                             ]}>
                             <Text style={styles.categoryText}>{category.name}</Text>
-                            <TouchableOpacity style={styles.editButtonContainer}>
+                            <TouchableOpacity
+                                style={styles.editButtonContainer}
+                                onPress={async () => {
+                                    setSelectedCategory(category);
+                                    console.log('edit', category.name);
+                                    openCategoryEditor();
+                                }}>
                                 <Text style={styles.editText}>Edit</Text>
                             </TouchableOpacity>
                         </View>
                     );
                 })}
             </ScrollView>
+            <CategoryEditComponent
+                isVisable={showEditor}
+                onClose={closeCategoryEditor}
+                category={selectedCategory}
+            />
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
         height: '90%',
-        alignContent: 'flex-start',
+        width: '100%',
+        alignSelf: 'center',
         alignItems: 'center',
+        backgroundColor: Colors.primaryColor,
         // figure out fontStyles
     },
     scrollableContainer: {
