@@ -5,7 +5,7 @@ import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Platform } from 'react-native';
 
-import { HomePage, AddExpense, GraphPage } from '../../screens';
+import { HomePage, AddExpense, GraphPage, CategoryPage } from '../../screens';
 
 const Tab = createBottomTabNavigator();
 
@@ -84,6 +84,7 @@ const Tabs = () => {
                     },
                 }}
             />
+            <Tab.Screen name="Category" component={CategoryPage} options={{ href: null }} />
         </Tab.Navigator>
     );
 };

@@ -9,6 +9,7 @@ import {
     ScrollView,
     Alert,
     SafeAreaView,
+    Button,
 } from 'react-native';
 
 import DatePickerComponent from '../components/DatePickerComponent';
@@ -24,7 +25,6 @@ import {
     getRowFromExpenseTable,
     deleteImage,
 } from '../util/FileSystemUtils';
-
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
@@ -150,7 +150,9 @@ export default function HomePage({ navigation }) {
                                             />
                                         )}
                                     </View>
-                                    <Text style={styles.expenseData}>{parseFloat(expense['amount']).toFixed(2)}</Text>
+                                    <Text style={styles.expenseData}>
+                                        {parseFloat(expense['amount']).toFixed(2)}
+                                    </Text>
                                     {/* This code handles the expense deletion */}
                                     <TouchableOpacity
                                         onPress={async () => {
@@ -184,6 +186,14 @@ export default function HomePage({ navigation }) {
                         {/* Add more content as needed */}
                     </View>
                 </ScrollView>
+            </View>
+            <View>
+                <Button
+                    title="Category"
+                    onPress={() => {
+                        navigation.navigate('Category');
+                    }}
+                />
             </View>
             <ExpenseInfoComponent
                 isVisable={showExpenseInfo}
