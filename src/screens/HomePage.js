@@ -77,7 +77,7 @@ export default function HomePage({ navigation }) {
 
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
-            return 0;
+            return '$0.00';
         }
         let newSpending = 0;
         todayExpenses.forEach(async (expense) => {
@@ -86,6 +86,7 @@ export default function HomePage({ navigation }) {
         const todaySpending = newSpending.toLocaleString('en-US', {
             style: 'currency',
             currency: 'USD',
+            minimumFractionDigits: 2,
         });
         return todaySpending;
     }, [todayExpenses]);
@@ -135,13 +136,6 @@ export default function HomePage({ navigation }) {
 
     // Format the date as "month/day/year"
     const formattedDate = `${month}/${day}/${year}`;
-
-    // error says too many re-renders
-    // // for arrow buttons
-    // const dayPlusOne = Number(day) + 1;
-    // const datePlusOne = `${year}-${month}-${dayPlusOne}`;
-    // const dayMinusOne = Number(day) - 1;
-    // const dateMinusOne = `${year}-${month}-${dayMinusOne}`;
 
     const openInfo = async () => {
         setShowExpenseInfo(true);
