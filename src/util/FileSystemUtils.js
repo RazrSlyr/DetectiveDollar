@@ -2,9 +2,8 @@ import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 import {
-    getCurrentDateString,
     getCurrentUTCDatetimeString,
-    getDateFromDatetimeString,
+    getDateFromUTCDatetimeString,
     getDateStringFromDate,
     incrementDateByFrequency,
 } from './DatetimeUtils';
@@ -29,7 +28,6 @@ import {
     createReacurringExpenseNextTriggerUpdate,
     createLastReacurrenceQuery,
     createExpenseByIdQuery,
-    createExpenseDeleteById,
     createReacurringDeleteById,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
@@ -227,7 +225,7 @@ export async function applyRecurringExpenses() {
     const currentDate = new Date();
     for (let i = 0; i < recurringExpenses?.length; i++) {
         const element = recurringExpenses[i];
-        let recurrenceDate = getDateFromDatetimeString(element['next_trigger']);
+        let recurrenceDate = getDateFromUTCDatetimeString(element['next_trigger']);
         // Get last expense to get data
         let lastRecurrance = null;
         await db.transactionAsync(async (tx) => {
@@ -245,7 +243,7 @@ export async function applyRecurringExpenses() {
             }
         });
 
-        while (lastRecurrance != null && recurrenceDate < currentDate) {
+        while (lastRecurrance != null && recurrenceDate <= currentDate) {
             await db.transactionAsync(async (tx) => {
                 try {
                     const newRecurranceDay = getDateStringFromDate(recurrenceDate);
