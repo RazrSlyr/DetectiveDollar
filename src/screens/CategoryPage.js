@@ -1,15 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 import {
-    TouchableOpacity,
-    StyleSheet,
-    View,
-    Text,
-    ScrollView,
-    Alert,
     SafeAreaView,
-    Array,
-} from 'react-native';
+    SafeAreaProvider,
+    SafeAreaInsetsContext,
+    useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { Button } from 'react-native-web';
 
 import * as Colors from '../constants/Colors';
@@ -21,9 +18,9 @@ export default function CategoryPage({ navigation }) {
             try {
                 // Fetch expenses for today and set to state
                 const categories = await getCategoryTable();
+                console.log(categories);
                 setCategories(categories);
                 console.log('Categories set!');
-                console.log(categories);
             } catch (error) {
                 console.error('Error fetching categories:', error);
             }
@@ -41,44 +38,92 @@ export default function CategoryPage({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-            <Text style={[styles.title, styles.topTitle]}>Categories</Text>
-            <View style={styles.scrollableContent}>
+            <View style={styles.titleContainer}>
+                <Text style={styles.titleText}>Categories</Text>
+            </View>
+            <ScrollView
+                style={styles.scrollableContainer}
+                contentContainerStyle={styles.scrollableContent}>
                 {categories.map((category) => {
                     return (
-                        <TouchableOpacity style={styles.catgeoryContainer}>
-                            <Text>{category['name']}</Text>
-                        </TouchableOpacity>
+                        <View
+                            style={[
+                                styles.catgeoryContainer,
+                                {
+                                    backgroundColor: category['color']
+                                        ? category['color']
+                                        : Colors.secondaryColor,
+                                },
+                            ]}>
+                            <Text style={styles.categoryText}>{category.name}</Text>
+                            <TouchableOpacity style={styles.editButtonContainer}>
+                                <Text style={styles.editText}>Edit</Text>
+                            </TouchableOpacity>
+                        </View>
                     );
                 })}
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        width: '100%',
+        height: '90%',
+        alignContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: Colors.primaryColor,
         // figure out fontStyles
     },
-    scrollableContent: {
+    scrollableContainer: {
         flex: 1,
+        width: '100%',
+    },
+    scrollableContent: {
         width: '100%', // Adjust the width as needed
+        padding: 10,
         alignItems: 'center',
     },
-    topTitle: {
-        paddingTop: 20,
+    titleContainer: {
         margin: 'auto',
+        width: '100%',
+        backgroundColor: Colors.secondaryColor,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    title: {
+    titleText: {
         fontWeight: 'bold',
-        fontSize: 36,
-        color: Colors.secondaryColor,
-        marginRight: 15,
+        fontSize: 35,
+        color: Colors.primaryColor,
+        justifyContent: 'center',
     },
     catgeoryContainer: {
-        width: '80%',
-        height: '10%',
+        width: '90%',
+        height: 'auto',
+        flexDirection: 'row',
+        alignItems: 'center',
+        margin: 10,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+    },
+    categoryText: {
+        color: Colors.primaryColor,
+        fontSize: 30,
+        fontWeight: 'bold',
+        alignSelf: 'flex-start',
+        margin: 10,
+    },
+    editButtonContainer: {
+        backgroundColor: Colors.primaryColor,
+        borderRadius: 30,
+        width: '20%',
+        height: 'auto',
+        alignItems: 'center',
+        position: 'absolute',
+        right: 20,
+    },
+    editText: {
+        color: Colors.secondaryColor,
+        fontSize: 20,
     },
 });
