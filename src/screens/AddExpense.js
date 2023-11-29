@@ -14,8 +14,10 @@ import {
     Alert,
 } from 'react-native';
 
+import DatePickerComponent from '../components/DatePickerComponent';
 import DropdownSelector from '../components/Dropdown';
-import { textColor } from '../constants/Colors';
+import GreenLine from '../components/GreenLine';
+import * as Colors from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString, getDateStringFromDate } from '../util/DatetimeUtils';
 import { addRowToCategoryTable, addRowToExpenseTable, saveImage } from '../util/FileSystemUtils';
@@ -65,120 +67,154 @@ export default function App({ navigation }) {
     };
     return (
         <View style={styles.container}>
-            <Text style={[styles.title, styles.topTitle]}>Add{'\n'}Expense</Text>
-            <StatusBar style="auto" />
-            <View style={styles.box}>
-                <Text
-                    style={{
-                        position: 'absolute',
-                        fontFamily: 'Roboto-Bold',
-                        color: '#d6dfda',
-                        top: 5,
-                        left: 5,
-                    }}>
-                    Today's Remaining Budget
-                </Text>
-                <Text style={{ ...styles.title, fontSize: 40, top: 10 }}>${formattedAmount}</Text>
-            </View>
-            <View style={styles.box2}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Name"
-                    onChangeText={(value) => setName(value)}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Amount"
-                    keyboardType="numeric"
-                    maxLength={10}
-                    onChangeText={(value) => setAmount(parseFloat(value).toFixed(2))}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Category"
-                    onChangeText={(value) => setCategory(value)}
-                />
-                <DropdownSelector
-                    data={[
-                        { label: "Don't Repeat", value: NO_REPETION },
-                        { label: 'Daily', value: DAILY },
-                        { label: 'Weekly', value: WEEKLY },
-                        { label: 'Monthly', value: MONTHLY },
-                    ]}
-                    onChange={(item) => {
-                        setFrequency(item.value);
-                    }}
-                    dropdownLabel="Expense Frequency"
-                    placeholderLabel="Expense Frequency"
-                />
-                {previewURI ? (
-                    <SafeAreaView style={styles.container}>
-                        <Image style={styles.preview} source={{ uri: previewURI }} />
-                        <TouchableOpacity
-                            style={{ position: 'absolute', right: -30, alignSelf: 'center' }}
-                            onPress={async () => {
-                                await clearImage();
-                            }}>
-                            <Feather name="x-circle" size={30} color="red" />
-                        </TouchableOpacity>
-                    </SafeAreaView>
-                ) : (
-                    <View style={styles.rowContainer}>
-                        <TouchableOpacity
-                            style={styles.rowItem}
-                            onPress={async () => {
-                                const cameraPermission =
-                                    await ImagePicker.requestCameraPermissionsAsync();
-                                if (cameraPermission.status === 'granted') {
-                                    const imageURI = await captureImage();
-                                    console.log('uri from imagepicker: ', imageURI);
-                                    setImageURI(imageURI);
-                                } else {
-                                    Alert.alert(
-                                        'Camera Permission Not Set',
-                                        'Please change app permission in settings',
-                                        [{ text: 'OK' }]
-                                    );
-                                }
-                            }}>
-                            <Feather name="camera" size={40} color="black" />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.rowItem}
-                            onPress={async () => {
-                                const mediaLibaryPermission =
-                                    await ImagePicker.requestMediaLibraryPermissionsAsync();
-                                if (mediaLibaryPermission.status === 'granted') {
-                                    const imageURI = await pickImage();
-                                    console.log('uri from imagepicker: ', imageURI);
-                                    setImageURI(imageURI);
-                                } else {
-                                    Alert.alert(
-                                        'Media Library Permission Not Set',
-                                        'Please change app permission in settings',
-                                        [{ text: 'OK' }]
-                                    );
-                                }
-                            }}>
-                            <AntDesign name="upload" size={40} color="black" />
-                        </TouchableOpacity>
-                    </View>
-                )}
-            </View>
-
-            <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
-                <View style={styles.buttonContainer}>
+            <View style={styles.upperPart} />
+            {/* Upper portion above SafeAreaView */}
+            <SafeAreaView style={styles.content}>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.title}>Add Expense</Text>
+                </View>
+                <StatusBar style="auto" />
+                <View style={styles.box}>
                     <Text
                         style={{
+                            position: 'absolute',
                             fontFamily: 'Roboto-Bold',
-                            color: '#ffffff',
-                            textAlign: 'center',
-                            fontSize: 30,
+                            color: '#d6dfda',
+                            top: 5,
+                            left: 5,
                         }}>
-                        Add
+                        Today's Spending
+                    </Text>
+                    <Text style={{ ...styles.title, fontSize: 40, top: 10 }}>
+                        ${formattedAmount}
                     </Text>
                 </View>
-            </TouchableOpacity>
+                <View style={styles.box2}>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputHeading}>Name</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Name of expense"
+                            onChangeText={(value) => setName(value)}
+                        />
+                    </View>
+                    <GreenLine />
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputHeading}>Amount</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="$"
+                            keyboardType="numeric"
+                            maxLength={10}
+                            onChangeText={(value) => setAmount(parseFloat(value).toFixed(2))}
+                        />
+                    </View>
+                    <GreenLine />
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputHeading}>Date</Text>
+                        {/* CHANGE TO DATE HERE */}
+                        <Text />
+                    </View>
+                    <GreenLine />
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputHeading}>Category</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="e.g., Food, Entertainment"
+                            onChangeText={(value) => setCategory(value)}
+                        />
+                    </View>
+                    <GreenLine />
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputHeading}>Recurring</Text>
+                        <DropdownSelector
+                            style={styles.input}
+                            data={[
+                                { label: "Don't Repeat", value: NO_REPETION },
+                                { label: 'Daily', value: DAILY },
+                                { label: 'Weekly', value: WEEKLY },
+                                { label: 'Monthly', value: MONTHLY },
+                            ]}
+                            onChange={(item) => {
+                                setFrequency(item.value);
+                            }}
+                            dropdownLabel="Expense Frequency"
+                            placeholderLabel="Expense Frequency"
+                        />
+                    </View>
+                    <GreenLine />
+                    <View style={[styles.inputContainer, styles.cameraBtnsContainer]}>
+                        {previewURI ? (
+                            <SafeAreaView style={styles.container}>
+                                <Image style={styles.preview} source={{ uri: previewURI }} />
+                                <TouchableOpacity
+                                    style={{
+                                        position: 'absolute',
+                                        right: -30,
+                                        alignSelf: 'center',
+                                    }}
+                                    onPress={async () => {
+                                        await clearImage();
+                                    }}>
+                                    <Feather name="x-circle" size={30} color="red" />
+                                </TouchableOpacity>
+                            </SafeAreaView>
+                        ) : (
+                            <View style={styles.rowContainer}>
+                                <TouchableOpacity
+                                    style={styles.rowItem}
+                                    onPress={async () => {
+                                        const cameraPermission =
+                                            await ImagePicker.requestCameraPermissionsAsync();
+                                        if (cameraPermission.status === 'granted') {
+                                            const imageURI = await captureImage();
+                                            console.log('uri from imagepicker: ', imageURI);
+                                            setImageURI(imageURI);
+                                        } else {
+                                            Alert.alert(
+                                                'Camera Permission Not Set',
+                                                'Please change app permission in settings',
+                                                [{ text: 'OK' }]
+                                            );
+                                        }
+                                    }}>
+                                    <Feather name="camera" size={40} color="black" />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.rowItem}
+                                    onPress={async () => {
+                                        const mediaLibaryPermission =
+                                            await ImagePicker.requestMediaLibraryPermissionsAsync();
+                                        if (mediaLibaryPermission.status === 'granted') {
+                                            const imageURI = await pickImage();
+                                            console.log('uri from imagepicker: ', imageURI);
+                                            setImageURI(imageURI);
+                                        } else {
+                                            Alert.alert(
+                                                'Media Library Permission Not Set',
+                                                'Please change app permission in settings',
+                                                [{ text: 'OK' }]
+                                            );
+                                        }
+                                    }}>
+                                    <AntDesign name="upload" size={40} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+                            <Text
+                                style={{
+                                    fontFamily: 'Roboto-Bold',
+                                    color: '#ffffff',
+                                    textAlign: 'center',
+                                    fontSize: 24,
+                                }}>
+                                Add
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </SafeAreaView>
         </View>
     );
 }
@@ -186,76 +222,92 @@ export default function App({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
-        alignItems: 'center',
-        justifyContent: 'top',
     },
-    topTitle: {
-        paddingTop: 50,
-        margin: 'auto',
+    upperPart: {
+        height: 50,
+        backgroundColor: Colors.secondaryColor,
+    },
+    content: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    titleContainer: {
+        width: '100%',
+        alignItems: 'center',
+        backgroundColor: Colors.secondaryColor,
+        paddingBottom: 10,
     },
     title: {
-        color: '#37c871',
+        color: 'white',
         fontFamily: 'Roboto-Bold',
-        fontSize: 30,
+        fontSize: 32,
         textAlign: 'center',
-        marginTop: 20,
     },
     box: {
         width: 300,
         height: 100,
         backgroundColor: '#ffffff',
         borderRadius: 10,
-        margin: 10,
+        margin: 20,
     },
     box2: {
         width: 300,
-        height: Dimensions.get('window').height * 0.4,
+        height: '65%',
+        // height: Dimensions.get('window').height * 0.4,
         backgroundColor: '#ffffff',
         borderRadius: 10,
-        margin: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+    },
+    inputContainer: {
+        //flex: 1,
+        height: 50,
+        width: '100%',
+        alignItems: 'center',
+        textAlign: 'left',
+    },
+    inputHeading: {
+        fontSize: 14,
+        fontFamily: 'Roboto-Bold',
+        color: Colors.secondaryColor,
+        width: '84%',
+        marginTop: 10,
     },
     input: {
-        color: textColor,
+        width: '84%',
+        color: Colors.textColor,
         fontFamily: 'Roboto-Bold',
-        fontSize: 20,
-        width: 250,
-        borderColor: '#37c871',
-        borderRadius: 10,
-        padding: 10,
-        textAlign: 'center',
+        fontSize: 16,
+        textAlign: 'left',
     },
     button: {
-        color: '#ffffff',
+        color: Colors.secondaryColor,
         fontFamily: 'Roboto-Bold',
-        fontSize: 20,
-        width: 250,
+        width: '60%',
         height: 40,
-        outlineColor: '#37c871',
-        borderColor: '#37c871',
-        borderRadius: 10,
+        borderRadius: 20,
         textAlign: 'center',
-    },
-    buttonContainer: {
-        backgroundColor: '#37c871',
-        padding: 10,
-        borderRadius: 10,
-        height: 60,
+        justifyContent: 'center',
+        backgroundColor: Colors.secondaryColor,
     },
     preview: {
         height: '100%',
         aspectRatio: 1,
     },
     rowContainer: {
+        backgroundColor: 'red',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        color: Colors.secondaryColor,
     },
     rowItem: {
         margin: 10,
+    },
+    cameraBtnsContainer: {
+        height: 100,
+        backgroundColor: 'blue',
+        marginTop: 80,
     },
 });
