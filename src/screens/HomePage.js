@@ -16,15 +16,12 @@ import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import {
-    applyRecurringExpenses,
     deleteRowFromExpenseTable,
     deleteRowFromReacurringTable,
-    getCategoryTable,
     getExpensesFromDay,
     getRowFromExpenseTable,
     deleteImage,
 } from '../util/FileSystemUtils';
-
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
@@ -185,6 +182,19 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
+            <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+                <View style={styles.buttonContainer}>
+                    <Text
+                        style={{
+                            fontFamily: 'Roboto-Bold',
+                            color: '#ffffff',
+                            textAlign: 'center',
+                            fontSize: 30,
+                        }}>
+                        Add Example Data
+                    </Text>
+                </View>
+            </TouchableOpacity>
             <ExpenseInfoComponent
                 isVisable={showExpenseInfo}
                 onClose={closeInfo}
@@ -200,6 +210,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: Colors.primaryColor,
         // figure out fontStyles
+    },
+    button: {
+        color: '#ffffff',
+        fontFamily: 'Roboto-Bold',
+        fontSize: 20,
+        width: 250,
+        height: 40,
+        outlineColor: '#37c871',
+        borderColor: '#37c871',
+        borderRadius: 10,
+        textAlign: 'center',
+    },
+    buttonContainer: {
+        backgroundColor: '#37c871',
+        padding: 10,
+        borderRadius: 10,
+        height: 60,
     },
     topTitle: {
         paddingTop: 20,

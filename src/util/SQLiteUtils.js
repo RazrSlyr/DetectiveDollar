@@ -42,36 +42,32 @@ const GET_ALL_CATEGORIES_QUERY = 'SELECT * FROM categories;';
 
 const GET_ALL_REACURRING_EXPENSES = 'SELECT * FROM reacurring';
 
-const createExpenseInsert = (name, category, amount, day, imageURI) => {
-    return `INSERT INTO expenses (name, category, amount, day, picture)
-    VALUES ('${name}', '${category}', ${amount}, '${day}', 
-    ${imageURI !== null ? `'${imageURI}'` : null});`;
-};
-
 const deleteExpense = (row) => {
     return `DELETE FROM expenses WHERE id = ${row}`;
 };
 
 const createReacurringDeleteById = (row) => {
     return `DELETE FROM reacurring WHERE id = ${row};`;
-}
+};
 
-const createExpenseInsertWithReacurringId = (
+const createExpenseInsert = (
     name,
     category,
     amount,
-    day,
     timestamp,
-    imageURI,
-    reacurringID
+    day,
+    subcategory = null,
+    picture = null,
+    memo = null,
+    reacurring_id = null
 ) => {
-    //if (image_uri) {
-    //    return `INSERT INTO expenses (name, category, amount, day, timestamp, picture, reacurring_id)
-    //    VALUES ('${name}', '${category}', ${amount}, '${day}', '${timestamp}', '${image_uri}', ${reacurring_id});`;
-    //}
-    return `INSERT INTO expenses (name, category, amount, day, timestamp, picture, reacurring_id)
-    VALUES ('${name}', '${category}', ${amount}, '${day}', '${timestamp}', 
-    ${imageURI !== null ? `'${imageURI}'` : null}, ${reacurringID});`;
+    return `INSERT INTO expenses (name, category, amount, timestamp, day, subcategory, picture, memo, reacurring_id)
+    VALUES ('${name}', '${category}', ${amount}, '${day}', ${timestamp}, '${day}', ${
+        subcategory !== null ? `'${subcategory}'` : null
+    }, ${picture !== null ? `'${picture}'` : null}, ${memo !== null ? `'${memo}'` : null}, ${
+        reacurring_id !== null ? reacurring_id : null
+    }
+    });`;
 };
 
 const createReacurringInsert = (frequency) => {
@@ -84,9 +80,11 @@ const createReacurringInsert = (frequency) => {
     return command;
 };
 
-const createCategoryInsert = (category) => {
-    const command = `INSERT OR IGNORE INTO categories (name)
-    VALUES ('${category}');`;
+const createCategoryInsert = (category = null, icon = null, color = null) => {
+    const command = `INSERT OR IGNORE INTO categories (name, icon, color)
+    VALUES ('${category}', ${icon !== null ? `'${icon}'` : null}, ${
+        color !== null ? `'${color}'` : null
+    });`;
     return command;
 };
 
@@ -151,7 +149,6 @@ export {
     createReacurringInsert,
     createExpenseByIdQuery,
     createReacurringByIdQuery,
-    createExpenseInsertWithReacurringId,
     createExpenseByCategoryQuery,
     createReacurringExpenseNextTriggerUpdate,
     createLastReacurrenceQuery,

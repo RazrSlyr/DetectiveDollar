@@ -2,7 +2,6 @@ import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 import {
-    getCurrentDateString,
     getCurrentUTCDatetimeString,
     getDateFromDatetimeString,
     getDateStringFromDate,
@@ -21,7 +20,6 @@ import {
     createExpenseByDayFrameQuery,
     createReacurringInsert,
     createReacurringByIdQuery,
-    createExpenseInsertWithReacurringId,
     createCategoryInsert,
     CREATE_CATEGORY_TABLE,
     GET_ALL_CATEGORIES_QUERY,
@@ -90,9 +88,20 @@ export async function addRowToExpenseTable(
     imageURI = null
 ) {
     const db = await getDatabase();
+    const currentTime = new Date().getTime();
     await db.transactionAsync(async (tx) => {
         if (expenseFrequency === NO_REPETION) {
-            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day, imageURI));
+            await tx.executeSqlAsync(
+                createExpenseInsert(
+                    name,
+                    category,
+                    amount,
+                    `datetime(${currentTime / 1000}, 'unixepoch)`,
+                    day,
+                    null,
+                    imageURI
+                )
+            );
             return;
         }
         const reacurringInsertId = (
@@ -102,13 +111,15 @@ export async function addRowToExpenseTable(
             await tx.executeSqlAsync(createReacurringByIdQuery(reacurringInsertId))
         ).rows[0].start;
         await tx.executeSqlAsync(
-            createExpenseInsertWithReacurringId(
+            createExpenseInsert(
                 name,
                 category,
                 amount,
+                `'${reacurringEntryTimestamp}'`,
                 day,
-                reacurringEntryTimestamp,
+                null,
                 imageURI,
+                null,
                 reacurringInsertId
             )
         );
@@ -251,13 +262,15 @@ export async function applyRecurringExpenses() {
                     const newRecurranceDay = getDateStringFromDate(recurrenceDate);
                     // Add expense using obtained data
                     await tx.executeSqlAsync(
-                        createExpenseInsertWithReacurringId(
+                        createExpenseInsert(
                             lastRecurrance['name'],
                             lastRecurrance['category'],
                             lastRecurrance['amount'],
+                            `'${getCurrentUTCDatetimeString(recurrenceDate)}'`,
                             newRecurranceDay,
-                            getCurrentUTCDatetimeString(recurrenceDate),
+                            lastRecurrance['subcategory'],
                             lastRecurrance['picture'],
+                            lastRecurrance['memo'],
                             lastRecurrance['reacurring_id']
                         )
                     );
@@ -320,5 +333,78 @@ export async function deleteImage(imageURI) {
         console.log('Image deleted');
     } catch (error) {
         console.error('Error deleting image:', error);
+    }
+}
+
+export async function createExampleData() {
+    const exampleCategories = [
+        {
+            name: 'Food',
+            icon: 'fastfood',
+            color: 'red',
+        },
+        {
+            name: 'Housing',
+            icon: 'house',
+            color: 'blue',
+        },
+        {
+            name: 'Social',
+            icon: 'people',
+            color: 'purple',
+        },
+        {
+            name: 'Personal',
+            icon: 'person',
+            color: 'blue',
+        },
+        {
+            name: 'Entertainment',
+            icon: 'videogame-asset',
+            color: 'orange',
+        },
+        {
+            name: 'Other',
+            icon: 'attach-money',
+            color: 'green',
+        },
+    ];
+
+    // Add example categories
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        const promises = [];
+        exampleCategories.forEach((category) => {
+            promises.push(
+                tx.executeSqlAsync(
+                    createCategoryInsert(category['name'], category['icon'], category['color'])
+                )
+            );
+        });
+        await Promise.all(promises);
+    });
+
+    // Add year worth of expenses
+
+    // Get current time and rewind a year back
+    const currentTimestamp = new Date().getTime();
+    let timestampOfExpense = new Date();
+    timestampOfExpense.setFullYear(timestampOfExpense.getFullYear() - 1);
+    timestampOfExpense = timestampOfExpense.getTime();
+
+    // Start Looping
+    const insertCommands = [];
+    const MINIMUM_EXPENSES = 3;
+    const MAXIMUM_EXPENSES = 10;
+    const TEN_MINUTES_IN_MILLISECONDS = 10 * 60 * 1000;
+    while (timestampOfExpense < currentTimestamp) {
+        const numberOfExpenses =
+            Math.floor(Math.random() * (MAXIMUM_EXPENSES - MINIMUM_EXPENSES + 1)) +
+            MINIMUM_EXPENSES;
+        for (let i = 0; i < numberOfExpenses; i++) {
+            const timestamp = timestampOfExpense + TEN_MINUTES_IN_MILLISECONDS * i;
+            const category =
+                exampleCategories[Math.floor(Math.random() * exampleCategories.length)];
+        }
     }
 }
