@@ -20,7 +20,6 @@ import {
     createExpenseByDayFrameQuery,
     createReacurringInsert,
     createReacurringByIdQuery,
-    createExpenseInsertWithReacurringId,
     createCategoryInsert,
     CREATE_CATEGORY_TABLE,
     GET_ALL_CATEGORIES_QUERY,
@@ -90,7 +89,18 @@ export async function addRowToExpenseTable(
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         if (expenseFrequency === NO_REPETION) {
-            await tx.executeSqlAsync(createExpenseInsert(name, category, amount, day, imageURI));
+            const timestamp = new Date().getTime() / 1000;
+            await tx.executeSqlAsync(
+                createExpenseInsert(
+                    name,
+                    category,
+                    amount,
+                    `datetime(${timestamp}, 'unixepoch')`,
+                    day,
+                    null,
+                    imageURI
+                )
+            );
             return;
         }
         const reacurringInsertId = (
@@ -100,13 +110,15 @@ export async function addRowToExpenseTable(
             await tx.executeSqlAsync(createReacurringByIdQuery(reacurringInsertId))
         ).rows[0].start;
         await tx.executeSqlAsync(
-            createExpenseInsertWithReacurringId(
+            createExpenseInsert(
                 name,
                 category,
                 amount,
+                `'${reacurringEntryTimestamp}'`,
                 day,
-                reacurringEntryTimestamp,
+                null,
                 imageURI,
+                null,
                 reacurringInsertId
             )
         );
@@ -210,9 +222,11 @@ export async function getExpensesbyCategory(startDate, endDate) {
 }
 
 export async function applyRecurringExpenses() {
+    console.log("Checking for reaccurring?");
     if (appliedReacurring) {
         return;
     }
+    console.log("Applying Reacurring");
     const db = await getDatabase();
     let recurringExpenses = null;
     await db.transactionAsync(async (tx) => {
@@ -225,6 +239,7 @@ export async function applyRecurringExpenses() {
     const currentDate = new Date();
     for (let i = 0; i < recurringExpenses?.length; i++) {
         const element = recurringExpenses[i];
+        console.log(element);
         let recurrenceDate = getDateFromUTCDatetimeString(element['next_trigger']);
         // Get last expense to get data
         let lastRecurrance = null;
@@ -249,13 +264,15 @@ export async function applyRecurringExpenses() {
                     const newRecurranceDay = getDateStringFromDate(recurrenceDate);
                     // Add expense using obtained data
                     await tx.executeSqlAsync(
-                        createExpenseInsertWithReacurringId(
+                        createExpenseInsert(
                             lastRecurrance['name'],
                             lastRecurrance['category'],
                             lastRecurrance['amount'],
+                            `'${getCurrentUTCDatetimeString(recurrenceDate)}'`,
                             newRecurranceDay,
-                            getCurrentUTCDatetimeString(recurrenceDate),
+                            lastRecurrance['subcategory'],
                             lastRecurrance['picture'],
+                            lastRecurrance['memo'],
                             lastRecurrance['reacurring_id']
                         )
                     );

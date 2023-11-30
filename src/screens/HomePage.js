@@ -44,6 +44,9 @@ export default function HomePage({ navigation }) {
             }
         };
 
+        // Apply recurring expenses
+        applyRecurringExpenses();
+
         // Call getExpenses when the component mounts
         getExpenses();
 
