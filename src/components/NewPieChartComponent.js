@@ -94,43 +94,47 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
 
         return randomColor;
     };
+    const noExpenseData = [{ label: 'No Data Available', value: 1, color: '#37c871' }];
+
+    // Check if there's data in the pieChartData object
+    const hasData = Object.keys(pieChartData).length > 0;
+
+
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            {Object.keys(pieChartData).length > 0 ? (
-                <View
-                    style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: 20,
-                    }}>
-                    <PieChart
-                        style={{ height: 200, width: 200 }}
-                        data={pieChartData}
-                        donut
-                        radius={90}
-                        innerRadius={60}
-                        centerLabelComponent={() => {
-                            return (
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text
-                                        style={{
-                                            fontSize: 22,
-                                            color: 'black',
-                                            fontWeight: 'bold',
-                                        }}>
-                                        {formattedTotal}
-                                    </Text>
-                                </View>
-                            );
-                        }}
-                    />
-                    <PieChartLegend chartData={pieChartData} />
-                </View>
-            ) : (
-                <Text>No Data Available</Text>
-            )}
+            <View
+                style={{
+                    flex: 1,
+                    //justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 20,
+                    //paddingBottom: 60,
+                    //marginTop: 90,
+                }}>
+                <PieChart
+                    style={{ height: 200, width: 200 }}
+                    data={hasData ? pieChartData : noExpenseData}
+                    donut
+                    radius={110}
+                    innerRadius={75}
+                    centerLabelComponent={() => {
+                        return (
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Text
+                                    style={{
+                                        fontSize: 22,
+                                        color: 'black',
+                                        fontWeight: 'bold',
+                                    }}>
+                                    {formattedTotal}
+                                </Text>
+                            </View>
+                        );
+                    }}
+                />
+                <PieChartLegend chartData={hasData ? pieChartData : noExpenseData} />
+            </View>
         </View>
     );
 };

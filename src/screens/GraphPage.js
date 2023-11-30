@@ -1,8 +1,10 @@
 import { AntDesign } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Swiper from 'react-native-swiper';
 
 import LineGraphComponent from '../components/LineGraphComponent';
 import NewPieChartComponent from '../components/NewPieChartComponent';
@@ -77,9 +79,21 @@ const GraphPage = ({ navigation }) => {
         return `${month}/${day}/${year}`;
     };
 
+
+
+/*     useFocusEffect(
+        React.useCallback(() => {
+            setSelectedTimeframe(WEEKLY);
+            setSelectedTimeframeDates(getWeekStartEndDate(getCurrentDateString()));
+            handleTimeframeSelect();
+        }, [])
+    ); */
+
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContentContainer}>
                 <Text style={styles.title}>Statistics</Text>
                 <View style={styles.dateContainer}>
                     <View style={styles.dateRange}>
@@ -114,20 +128,34 @@ const GraphPage = ({ navigation }) => {
                 </View>
                 <WeekMonthYearButtons onSelect={handleTimeframeSelect} />
                 <View style={styles.scrollableContent}>
-                    <View style={styles.lineChartContainer}>
-                        <LineGraphComponent
-                            startDate={selectedTimeframeDates[0]}
-                            endDate={selectedTimeframeDates[1]}
-                            timeFrame={selectedTimeframe}
-                        />
-                    </View>
-                    <View style={styles.chartContainer}>
-                        <NewPieChartComponent
-                            startDate={selectedTimeframeDates[0]}
-                            endDate={selectedTimeframeDates[1]}
-                            timeFrame={selectedTimeframe}
-                        />
-                    </View>
+                    <Swiper
+                        style={styles.wrapper}
+                        dotStyle={styles.customDot}
+                        activeDotStyle={styles.customActiveDot}
+                        loop={false}
+                        paginationStyle={{
+                            bottom: 820,
+                            left: 300,
+                        }}>
+                        <View style={styles.pieChartSlide}>
+                            <View style={styles.chartContainer}>
+                                <NewPieChartComponent
+                                    startDate={selectedTimeframeDates[0]}
+                                    endDate={selectedTimeframeDates[1]}
+                                    timeFrame={selectedTimeframe}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.lineChartSlide}>
+                            <View style={styles.lineChartContainer}>
+                                <LineGraphComponent
+                                    startDate={selectedTimeframeDates[0]}
+                                    endDate={selectedTimeframeDates[1]}
+                                    timeFrame={selectedTimeframe}
+                                />
+                            </View>
+                        </View>
+                    </Swiper>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -157,26 +185,6 @@ const styles = StyleSheet.create({
         color: Colors.secondaryColor,
         marginTop: 20,
     },
-    chartContainer: {
-        margin: 5,
-        height: 320,
-        width: 290,
-        alignContent: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        flex: 1,
-    },
-    lineChartContainer: {
-        margin: 5,
-        height: 300,
-        width: 360,
-        alignContent: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        paddingTop: 40,
-    },
     dateContainer: {
         flex: 1,
         alignItems: 'center',
@@ -203,7 +211,55 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginTop: 20,
         marginHorizontal: 2,
-        //marginBottom: 10,
         overflow: 'hidden',
+    },
+    wrapper: {
+        //showsPagination: true,
+    },
+    lineChartSlide: {
+        //flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    pieChartSlide: {
+        //flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    customDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: 'gray', // Color for non-active dots
+    },
+    customActiveDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: '#37c871', // Color for the active dot
+    },
+    scrollContentContainer: {
+        paddingBottom: 60,
+    },
+    chartContainer: {
+        margin: 5,
+        height: '100%',
+        width: 360,
+        alignContent: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        //flex: 1,
+    },
+    lineChartContainer: {
+        margin: 5,
+        height: '100%',
+        width: 360,
+        alignContent: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        paddingTop: 20,
+        //flex: 1,
     },
 });

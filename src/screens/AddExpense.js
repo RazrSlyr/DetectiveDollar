@@ -12,6 +12,7 @@ import {
     Dimensions,
     SafeAreaView,
     Alert,
+    Platform,
 } from 'react-native';
 
 import DropdownSelector from '../components/Dropdown';
@@ -91,6 +92,7 @@ export default function App({ navigation }) {
                     style={styles.input}
                     placeholder="Category"
                     onChangeText={(value) => setCategory(value)}
+                    keyboardType={Platform.OS === 'ios' ? 'ascii-capable' : 'visible-password'}
                 />
                 <DropdownSelector
                     data={[

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 
+import LineGraphStats from './LineGraphStats';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
     getCurrentDateString,
@@ -15,6 +16,8 @@ import { getExpensesFromDayframe } from '../util/FileSystemUtils';
 const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const [lineGraphData, setlineGraphData] = useState([]);
     const [maxDataValue, setMaxDataValue] = useState(0);
+    const [totalSpending, setTotalSpending] = useState(0);
+    const [averageExpense, setAverageExpense] = useState(0);
 
     const getDaysInMonth = (currentDateString) => {
         const currentDate = new Date(currentDateString);
@@ -53,6 +56,36 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
         }
     };
 
+    const calculateTotalExpense = (transactions) => {
+        return transactions.reduce((total, expense) => total + expense.amount, 0);
+    };
+
+    const getAverage = (startDateString, endDateString, timeFrame, totalSpending) => {
+        if (totalSpending === 0) {
+            return 0;
+        }
+        const currentDate = new Date(getCurrentDateString());
+        const startDate = new Date(startDateString);
+        const endDate = new Date(endDateString);
+        if (currentDate <= endDate) {
+            if (timeFrame === WEEKLY || timeFrame === MONTHLY) {
+                const daysDifference =
+                    Math.ceil((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                return (totalSpending / daysDifference).toFixed(2);
+            } else if (timeFrame === YEARLY) {
+                return (totalSpending / (currentDate.getMonth() + 1)).toFixed(2);
+            }
+        } else {
+            if (timeFrame === WEEKLY) {
+                return (totalSpending / 7).toFixed(2);
+            } else if (timeFrame === MONTHLY) {
+                return (totalSpending / getDaysInMonth(endDateString)).toFixed(2);
+            } else if (timeFrame === YEARLY) {
+                return (totalSpending / 12).toFixed(2);
+            }
+        }
+    };
+
     const updateLineGraphData = async () => {
         try {
             timeFrame = timeFrame || WEEKLY;
@@ -64,6 +97,11 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 endDate = endDate || week[1];
 
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
+                setTotalSpending(calculateTotalExpense(transactions));
+                setAverageExpense(
+                    getAverage(startDate, endDate, timeFrame, calculateTotalExpense(transactions))
+                );
+
                 const weekLabel = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 const updatedData = transactions.reduce((accumulator, expense) => {
                     const date = new Date(expense.day);
@@ -94,7 +132,10 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 startDate = startDate || month[0];
                 endDate = endDate || month[1];
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
-
+                setTotalSpending(calculateTotalExpense(transactions));
+                setAverageExpense(
+                    getAverage(startDate, endDate, timeFrame, calculateTotalExpense(transactions))
+                );
                 const monthLabel = getDaysInMonth(endDate);
                 const totalDays = monthLabel.length;
                 const step = Math.floor(totalDays / 4);
@@ -134,7 +175,10 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 startDate = startDate || year[0];
                 endDate = endDate || year[1];
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
-
+                setTotalSpending(calculateTotalExpense(transactions));
+                setAverageExpense(
+                    getAverage(startDate, endDate, timeFrame, calculateTotalExpense(transactions))
+                );
                 const yearLabel = [
                     'Jan',
                     'Feb',
@@ -208,97 +252,112 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     }
 
     return (
-        <View>
+        <View style={{ flex: 1, justifyContent: 'center', }}>
             {lineGraphData.length > 0 ? (
-                <LineChart
-                    hideDataPoints
-                    areaChart
-                    data={lineGraphData}
-                    startFillColor="#37C871"
-                    startOpacity={0.8}
-                    endFillColor="#D5FADD"
-                    endOpacity={0.3}
-                    color="#37c871"
-                    thickness={4}
-                    width={310}
-                    height={220}
-                    scrollToIndex={-1}
-                    spacing={spacing}
-                    initialSpacing={initialSpacing}
-                    endSpacing={0}
-                    label={['0', '30']}
-                    xAxisLabelTextStyle={{
-                        color: '#545454',
-                        fontSize: fontSize,
-                        textAlign: 'left',
-                        marginRight: -9,
-                    }}
-                    yAxisTextStyle={{
-                        color: '#545454',
-                        fontSize: 12,
-                        textAlign: 'left',
-                    }}
-                    noOfSections={5}
-                    yAxisLabelPrefix="$"
-                    yAxisThickness={0}
-                    yAxisLabelWidth={45}
-                    maxValue={Math.ceil(maxDataValue * 2)}
-                    formatYLabel={(label) => {
-                        const labelVal = Number(label);
-                        if (labelVal >= 1000000) return (labelVal / 1000000).toFixed(1) + 'M';
-                        if (labelVal >= 1000) return (labelVal / 1000).toFixed(1) + 'K';
-                        if (labelVal < 1000 && labelVal > 10) return Math.floor(labelVal / 10) * 10;
-                        return label;
-                    }}
-                    pointerConfig={{
-                        pointerStripHeight: 160,
-                        pointerStripColor: 'lightgray',
-                        pointerStripWidth: 2,
-                        pointerColor: 'lightgray',
-                        radius: 6,
-                        pointerLabelWidth: 100,
-                        pointerLabelHeight: 90,
-                        activatePointersOnLongPress: false,
-                        autoAdjustPointerLabelPosition: false,
-                        activatePointersDelay: 2,
-                        hidePointer: true,
-                        pointerLabelComponent: (items) => {
-                            return (
-                                <View
-                                    style={{
-                                        height: 90,
-                                        width: 100,
-                                        justifyContent: 'center',
-                                        marginTop: -30,
-                                        marginLeft: -40,
-                                    }}>
-                                    <Text
-                                        style={{
-                                            color: 'black',
-                                            fontSize: 14,
-                                            marginBottom: 6,
-                                            textAlign: 'center',
-                                        }}>
-                                        {items[0].date}
-                                    </Text>
+                <View
+                    style={{
+                        flex: 1,
+                        //justifyContent: 'center',
+                        alignItems: 'center',
+                        //padding: 20,
+                    }}>
+                    <LineChart
+                        hideDataPoints
+                        areaChart
+                        data={lineGraphData}
+                        startFillColor="#37C871"
+                        startOpacity={0.8}
+                        endFillColor="#D5FADD"
+                        endOpacity={0.3}
+                        color="#37c871"
+                        thickness={4}
+                        width={310}
+                        height={220}
+                        scrollToIndex={-1}
+                        spacing={spacing}
+                        initialSpacing={initialSpacing}
+                        endSpacing={0}
+                        label={['0', '30']}
+                        xAxisLabelTextStyle={{
+                            color: '#545454',
+                            fontSize: fontSize,
+                            textAlign: 'left',
+                            marginRight: -9,
+                        }}
+                        yAxisTextStyle={{
+                            color: '#545454',
+                            fontSize: 12,
+                            textAlign: 'left',
+                        }}
+                        noOfSections={5}
+                        yAxisLabelPrefix="$"
+                        yAxisThickness={0}
+                        yAxisLabelWidth={45}
+                        maxValue={Math.ceil(maxDataValue * 2)}
+                        formatYLabel={(label) => {
+                            const labelVal = Number(label);
+                            if (labelVal >= 1000000) return (labelVal / 1000000).toFixed(1) + 'M';
+                            if (labelVal >= 1000) return (labelVal / 1000).toFixed(1) + 'K';
+                            if (labelVal < 1000 && labelVal > 10)
+                                return Math.floor(labelVal / 10) * 10;
+                            return label;
+                        }}
+                        pointerConfig={{
+                            pointerStripHeight: 160,
+                            pointerStripColor: 'lightgray',
+                            pointerStripWidth: 2,
+                            pointerColor: 'lightgray',
+                            radius: 6,
+                            pointerLabelWidth: 100,
+                            pointerLabelHeight: 90,
+                            activatePointersOnLongPress: false,
+                            autoAdjustPointerLabelPosition: false,
+                            activatePointersDelay: 2,
+                            hidePointer: true,
+                            pointerLabelComponent: (items) => {
+                                return (
                                     <View
                                         style={{
-                                            paddingHorizontal: 14,
-                                            paddingVertical: 6,
-                                            borderRadius: 16,
-                                            backgroundColor: 'white',
-                                            borderColor: '#37C871',
-                                            borderWidth: 2,
+                                            height: 90,
+                                            width: 100,
+                                            justifyContent: 'center',
+                                            marginTop: -30,
+                                            marginLeft: -40,
                                         }}>
-                                        <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
-                                            {'$' + items[0].value}
+                                        <Text
+                                            style={{
+                                                color: 'black',
+                                                fontSize: 14,
+                                                marginBottom: 6,
+                                                textAlign: 'center',
+                                            }}>
+                                            {items[0].date}
                                         </Text>
+                                        <View
+                                            style={{
+                                                paddingHorizontal: 14,
+                                                paddingVertical: 6,
+                                                borderRadius: 16,
+                                                backgroundColor: 'white',
+                                                borderColor: '#37C871',
+                                                borderWidth: 2,
+                                            }}>
+                                            <Text
+                                                style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                                                {'$' + items[0].value}
+                                            </Text>
+                                        </View>
                                     </View>
-                                </View>
-                            );
-                        },
-                    }}
-                />
+                                );
+                            },
+                        }}
+                    />
+                    <LineGraphStats
+                        totalSpending={totalSpending}
+                        averageExpense={averageExpense}
+                        timeFrame={timeFrame}
+                    />
+                </View>
             ) : (
                 <Text>Loading...</Text>
             )}
