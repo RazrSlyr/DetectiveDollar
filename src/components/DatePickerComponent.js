@@ -1,11 +1,11 @@
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Platform, Modal, StyleSheet, Text } from 'react-native';
 
 import { secondaryColor } from '../constants/Colors';
 
-const DatePickerComponent = ({ onDateChange }) => {
+const DatePickerComponent = ({ onDateChange, iconName, iconSize, iconColor }) => {
     const isIOS = Platform.OS === 'ios';
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [isModalVisible, setModalVisibility] = useState(false);
@@ -40,7 +40,7 @@ const DatePickerComponent = ({ onDateChange }) => {
     return (
         <View>
             <TouchableOpacity onPress={showDatePicker} style={{ alignItems: 'center' }}>
-                <FontAwesome name="calendar" size={30} color={secondaryColor} />
+                <AntDesign name={iconName} size={iconSize} color={iconColor} />
             </TouchableOpacity>
 
             <Modal
@@ -88,10 +88,10 @@ const styles = StyleSheet.create({
         // backgroundColor: 'rgba(0, 0, 0, 1)',
         borderRadius: 10,
         alignItems: 'center',
-        zIndex: 100,
+        zIndex: 999,
     },
     cancelButtonContainer: {
-        marginTop: 10,
+        marginTop: 15,
         marginBottom: 2,
         paddingVertical: 10,
         paddingHorizontal: 20,
