@@ -8,15 +8,17 @@ const CREATE_REACCURING_TABLE = `CREATE TABLE IF NOT EXISTS reacurring (
 );`;
 
 const CREATE_CATEGORY_TABLE = `CREATE TABLE IF NOT EXISTS categories (
-    name TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
     icon TEXT,
-    color TEXT
+    color TEXT,
+    UNIQUE(name)
 );`;
 
 const CREATE_EXPENSES_TABLE = `CREATE TABLE IF NOT EXISTS expenses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    category TEXT NOT NULL,
+    category INTEGER NOT NULL,
     subcategory TEXT,
     amount REAL NOT NULL,
     picture TEXT,
@@ -49,7 +51,9 @@ const deleteExpense = (row) => {
 const createReacurringDeleteById = (row) => {
     return `DELETE FROM reacurring WHERE id = ${row};`;
 };
+};
 
+const createExpenseInsert = (
 const createExpenseInsert = (
     name,
     category,
@@ -62,11 +66,10 @@ const createExpenseInsert = (
     reacurring_id = null
 ) => {
     return `INSERT INTO expenses (name, category, amount, timestamp, day, subcategory, picture, memo, reacurring_id)
-    VALUES ('${name}', '${category}', ${amount}, '${day}', ${timestamp}, '${day}', ${
+    VALUES ('${name}', ${category}, ${amount}, ${timestamp}, '${day}', ${
         subcategory !== null ? `'${subcategory}'` : null
     }, ${picture !== null ? `'${picture}'` : null}, ${memo !== null ? `'${memo}'` : null}, ${
-        reacurring_id !== null ? reacurring_id : null
-    }
+        reacurring_id !== null ? `${reacurring_id}` : null
     });`;
 };
 
@@ -80,9 +83,9 @@ const createReacurringInsert = (frequency) => {
     return command;
 };
 
-const createCategoryInsert = (category = null, icon = null, color = null) => {
+const createCategoryInsert = (name, icon = null, color = null) => {
     const command = `INSERT OR IGNORE INTO categories (name, icon, color)
-    VALUES ('${category}', ${icon !== null ? `'${icon}'` : null}, ${
+    VALUES ('${name}', ${icon !== null ? `'${icon}'` : null}, ${
         color !== null ? `'${color}'` : null
     });`;
     return command;
@@ -131,6 +134,14 @@ const createLastReacurrenceQuery = (id) => {
     return `SELECT * FROM expenses WHERE reacurring_id = ${id} ORDER BY timestamp DESC LIMIT 1;`;
 };
 
+const createCategoryQueryByName = (name) => {
+    return `SELECT * FROM categories WHERE name = '${name}' LIMIT 1;`;
+};
+
+const createCategoryQueryById = (id) => {
+    return `SELECT * FROM categories WHERE id = ${id} LIMIT 1;`;
+};
+
 export {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
@@ -154,4 +165,6 @@ export {
     createLastReacurrenceQuery,
     createReacurringDeleteById,
     createExpenseByDayFrameQuery,
+    createCategoryQueryByName,
+    createCategoryQueryById,
 };

@@ -35,15 +35,16 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
-        await addRowToCategoryTable(category);
+        const categoryId = await addRowToCategoryTable(category);
+        console.log(categoryId);
         let imageURI = null;
         if (previewURI) {
             imageURI = await saveImage(previewURI);
         }
         await addRowToExpenseTable(
             name,
-            category,
-            parseFloat(amount),
+            categoryId,
+            parseFloat(amount).toFixed(2),
             dateString,
             frequency,
             imageURI
@@ -85,7 +86,7 @@ export default function App({ navigation }) {
                     placeholder="Amount"
                     keyboardType="numeric"
                     maxLength={10}
-                    onChangeText={(value) => setAmount(value)}
+                    onChangeText={(value) => setAmount(parseFloat(value).toFixed(2))}
                 />
                 <TextInput
                     style={styles.input}

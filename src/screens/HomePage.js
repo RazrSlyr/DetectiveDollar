@@ -21,6 +21,7 @@ import {
     getExpensesFromDay,
     getRowFromExpenseTable,
     deleteImage,
+    getCategoryNameFromId,
 } from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
@@ -34,12 +35,20 @@ export default function HomePage({ navigation }) {
             try {
                 // Fetch expenses for today and set to state
                 const expenses = await getExpensesFromDay(targetDate);
+                // Change expense categoryId to name
+                for (let i = 0; i < expenses.length; i++) {
+                    expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+                }
+                // Change expense categoryId to name
                 setTodayExpenses(expenses);
                 // console.log('expenses set!');
             } catch (error) {
                 console.error('Error fetching expenses:', error);
             }
         };
+
+        // Apply recurring expenses
+        applyRecurringExpenses();
 
         // Call getExpenses when the component mounts
         getExpenses();
@@ -55,6 +64,10 @@ export default function HomePage({ navigation }) {
         try {
             // Fetch expenses for new date and set to new state
             const expenses = await getExpensesFromDay(newDate);
+            // Change expense categoryId to name
+            for (let i = 0; i < expenses.length; i++) {
+                expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+            }
             setTodayExpenses(expenses);
             setTargetDate(newDate);
         } catch (error) {
@@ -67,7 +80,7 @@ export default function HomePage({ navigation }) {
             return 0;
         }
         let newSpending = 0;
-        todayExpenses.forEach((expense) => {
+        todayExpenses.forEach(async (expense) => {
             newSpending += parseFloat(expense['amount']);
         });
         const todaySpending = newSpending.toLocaleString('en-US', {
@@ -147,7 +160,9 @@ export default function HomePage({ navigation }) {
                                             />
                                         )}
                                     </View>
-                                    <Text style={styles.expenseData}>{expense['amount']}</Text>
+                                    <Text style={styles.expenseData}>
+                                        {parseFloat(expense['amount']).toFixed(2)}
+                                    </Text>
                                     {/* This code handles the expense deletion */}
                                     <TouchableOpacity
                                         onPress={async () => {
