@@ -16,15 +16,15 @@ import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import {
-    applyRecurringExpenses,
     deleteRowFromExpenseTable,
     deleteRowFromReacurringTable,
-    getCategoryTable,
     getExpensesFromDay,
     getRowFromExpenseTable,
     deleteImage,
+    getCategoryNameFromId,
+    applyRecurringExpenses,
+    createExampleData,
 } from '../util/FileSystemUtils';
-
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
@@ -37,12 +37,20 @@ export default function HomePage({ navigation }) {
             try {
                 // Fetch expenses for today and set to state
                 const expenses = await getExpensesFromDay(targetDate);
+                // Change expense categoryId to name
+                for (let i = 0; i < expenses.length; i++) {
+                    expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+                }
+                // Change expense categoryId to name
                 setTodayExpenses(expenses);
                 // console.log('expenses set!');
             } catch (error) {
                 console.error('Error fetching expenses:', error);
             }
         };
+
+        // Apply recurring expenses
+        applyRecurringExpenses();
 
         // Call getExpenses when the component mounts
         getExpenses();
@@ -58,6 +66,10 @@ export default function HomePage({ navigation }) {
         try {
             // Fetch expenses for new date and set to new state
             const expenses = await getExpensesFromDay(newDate);
+            // Change expense categoryId to name
+            for (let i = 0; i < expenses.length; i++) {
+                expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+            }
             setTodayExpenses(expenses);
             setTargetDate(newDate);
         } catch (error) {
@@ -70,7 +82,7 @@ export default function HomePage({ navigation }) {
             return 0;
         }
         let newSpending = 0;
-        todayExpenses.forEach((expense) => {
+        todayExpenses.forEach(async (expense) => {
             newSpending += parseFloat(expense['amount']);
         });
         const todaySpending = newSpending.toLocaleString('en-US', {
@@ -93,7 +105,28 @@ export default function HomePage({ navigation }) {
             promises.push(deleteRowFromReacurringTable(rowData['reacurring_id']));
         }
         await Promise.all(promises);
-        setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
+        // Fetch expenses for today and set to state
+        const expenses = await getExpensesFromDay(targetDate);
+        // Change expense categoryId to name
+        for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+        }
+        setTodayExpenses(expenses);
+    };
+
+    const handleAddFakeData = async () => {
+        alert('Adding example data...');
+        // Add expenses
+        await createExampleData();
+
+        // Fetch expenses for today and set to state
+        const expenses = await getExpensesFromDay(targetDate);
+        // Change expense categoryId to name
+        for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+        }
+        setTodayExpenses(expenses);
+        alert('Data has been added and set');
     };
 
     // make date more readable
@@ -150,7 +183,9 @@ export default function HomePage({ navigation }) {
                                             />
                                         )}
                                     </View>
-                                    <Text style={styles.expenseData}>{parseFloat(expense['amount']).toFixed(2)}</Text>
+                                    <Text style={styles.expenseData}>
+                                        {parseFloat(expense['amount']).toFixed(2)}
+                                    </Text>
                                     {/* This code handles the expense deletion */}
                                     <TouchableOpacity
                                         onPress={async () => {
@@ -185,6 +220,18 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
+            <TouchableOpacity style={styles.button} onPress={handleAddFakeData}>
+                <View style={styles.buttonContainer}>
+                    <Text
+                        style={{
+                            color: '#ffffff',
+                            textAlign: 'center',
+                            fontSize: 25,
+                        }}>
+                        Add Example Data
+                    </Text>
+                </View>
+            </TouchableOpacity>
             <ExpenseInfoComponent
                 isVisable={showExpenseInfo}
                 onClose={closeInfo}
@@ -200,6 +247,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: Colors.primaryColor,
         // figure out fontStyles
+    },
+    button: {
+        color: '#ffffff',
+        fontSize: 20,
+        width: 250,
+        height: 40,
+        outlineColor: '#37c871',
+        borderColor: '#37c871',
+        borderRadius: 10,
+        textAlign: 'center',
+    },
+    buttonContainer: {
+        backgroundColor: '#37c871',
+        padding: 10,
+        borderRadius: 10,
+        height: 60,
     },
     topTitle: {
         paddingTop: 20,

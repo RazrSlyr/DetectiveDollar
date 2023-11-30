@@ -35,14 +35,15 @@ export default function App({ navigation }) {
             return;
         }
         const dateString = getCurrentDateString();
-        await addRowToCategoryTable(category);
+        const categoryId = await addRowToCategoryTable(category);
+        console.log(categoryId);
         let imageURI = null;
         if (previewURI) {
             imageURI = await saveImage(previewURI);
         }
         await addRowToExpenseTable(
             name,
-            category,
+            categoryId,
             parseFloat(amount).toFixed(2),
             dateString,
             frequency,
