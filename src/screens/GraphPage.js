@@ -79,15 +79,17 @@ const GraphPage = ({ navigation }) => {
         return `${month}/${day}/${year}`;
     };
 
+    const [activeSlide, setActiveSlide] = useState(0);
 
-
-/*     useFocusEffect(
-        React.useCallback(() => {
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('state', () => {
+            // When the page comes into focus, set the active slide to 0 (the first slide)
+            setActiveSlide(0);
             setSelectedTimeframe(WEEKLY);
             setSelectedTimeframeDates(getWeekStartEndDate(getCurrentDateString()));
-            handleTimeframeSelect();
-        }, [])
-    ); */
+        });
+        return unsubscribe;
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -132,10 +134,14 @@ const GraphPage = ({ navigation }) => {
                         style={styles.wrapper}
                         dotStyle={styles.customDot}
                         activeDotStyle={styles.customActiveDot}
-                        loop={false}
                         paginationStyle={{
                             bottom: 820,
                             left: 300,
+                        }}
+                        loop={false}
+                        index={activeSlide}
+                        onIndexChanged={(index) => {
+                            setActiveSlide(index);
                         }}>
                         <View style={styles.pieChartSlide}>
                             <View style={styles.chartContainer}>
