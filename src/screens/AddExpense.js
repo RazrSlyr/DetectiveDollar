@@ -12,6 +12,7 @@ import {
     Dimensions,
     SafeAreaView,
     Alert,
+    Button,
 } from 'react-native';
 
 import DatePickerComponent from '../components/DatePickerComponent';
@@ -19,8 +20,14 @@ import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
+import * as Sizes from '../constants/Sizes';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToCategoryTable, addRowToExpenseTable, saveImage, getExpensesFromDay } from '../util/FileSystemUtils';
+import {
+    addRowToCategoryTable,
+    addRowToExpenseTable,
+    saveImage,
+    getExpensesFromDay,
+} from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
 export default function App({ navigation }) {
@@ -30,7 +37,8 @@ export default function App({ navigation }) {
     const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
     const [todayExpenses, setTodayExpenses] = useState([]);
-    
+    const todaysDate = getCurrentDateString();
+    const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
             return '$0.00';
@@ -49,12 +57,30 @@ export default function App({ navigation }) {
 
     useEffect(() => {
         const getExpenses = async () => {
-            setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
+            setTodayExpenses(await getExpensesFromDay(todaysDate));
         };
         navigation.addListener('focus', () => {
             getExpenses();
         });
     }, []);
+
+    const handleDateChange = async (newDate) => {
+        try {
+            // Set the new date
+            setTargetDate(newDate);
+        } catch (error) {
+            console.error('Error fetching expenses for new date:', error);
+        }
+    };
+
+    // make date more readable
+    const parts = targetDate.split('-');
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
+
+    // Format the date as "month/day/year"
+    const formattedDate = `${month}/${day}/${year}`;
 
     const handleButtonPress = async () => {
         // Add your button click logic here
@@ -66,7 +92,7 @@ export default function App({ navigation }) {
         const dateString = getDateStringFromDate(currentDate);
         const timestamp = currentDate.getTime();
         const categoryId = await addRowToCategoryTable(category);
-        console.log(categoryId);
+        // console.log(categoryId);
         let imageURI = null;
         if (previewURI) {
             imageURI = await saveImage(previewURI);
@@ -76,7 +102,7 @@ export default function App({ navigation }) {
             categoryId,
             parseFloat(amount).toFixed(2),
             timestamp,
-            dateString,
+            targetDate,
             null,
             imageURI,
             null,
@@ -104,6 +130,7 @@ export default function App({ navigation }) {
                             color: '#d6dfda',
                             top: 5,
                             left: 5,
+                            fontSize: Sizes.textSize,
                         }}>
                         Today's Spending
                     </Text>
@@ -111,7 +138,7 @@ export default function App({ navigation }) {
                 </View>
                 <View style={styles.box2}>
                     <View style={[styles.inputContainer, styles.firstInput]}>
-                        <Text style={styles.inputHeading}>Name</Text>
+                        <Text style={styles.inputHeading}>NAME</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Name of expense"
@@ -120,10 +147,10 @@ export default function App({ navigation }) {
                     </View>
                     <GreenLine />
                     <View style={styles.inputContainer}>
-                        <Text style={styles.inputHeading}>Amount</Text>
+                        <Text style={styles.inputHeading}>AMOUNT</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="$"
+                            placeholder="$0.00"
                             keyboardType="numeric"
                             maxLength={10}
                             onChangeText={(value) => setAmount(parseFloat(value).toFixed(2))}
@@ -131,22 +158,47 @@ export default function App({ navigation }) {
                     </View>
                     <GreenLine />
                     <View style={styles.inputContainer}>
-                        <Text style={styles.inputHeading}>Date</Text>
+                        <Text style={styles.inputHeading}>DATE</Text>
                         {/* CHANGE TO DATE HERE */}
-                        <Text />
+                        <View style={styles.dateInputContainer}>
+                            <Text
+                                style={{
+                                    // color: '#ccc',
+                                    fontSize: Sizes.textSize,
+                                    textAlign: 'left',
+                                    flex: 1,
+                                    fontFamily: 'Roboto-Bold',
+                                }}>
+                                {formattedDate}
+                            </Text>
+                            <DatePickerComponent
+                                onDateChange={handleDateChange}
+                                iconName="calendar"
+                                iconSize={20}
+                            />
+                        </View>
                     </View>
                     <GreenLine />
                     <View style={styles.inputContainer}>
-                        <Text style={styles.inputHeading}>Category</Text>
-                        <TextInput
+                        <Text style={styles.inputHeading}>CATEGORY</Text>
+                        <DropdownSelector
                             style={styles.input}
-                            placeholder="e.g., Food, Entertainment"
-                            onChangeText={(value) => setCategory(value)}
+                            data={[
+                                { label: 'Food' },
+                                { label: 'Entertainment' },
+                                { label: 'Rent/Utility' },
+                                { label: 'Create a new category...', value: MONTHLY },
+                            ]}
+                            onChange={(item) => {
+                                setCategory(item.label);
+                            }}
+                            dropdownLabel="e.g., Food, Entertainment"
+                            placeholderLabel="Select or add"
                         />
                     </View>
                     <GreenLine />
                     <View style={styles.inputContainer}>
-                        <Text style={styles.inputHeading}>Recurring</Text>
+                        <Text style={styles.inputHeading}>RECURRING</Text>
                         <DropdownSelector
                             style={styles.input}
                             data={[
@@ -164,7 +216,7 @@ export default function App({ navigation }) {
                     </View>
                     <GreenLine />
                     <View style={styles.inputContainer}>
-                        <Text style={styles.inputHeading}>Memo</Text>
+                        <Text style={styles.inputHeading}>MEMO</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Notes about spending"
@@ -277,8 +329,9 @@ const styles = StyleSheet.create({
     title: {
         color: 'white',
         fontFamily: 'Roboto-Bold',
-        fontSize: 32,
+        fontSize: Sizes.titleSize,
         textAlign: 'center',
+        fontWeight: 'bold',
     },
     box: {
         width: 300,
@@ -307,17 +360,18 @@ const styles = StyleSheet.create({
         textAlign: 'left',
     },
     inputHeading: {
-        fontSize: 14,
+        fontSize: 12,
         fontFamily: 'Roboto-Bold',
         color: Colors.secondaryColor,
         width: '84%',
         marginTop: 15,
+        marginBottom: 5,
     },
     input: {
         width: '84%',
         color: Colors.textColor,
         fontFamily: 'Roboto-Bold',
-        fontSize: 18,
+        fontSize: Sizes.textSize,
         textAlign: 'left',
     },
     button: {
@@ -348,5 +402,10 @@ const styles = StyleSheet.create({
     },
     firstInput: {
         marginTop: 0,
+    },
+    dateInputContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        width: '84%',
     },
 });
