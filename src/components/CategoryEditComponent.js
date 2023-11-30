@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     TouchableOpacity,
     StyleSheet,
@@ -13,10 +13,25 @@ import {
 import * as Colors from '../constants/Colors';
 import { deleteRowFromCategoryTable, updateRowFromCategoryTable } from '../util/FileSystemUtils';
 const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }) => {
+    const [enableSave, setEnableSave] = useState(false);
     const [categoryName, setCategoryName] = useState();
     const [categoryColor, setCategoryColor] = useState(); //use to update color
 
-    console.log('category to edit: ', category);
+    useEffect(() => {
+        const updateEnableSave = () => {
+            if (
+                categoryName === undefined ||
+                categoryName === '' ||
+                categoryName === category.name
+            ) {
+                setEnableSave(false);
+            } else {
+                setEnableSave(true);
+            }
+        };
+        updateEnableSave();
+    }, [enableSave, categoryName]);
+
     return (
         <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
             <View style={styles.modalContainer}>
@@ -30,8 +45,14 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                 <Text style={styles.inputHeading}>NAME</Text>
                                 <TextInput
                                     style={styles.input}
-                                    value={category.name}
-                                    onChangeText={setCategoryName}
+                                    value={
+                                        categoryName === undefined ? category.name : categoryName
+                                    }
+                                    onChangeText={(value) => {
+                                        console.log('change value', value);
+                                        setCategoryName(value);
+                                        setCategoryColor(category.color);
+                                    }}
                                 />
                             </View>
                             <View style={styles.line} />
@@ -47,11 +68,15 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                     )}
                     <View style={styles.rowContainer}>
                         <TouchableOpacity
-                            style={styles.button}
+                            style={[
+                                styles.button,
+                                { backgroundColor: !enableSave ? 'grey' : styles.button.color },
+                            ]}
+                            disabled={!enableSave}
                             onPress={async () => {
                                 console.log('attempt to update');
                                 await updateRowFromCategoryTable(
-                                    category.name, //id goes here
+                                    category.id,
                                     categoryName,
                                     categoryColor
                                 );
@@ -63,16 +88,15 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                         <TouchableOpacity
                             style={[styles.button, { backgroundColor: 'red' }]}
                             onPress={async () => {
-                                await deleteRowFromCategoryTable(category.name);
+                                //await deleteRowFromCategoryTable(category.name);
                                 await onUpdate();
+                                setCategoryName(undefined);
+                                setCategoryColor(undefined);
                                 onClose();
                             }}>
-                            <Text style={styles.buttonText}>Delete</Text>
+                            <Text style={styles.buttonText}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                        <Feather name="x-circle" size={50} color="red" />
-                    </TouchableOpacity>
                 </SafeAreaView>
             </View>
         </Modal>

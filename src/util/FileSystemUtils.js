@@ -161,15 +161,13 @@ export async function updateRowFromCategoryTable(row_id, name, color) {
     }
     console.log('attempt to update category', row_id);
     const db = await getDatabase();
-    // when changing to use int primary key,
-    // remove quotes from row_id
     try {
         // Need to update Category Table
-        //await db.transactionAsync(async (tx) => {
-        //    await tx.executeSqlAsync(
-        //        `UPDATE categories SET name = '${name}', color = '${color} WHERE category = '${row_id}';`
-        //    );
-        //});
+        await db.transactionAsync(async (tx) => {
+            await tx.executeSqlAsync(
+                `UPDATE categories SET name = '${name}', color = '${color}' WHERE id = ${row_id};`
+            );
+        });
         console.log('success');
     } catch (error) {
         console.error('fail', error);
