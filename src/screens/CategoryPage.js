@@ -1,6 +1,7 @@
+import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CategoryEditComponent from '../components/CategoryEditComponent';
@@ -103,12 +104,20 @@ const styles = StyleSheet.create({
         width: '100%',
         alignSelf: 'center',
         alignItems: 'center',
-        backgroundColor: Colors.primaryColor,
-        // figure out fontStyles
+        backgroundColor: Colors.secondaryColor,
+    },
+    rowContainer: {
+        width: '90%',
+        marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        position: 'absolute',
+        marginTop: 30,
     },
     scrollableContainer: {
         flex: 1,
         width: '100%',
+        backgroundColor: Colors.primaryColor,
     },
     scrollableContent: {
         width: '100%', // Adjust the width as needed
@@ -116,11 +125,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     titleContainer: {
-        margin: 'auto',
-        width: '100%',
-        backgroundColor: Colors.secondaryColor,
-        alignItems: 'center',
-        justifyContent: 'center',
+        width: 'auto',
     },
     titleText: {
         fontWeight: 'bold',
@@ -156,5 +161,8 @@ const styles = StyleSheet.create({
     editText: {
         color: Colors.secondaryColor,
         fontSize: 20,
+    },
+    backButton: {
+        width: 'auto',
     },
 });

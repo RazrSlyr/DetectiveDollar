@@ -30,7 +30,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
             }
         };
         updateEnableSave();
-    }, [enableSave, categoryName]);
+    }, [categoryName, categoryColor]);
 
     return (
         <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>

@@ -84,7 +84,7 @@ const Tabs = () => {
                     },
                 }}
             />
-            <Tab.Screen name="Category" component={CategoryPage} options={{ href: null }} />
+            <Tab.Screen name="Category" component={CategoryPage} />
         </Tab.Navigator>
     );
 };
