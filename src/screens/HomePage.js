@@ -22,6 +22,8 @@ import {
     getRowFromExpenseTable,
     deleteImage,
     getCategoryNameFromId,
+    applyRecurringExpenses,
+    createExampleData,
 } from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
@@ -103,7 +105,28 @@ export default function HomePage({ navigation }) {
             promises.push(deleteRowFromReacurringTable(rowData['reacurring_id']));
         }
         await Promise.all(promises);
-        setTodayExpenses(await getExpensesFromDay(getCurrentDateString()));
+        // Fetch expenses for today and set to state
+        const expenses = await getExpensesFromDay(targetDate);
+        // Change expense categoryId to name
+        for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+        }
+        setTodayExpenses(expenses);
+    };
+
+    const handleAddFakeData = async () => {
+        alert('Adding example data...');
+        // Add expenses
+        await createExampleData();
+
+        // Fetch expenses for today and set to state
+        const expenses = await getExpensesFromDay(targetDate);
+        // Change expense categoryId to name
+        for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+        }
+        setTodayExpenses(expenses);
+        alert('Data has been added and set');
     };
 
     // make date more readable
@@ -197,14 +220,13 @@ export default function HomePage({ navigation }) {
                     </View>
                 </ScrollView>
             </View>
-            <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+            <TouchableOpacity style={styles.button} onPress={handleAddFakeData}>
                 <View style={styles.buttonContainer}>
                     <Text
                         style={{
-                            fontFamily: 'Roboto-Bold',
                             color: '#ffffff',
                             textAlign: 'center',
-                            fontSize: 30,
+                            fontSize: 25,
                         }}>
                         Add Example Data
                     </Text>
@@ -228,7 +250,6 @@ const styles = StyleSheet.create({
     },
     button: {
         color: '#ffffff',
-        fontFamily: 'Roboto-Bold',
         fontSize: 20,
         width: 250,
         height: 40,

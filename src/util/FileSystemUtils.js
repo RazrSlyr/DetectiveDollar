@@ -31,8 +31,9 @@ import {
     createCategoryQueryByName,
     createCategoryQueryById,
 } from './SQLiteUtils';
-import { NO_REPETION } from '../constants/FrequencyConstants';
+import { DAY_LENGTH, NO_REPETION } from '../constants/FrequencyConstants';
 import { ALBUMNNAME } from '../constants/ImageConstants';
+import { generateRandomName, printAdjectives } from './NameUtils';
 
 const dataDir = FileSystem.documentDirectory + 'SQLite';
 const databaseName = 'DetectiveDollar.db';
@@ -113,17 +114,13 @@ export async function addRowToExpenseTable(
         ).rows[0].start;
         await tx.executeSqlAsync(
             createExpenseInsert(
-            createExpenseInsert(
                 name,
                 category,
                 amount,
                 `'${reacurringEntryTimestamp}'`,
-                `'${reacurringEntryTimestamp}'`,
                 day,
                 null,
-                null,
                 imageURI,
-                null,
                 null,
                 reacurringInsertId
             )
@@ -131,11 +128,11 @@ export async function addRowToExpenseTable(
     });
 }
 
-export async function addRowToCategoryTable(categoryName) {
+export async function addRowToCategoryTable(categoryName, icon = null, color = null) {
     const db = await getDatabase();
     let categoryId = null;
     await db.transactionAsync(async (tx) => {
-        await tx.executeSqlAsync(createCategoryInsert(categoryName));
+        await tx.executeSqlAsync(createCategoryInsert(categoryName, icon, color));
         categoryId = (await tx.executeSqlAsync(createCategoryQueryByName(categoryName))).rows[0][
             'id'
         ];
@@ -284,17 +281,13 @@ export async function applyRecurringExpenses() {
                     // Add expense using obtained data
                     await tx.executeSqlAsync(
                         createExpenseInsert(
-                        createExpenseInsert(
                             lastRecurrance['name'],
                             lastRecurrance['category'],
                             lastRecurrance['amount'],
                             `'${getCurrentUTCDatetimeString(recurrenceDate)}'`,
-                            `'${getCurrentUTCDatetimeString(recurrenceDate)}'`,
                             newRecurranceDay,
                             lastRecurrance['subcategory'],
-                            lastRecurrance['subcategory'],
                             lastRecurrance['picture'],
-                            lastRecurrance['memo'],
                             lastRecurrance['memo'],
                             lastRecurrance['reacurring_id']
                         )
@@ -397,17 +390,20 @@ export async function createExampleData() {
 
     // Add example categories
     const db = await getDatabase();
-    await db.transactionAsync(async (tx) => {
-        const promises = [];
-        exampleCategories.forEach((category) => {
-            promises.push(
-                tx.executeSqlAsync(
-                    createCategoryInsert(category['name'], category['icon'], category['color'])
-                )
+    let promises = [];
+    for (let i = 0; i < exampleCategories.length; i++) {
+        const category = exampleCategories[i];
+        const createCategoryAndSetId = async () => {
+            const categoryId = await addRowToCategoryTable(
+                category['name'],
+                category['icon'],
+                category['color']
             );
-        });
-        await Promise.all(promises);
-    });
+            exampleCategories[i]['id'] = categoryId;
+        };
+        promises.push(createCategoryAndSetId());
+    }
+    await Promise.all(promises);
 
     // Add year worth of expenses
 
@@ -417,19 +413,46 @@ export async function createExampleData() {
     timestampOfExpense.setFullYear(timestampOfExpense.getFullYear() - 1);
     timestampOfExpense = timestampOfExpense.getTime();
 
-    // Start Looping
+    // Start Looping and Generating Insert Commands
     const insertCommands = [];
     const MINIMUM_EXPENSES = 3;
     const MAXIMUM_EXPENSES = 10;
     const TEN_MINUTES_IN_MILLISECONDS = 10 * 60 * 1000;
-    while (timestampOfExpense < currentTimestamp) {
+    while (timestampOfExpense <= currentTimestamp) {
         const numberOfExpenses =
             Math.floor(Math.random() * (MAXIMUM_EXPENSES - MINIMUM_EXPENSES + 1)) +
             MINIMUM_EXPENSES;
         for (let i = 0; i < numberOfExpenses; i++) {
-            const timestamp = timestampOfExpense + TEN_MINUTES_IN_MILLISECONDS * i;
+            const timestamp = timestampOfExpense - TEN_MINUTES_IN_MILLISECONDS * i;
+            const date = new Date();
+            date.setTime(timestamp);
             const category =
                 exampleCategories[Math.floor(Math.random() * exampleCategories.length)];
+            const name = generateRandomName();
+            const amount = Math.floor(Math.random() * 1001);
+            insertCommands.push(
+                createExpenseInsert(
+                    name,
+                    category['id'],
+                    amount,
+                    `datetime(${timestamp / 1000}, 'unixepoch')`,
+                    getDateStringFromDate(date),
+                    null,
+                    null,
+                    null,
+                    null
+                )
+            );
         }
+        timestampOfExpense += DAY_LENGTH;
     }
+
+    // Run Insert Commands
+    await db.transactionAsync(async (tx) => {
+        promises = [];
+        insertCommands.forEach((command) => {
+            promises.push(tx.executeSqlAsync(command));
+        });
+        await Promise.all(promises);
+    });
 }

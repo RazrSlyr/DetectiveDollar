@@ -51,9 +51,7 @@ const deleteExpense = (row) => {
 const createReacurringDeleteById = (row) => {
     return `DELETE FROM reacurring WHERE id = ${row};`;
 };
-};
 
-const createExpenseInsert = (
 const createExpenseInsert = (
     name,
     category,
