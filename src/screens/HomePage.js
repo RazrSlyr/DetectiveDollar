@@ -148,7 +148,12 @@ export default function HomePage({ navigation }) {
             <StatusBar style="auto" />
             <Text style={[styles.title, styles.topTitle]}>Daily Spending</Text>
             <TouchableOpacity style={styles.calendarContainer} activeOpacity={0.7}>
-                <DatePickerComponent onDateChange={handleDateChange} />
+                <DatePickerComponent
+                    onDateChange={handleDateChange}
+                    iconName="calendar"
+                    iconSize={32}
+                    iconColor={Colors.secondaryColor}
+                />
             </TouchableOpacity>
             <View style={styles.totalExpensesContainer}>
                 <Text style={styles.subHeading}>Expenses for {formattedDate}</Text>
