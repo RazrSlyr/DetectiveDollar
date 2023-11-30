@@ -71,11 +71,12 @@ const createExpenseInsert = (
     });`;
 };
 
-const createReacurringInsert = (frequency) => {
-    const start = new Date();
-    const next = incrementDateByFrequency(start, frequency);
+const createReacurringInsert = (start, frequency) => {
+    const startDate = new Date();
+    startDate.setTime(start);
+    const next = incrementDateByFrequency(startDate, frequency);
     const command = `INSERT INTO reacurring (frequency, start, next_trigger)
-    VALUES ('${frequency}', datetime(${start.getTime() / 1000}, 'unixepoch'), datetime(${
+    VALUES ('${frequency}', datetime(${start / 1000}, 'unixepoch'), datetime(${
         next / 1000
     }, 'unixepoch'));`;
     return command;

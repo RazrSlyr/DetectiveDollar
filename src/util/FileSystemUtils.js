@@ -7,6 +7,7 @@ import {
     getDateStringFromDate,
     incrementDateByFrequency,
 } from './DatetimeUtils';
+import { generateRandomName, printAdjectives } from './NameUtils';
 import {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
@@ -33,7 +34,6 @@ import {
 } from './SQLiteUtils';
 import { DAY_LENGTH, NO_REPETION } from '../constants/FrequencyConstants';
 import { ALBUMNNAME } from '../constants/ImageConstants';
-import { generateRandomName, printAdjectives } from './NameUtils';
 
 const dataDir = FileSystem.documentDirectory + 'SQLite';
 const databaseName = 'DetectiveDollar.db';
@@ -85,12 +85,14 @@ export async function addRowToExpenseTable(
     name,
     category,
     amount,
+    timestamp,
     day,
-    expenseFrequency,
-    imageURI = null
+    subcategory = null,
+    picture = null,
+    memo = null,
+    expenseFrequency = NO_REPETION
 ) {
     const db = await getDatabase();
-    const currentTime = new Date().getTime();
     await db.transactionAsync(async (tx) => {
         if (expenseFrequency === NO_REPETION) {
             await tx.executeSqlAsync(
@@ -98,16 +100,18 @@ export async function addRowToExpenseTable(
                     name,
                     category,
                     amount,
-                    `datetime(${currentTime / 1000}, 'unixepoch)`,
+                    `datetime(${timestamp / 1000}, 'unixepoch')`,
                     day,
-                    null,
-                    imageURI
+                    subcategory,
+                    picture,
+                    memo,
+                    null
                 )
             );
             return;
         }
         const reacurringInsertId = (
-            await tx.executeSqlAsync(createReacurringInsert(expenseFrequency))
+            await tx.executeSqlAsync(createReacurringInsert(timestamp, expenseFrequency))
         )?.insertId;
         const reacurringEntryTimestamp = (
             await tx.executeSqlAsync(createReacurringByIdQuery(reacurringInsertId))
@@ -119,9 +123,9 @@ export async function addRowToExpenseTable(
                 amount,
                 `'${reacurringEntryTimestamp}'`,
                 day,
-                null,
-                imageURI,
-                null,
+                subcategory,
+                picture,
+                memo,
                 reacurringInsertId
             )
         );
