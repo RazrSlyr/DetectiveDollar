@@ -137,6 +137,49 @@ export async function deleteRowFromExpenseTable(row) {
         await tx.executeSqlAsync(deleteExpense(row));
     });
 }
+export async function updateRowFromCategoryTable(row_id, name, color) {
+    if (row_id === undefined || row_id === null) {
+        return;
+    }
+    console.log('attempt to update category', row_id);
+    const db = await getDatabase();
+    // when changing to use int primary key,
+    // remove quotes from row_id
+    try {
+        // Need to update Category Table
+        //await db.transactionAsync(async (tx) => {
+        //    await tx.executeSqlAsync(
+        //        `UPDATE categories SET name = '${name}', color = '${color} WHERE category = '${row_id}';`
+        //    );
+        //});
+        console.log('success');
+    } catch (error) {
+        console.error('fail', error);
+    }
+}
+export async function deleteRowFromCategoryTable(row_id) {
+    if (row_id === undefined || row_id === null) {
+        return;
+    }
+    console.log('attempt to delete category', row_id);
+    const db = await getDatabase();
+    // when changing to use int primary key,
+    // remove quotes from row_id
+    try {
+        await db.transactionAsync(async (tx) => {
+            await tx.executeSqlAsync(
+                `UPDATE expenses SET category = "None" WHERE category = '${row_id}';`
+            );
+        });
+        console.log('update expenses');
+        await db.transactionAsync(async (tx) => {
+            await tx.executeSqlAsync(`DELETE FROM categories WHERE name = '${row_id}';`);
+        });
+        console.log('success');
+    } catch (error) {
+        console.error('fail', error);
+    }
+}
 
 export async function deleteRowFromReacurringTable(row) {
     const db = await getDatabase();

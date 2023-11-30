@@ -35,6 +35,18 @@ export default function CategoryPage({ navigation }) {
     const openCategoryEditor = async () => {
         setShowEditor(true);
     };
+
+    const updateCategories = async () => {
+        try {
+            // Fetch expenses for today and set to state
+            const categories = await getCategoryTable();
+            setCategories(categories);
+            console.log('Categories set!');
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+
     const closeCategoryEditor = () => {
         setSelectedCategory(null);
         setShowEditor(false);
@@ -74,10 +86,12 @@ export default function CategoryPage({ navigation }) {
                     );
                 })}
             </ScrollView>
+
             <CategoryEditComponent
                 isVisable={showEditor}
                 onClose={closeCategoryEditor}
                 category={selectedCategory}
+                onUpdate={updateCategories}
             />
         </SafeAreaView>
     );
