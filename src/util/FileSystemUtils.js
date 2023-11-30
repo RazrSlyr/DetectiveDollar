@@ -28,6 +28,8 @@ import {
     createLastReacurrenceQuery,
     createExpenseByIdQuery,
     createReacurringDeleteById,
+    createCategoryQueryByName,
+    createCategoryQueryById,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
 import { ALBUMNNAME } from '../constants/ImageConstants';
@@ -125,11 +127,16 @@ export async function addRowToExpenseTable(
     });
 }
 
-export async function addRowToCategoryTable(category) {
+export async function addRowToCategoryTable(categoryName) {
     const db = await getDatabase();
+    let categoryId = null;
     await db.transactionAsync(async (tx) => {
-        await tx.executeSqlAsync(createCategoryInsert(category));
+        await tx.executeSqlAsync(createCategoryInsert(categoryName));
+        categoryId = (await tx.executeSqlAsync(createCategoryQueryByName(categoryName))).rows[0][
+            'id'
+        ];
     });
+    return categoryId;
 }
 
 export async function getRowFromExpenseTable(row) {
@@ -206,15 +213,26 @@ export async function getExpensesFromDayframe(startDay, endDay) {
     return rows;
 }
 
+export async function getCategoryNameFromId(categoryId) {
+    let categoryName = null;
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        categoryName = (await tx.executeSqlAsync(createCategoryQueryById(categoryId))).rows[0][
+            'name'
+        ];
+    });
+    return categoryName;
+}
+
 export async function getExpensesbyCategory(startDate, endDate) {
     const categoryDict = {};
     const rows = await getExpensesFromDayframe(startDate, endDate);
 
     for (const row of rows) {
         if (row['category'] in categoryDict) {
-            categoryDict[row['category']].push(row);
+            categoryDict[await getCategoryNameFromId(row['category'])].push(row);
         } else {
-            categoryDict[row['category']] = [row];
+            categoryDict[await getCategoryNameFromId(row['category'])] = [row];
         }
     }
 
@@ -222,11 +240,9 @@ export async function getExpensesbyCategory(startDate, endDate) {
 }
 
 export async function applyRecurringExpenses() {
-    console.log("Checking for reaccurring?");
     if (appliedReacurring) {
         return;
     }
-    console.log("Applying Reacurring");
     const db = await getDatabase();
     let recurringExpenses = null;
     await db.transactionAsync(async (tx) => {
@@ -239,7 +255,6 @@ export async function applyRecurringExpenses() {
     const currentDate = new Date();
     for (let i = 0; i < recurringExpenses?.length; i++) {
         const element = recurringExpenses[i];
-        console.log(element);
         let recurrenceDate = getDateFromUTCDatetimeString(element['next_trigger']);
         // Get last expense to get data
         let lastRecurrance = null;

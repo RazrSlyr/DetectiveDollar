@@ -8,15 +8,17 @@ const CREATE_REACCURING_TABLE = `CREATE TABLE IF NOT EXISTS reacurring (
 );`;
 
 const CREATE_CATEGORY_TABLE = `CREATE TABLE IF NOT EXISTS categories (
-    name TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
     icon TEXT,
-    color TEXT
+    color TEXT,
+    UNIQUE(name)
 );`;
 
 const CREATE_EXPENSES_TABLE = `CREATE TABLE IF NOT EXISTS expenses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    category TEXT NOT NULL,
+    category INTEGER NOT NULL,
     subcategory TEXT,
     amount REAL NOT NULL,
     picture TEXT,
@@ -62,7 +64,7 @@ const createExpenseInsert = (
     reacurring_id = null
 ) => {
     return `INSERT INTO expenses (name, category, amount, timestamp, day, subcategory, picture, memo, reacurring_id)
-    VALUES ('${name}', '${category}', '${amount}', ${timestamp}, '${day}', ${
+    VALUES ('${name}', ${category}, '${amount}', ${timestamp}, '${day}', ${
         subcategory !== null ? `'${subcategory}'` : null
     }, ${picture !== null ? `'${picture}'` : null}, ${memo !== null ? `'${memo}'` : null}, ${
         reacurring_id !== null ? `${reacurring_id}` : null
@@ -130,6 +132,14 @@ const createLastReacurrenceQuery = (id) => {
     return `SELECT * FROM expenses WHERE reacurring_id = ${id} ORDER BY timestamp DESC LIMIT 1;`;
 };
 
+const createCategoryQueryByName = (name) => {
+    return `SELECT * FROM categories WHERE name = '${name}' LIMIT 1;`;
+};
+
+const createCategoryQueryById = (id) => {
+    return `SELECT * FROM categories WHERE id = ${id} LIMIT 1;`;
+};
+
 export {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
@@ -153,4 +163,6 @@ export {
     createLastReacurrenceQuery,
     createReacurringDeleteById,
     createExpenseByDayFrameQuery,
+    createCategoryQueryByName,
+    createCategoryQueryById,
 };
