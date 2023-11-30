@@ -41,6 +41,7 @@ export default function App({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
     const todaysDate = getCurrentDateString();
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
+    const [memo, setMemo] = useState('');
 
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
@@ -107,6 +108,7 @@ export default function App({ navigation }) {
             timestamp,
             targetDate,
             null,
+            memo,
             imageURI,
             null,
             frequency
@@ -230,6 +232,7 @@ export default function App({ navigation }) {
                                 style={styles.input}
                                 placeholder="Notes about spending"
                                 /* Need to add logic to connect to backend */
+                                onChangeText={(value) => setMemo(value)}
                             />
                         </View>
                         <GreenLine />

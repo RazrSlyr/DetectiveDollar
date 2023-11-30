@@ -91,10 +91,6 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
-    const goToAddPage = () => {
-        navigation.navigate('AddExpense'); // change TEMPORARY to actual page
-    };
-
     const handleDelete = async (expense) => {
         deleteImage(expense['picture']);
 
