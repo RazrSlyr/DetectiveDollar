@@ -40,7 +40,7 @@ const DatePickerComponent = ({ onDateChange, iconName, iconSize, iconColor }) =>
 
     return (
         <View>
-            <TouchableOpacity onPress={showDatePicker} style={{ alignItems: 'center' }}>
+            <TouchableOpacity onPress={showDatePicker} style={{ alignItems: 'center', width: '100%' }}>
                 <AntDesign name={iconName} size={iconSize} color={iconColor} />
             </TouchableOpacity>
 

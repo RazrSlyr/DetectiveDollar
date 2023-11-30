@@ -63,7 +63,7 @@ const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
                     </View>
                     <View style={styles.memoContainer}>
                         <Text style={styles.titleText}>Memo</Text>
-                        <Text style={styles.valueText} />
+                        <Text style={styles.valueText}>{expense.memo}</Text>
                     </View>
 
                     <TouchableOpacity style={styles.closeButton} onPress={onClose}>
