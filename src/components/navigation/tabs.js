@@ -3,12 +3,22 @@
 
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { View, Platform } from 'react-native';
 
+import { NavDrawer } from './drawer';
 import { HomePage, AddExpense, GraphPage, CategoryPage } from '../../screens';
 
+const HomeStack = createDrawerNavigator();
+function HomeStackScreen() {
+    return (
+        <HomeStack.Navigator>
+            <HomeStack.Screen name="Home" component={HomePage} />
+            <HomeStack.Screen name="Category" component={CategoryPage} />
+        </HomeStack.Navigator>
+    );
+}
 const Tab = createBottomTabNavigator();
-
 const Tabs = () => {
     return (
         <Tab.Navigator
@@ -30,7 +40,7 @@ const Tabs = () => {
             })}>
             <Tab.Screen
                 name="Home"
-                component={HomePage}
+                component={HomeStackScreen}
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
@@ -84,7 +94,6 @@ const Tabs = () => {
                     },
                 }}
             />
-            <Tab.Screen name="Category" component={CategoryPage} />
         </Tab.Navigator>
     );
 };
