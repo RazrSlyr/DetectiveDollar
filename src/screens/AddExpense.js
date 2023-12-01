@@ -42,7 +42,6 @@ export default function App({ navigation }) {
     const todaysDate = getCurrentDateString();
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [memo, setMemo] = useState('');
-
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
             return '$0.00';
@@ -96,7 +95,7 @@ export default function App({ navigation }) {
         const dateString = getDateStringFromDate(currentDate);
         const timestamp = currentDate.getTime();
         const categoryId = await addRowToCategoryTable(category);
-        // console.log(categoryId);
+        //console.log(categoryId);
         let imageURI = null;
         if (previewURI) {
             imageURI = await saveImage(previewURI);
@@ -185,7 +184,7 @@ export default function App({ navigation }) {
                                 <DatePickerComponent
                                     onDateChange={handleDateChange}
                                     iconName="calendar"
-                                    iconSize={20}
+                                    iconSize={24}
                                 />
                             </View>
                         </View>
@@ -203,7 +202,7 @@ export default function App({ navigation }) {
                                 onChange={(item) => {
                                     setCategory(item.label);
                                 }}
-                                // dropdownLabel="e.g., Food, Entertainment"
+                                dropdownLabel="e.g., Food, Entertainment"
                                 placeholderLabel="Select or add"
                             />
                         </View>
@@ -231,7 +230,6 @@ export default function App({ navigation }) {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Notes about spending"
-                                /* Need to add logic to connect to backend */
                                 onChangeText={(value) => setMemo(value)}
                             />
                         </View>
@@ -326,7 +324,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     upperPart: {
-        height: 50,
+        height: Dimensions.get('window').height * 0.06,
         backgroundColor: Colors.secondaryColor,
     },
     content: {
@@ -347,8 +345,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     box: {
-        width: 300,
-        height: 100,
+        width: Dimensions.get('window').width * 0.75,
+        height: Dimensions.get('window').height * 0.1,
         backgroundColor: '#ffffff',
         borderRadius: 10,
         margin: 20,
@@ -356,9 +354,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     box2: {
-        width: 300,
-        height: '66%',
-        // height: Dimensions.get('window').height * 0.4,
+        width: Dimensions.get('window').width * 0.75,
+        height: Dimensions.get('window').height * 0.6,
         backgroundColor: '#ffffff',
         borderRadius: 10,
         display: 'flex',
@@ -366,8 +363,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     inputContainer: {
-        //flex: 1,
-        height: 60,
+        height: Dimensions.get('window').height * 0.072,
         width: '100%',
         alignItems: 'center',
         textAlign: 'left',
@@ -391,7 +387,7 @@ const styles = StyleSheet.create({
         color: Colors.secondaryColor,
         fontFamily: 'Roboto-Bold',
         width: '60%',
-        height: 40,
+        height: '40%',
         borderRadius: 20,
         textAlign: 'center',
         justifyContent: 'center',
@@ -410,7 +406,7 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     cameraBtnsContainer: {
-        height: 100,
+        height: '20%',
         marginTop: 10,
     },
     firstInput: {
