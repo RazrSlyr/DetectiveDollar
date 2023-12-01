@@ -4,12 +4,7 @@ const WEEKLY = 'Weekly';
 const MONTHLY = 'Monthly';
 const YEARLY = 'Yearly';
 
-const DAY_LENGTH = (() => {
-    const day = new Date(0);
-    const nextDay = new Date(0);
-    nextDay.setDate(nextDay.getDate() + 1);
-    return nextDay.getTime() - day.getTime();
-})();
+const DAY_LENGTH = 24 * 60 * 60 * 1000;
 
 const WEEK_LENGTH = DAY_LENGTH * 7;
 

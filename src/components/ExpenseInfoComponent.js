@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import * as Colors from '../constants/Colors';
+import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
 const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
     const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
 
@@ -48,7 +49,9 @@ const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
                     </View>
                     <View style={styles.textContainer}>
                         <Text style={styles.titleText}>When</Text>
-                        <Text style={styles.valueText}>{expense.timestamp}</Text>
+                        <Text style={styles.valueText}>
+                            {getDatetimeString(getDateFromUTCDatetimeString(expense.timestamp))}
+                        </Text>
                     </View>
                     <View style={styles.textContainer}>
                         <Text style={styles.titleText}>Amount</Text>
@@ -60,7 +63,7 @@ const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
                     </View>
                     <View style={styles.memoContainer}>
                         <Text style={styles.titleText}>Memo</Text>
-                        <Text style={styles.valueText}></Text>
+                        <Text style={styles.valueText} />
                     </View>
 
                     <TouchableOpacity style={styles.closeButton} onPress={onClose}>

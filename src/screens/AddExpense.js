@@ -18,7 +18,7 @@ import {
 import DropdownSelector from '../components/Dropdown';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
-import { getCurrentDateString } from '../util/DatetimeUtils';
+import { getCurrentDateString, getDateStringFromDate } from '../util/DatetimeUtils';
 import { addRowToCategoryTable, addRowToExpenseTable, saveImage } from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
@@ -35,19 +35,25 @@ export default function App({ navigation }) {
             alert('Please Input a Name, Amount, and Category');
             return;
         }
-        const dateString = getCurrentDateString();
-        await addRowToCategoryTable(category);
+        const currentDate = new Date();
+        const dateString = getDateStringFromDate(currentDate);
+        const timestamp = currentDate.getTime();
+        const categoryId = await addRowToCategoryTable(category);
+        console.log(categoryId);
         let imageURI = null;
         if (previewURI) {
             imageURI = await saveImage(previewURI);
         }
         await addRowToExpenseTable(
             name,
-            category,
-            parseFloat(amount),
+            categoryId,
+            parseFloat(amount).toFixed(2),
+            timestamp,
             dateString,
-            frequency,
-            imageURI
+            null,
+            imageURI,
+            null,
+            frequency
         );
     };
     const formattedAmount = amount.toLocaleString('en-US', {
@@ -86,7 +92,7 @@ export default function App({ navigation }) {
                     placeholder="Amount"
                     keyboardType="numeric"
                     maxLength={10}
-                    onChangeText={(value) => setAmount(value)}
+                    onChangeText={(value) => setAmount(parseFloat(value).toFixed(2))}
                 />
                 <TextInput
                     style={styles.input}
