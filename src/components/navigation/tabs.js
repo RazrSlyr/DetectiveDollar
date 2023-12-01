@@ -4,20 +4,41 @@
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { View, Platform } from 'react-native';
+import { View, Platform, Dimensions } from 'react-native';
 
-import { NavDrawer } from './drawer';
+import { CustomDrawer } from './CustomDrawer';
+import * as Colors from '../../constants/Colors';
 import { HomePage, AddExpense, GraphPage, CategoryPage } from '../../screens';
 
-const HomeStack = createDrawerNavigator();
-function HomeStackScreen() {
+const Drawer = createDrawerNavigator();
+const HomeStack = () => {
     return (
-        <HomeStack.Navigator>
-            <HomeStack.Screen name="Home" component={HomePage} />
-            <HomeStack.Screen name="Category" component={CategoryPage} />
-        </HomeStack.Navigator>
+        <Drawer.Navigator
+            screenOptions={{
+                drawerActiveTintColor: Colors.secondaryColor,
+                drawerInactiveTintColor: Colors.secondaryColor,
+                drawerStyle: {
+                    backgroundColor: 'white',
+                    width: Dimensions.get('screen').width / 2,
+                },
+                drawerLabelStyle: {
+                    fontSize: 20, // Set the font size for each item
+                },
+                headerTitleAlign: 'center',
+                headerTintColor: '#fff', // Set the text color of the header
+                headerStyle: {
+                    backgroundColor: Colors.secondaryColor, // Set the background color of the header
+                },
+                headerTitleStyle: {
+                    fontWeight: 'bold', // Set the font weight of the header title
+                    fontSize: 35,
+                },
+            }}>
+            <Drawer.Screen name="Home Page" component={HomePage} />
+            <Drawer.Screen name="Category" component={CategoryPage} />
+        </Drawer.Navigator>
     );
-}
+};
 const Tab = createBottomTabNavigator();
 const Tabs = () => {
     return (
@@ -35,12 +56,12 @@ const Tabs = () => {
                     left: 0,
                     elevation: 0,
                     height: 80,
-                    background: '#fff',
+                    background: 'black',
                 },
             })}>
             <Tab.Screen
                 name="Home"
-                component={HomeStackScreen}
+                component={HomeStack}
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
