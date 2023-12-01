@@ -212,8 +212,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         flex: 1,
         borderWidth: 1,
-        borderColor: '#37c871',
-        backgroundColor: '#f9f9f9',
+        borderColor: Colors.secondaryColor,
+        backgroundColor: Colors.primaryColor,
         borderRadius: 15,
         marginTop: 20,
         marginHorizontal: 2,
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
         width: 10,
         height: 10,
         borderRadius: 5,
-        backgroundColor: '#37c871', // Color for the active dot
+        backgroundColor: Colors.secondaryColor, // Color for the active dot
     },
     scrollContentContainer: {
         paddingBottom: 60,

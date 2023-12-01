@@ -4,6 +4,7 @@ import { View, Text } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 
 import LineGraphStats from './LineGraphStats';
+import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
     getCurrentDateString,
@@ -339,7 +340,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                                                 paddingVertical: 6,
                                                 borderRadius: 16,
                                                 backgroundColor: 'white',
-                                                borderColor: '#37C871',
+                                                borderColor: Colors.secondaryColor,
                                                 borderWidth: 2,
                                             }}>
                                             <Text
