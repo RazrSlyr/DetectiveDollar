@@ -1,7 +1,7 @@
 import { AntDesign, Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     TouchableOpacity,
     StyleSheet,
@@ -16,7 +16,7 @@ import DropdownSelector from '../components/Dropdown';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { addRowToCategoryTable, addRowToExpenseTable, addImage } from '../util/FileSystemUtils';
+import { addRowToCategoryTable, addRowToExpenseTable, addImage, getCategoryTable} from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
 export default function App({ navigation }) {
@@ -26,7 +26,7 @@ export default function App({ navigation }) {
     const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
     const handleButtonPress = async () => {
-        // Add your button click logic here
+        // Button logic
         if (name === '' || amount === '' || category === '') {
             alert('Please Input a Name, Amount, and Category');
             return;
@@ -45,6 +45,12 @@ export default function App({ navigation }) {
             frequency,
             imageURI
         );
+        this.name.clear()
+        this.amount.clear()
+        // this.category.clear()
+        alert("Entry added")
+        setTextInputVisible(false)
+        navigation.navigate('Home')
     };
     const formattedAmount = amount.toLocaleString('en-US', {
         style: 'currency',
@@ -55,6 +61,27 @@ export default function App({ navigation }) {
         //deleteImageAsset(imageURI);
         setImageURI(null);
     };
+
+    const [categories, setCategories] = useState([]);
+    const fetchCategories = async() => {
+        try {
+            const categories = await getCategoryTable();
+            const categoryNames = categories.map((category) => category["name"]);
+            setCategories(categoryNames);
+            return categoryNames
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+    useEffect(() => {
+        fetchCategories();  
+    }, []);
+
+    const [isTextInputVisible, setTextInputVisible] = useState(false);
+    const handleCategoryButtonPress = () => {
+        setTextInputVisible(true);
+    }
+
     return (
         <View style={styles.container}>
             <Text style={[styles.title, styles.topTitle]}>Add{'\n'}Expense</Text>
@@ -73,23 +100,44 @@ export default function App({ navigation }) {
                 <Text style={{ ...styles.title, fontSize: 40, top: 10 }}>${formattedAmount}</Text>
             </View>
             <View style={styles.box2}>
-                <TextInput
+                <TextInput ref={input => { this.name = input }}
                     style={styles.input}
                     placeholder="Name"
                     onChangeText={(value) => setName(value)}
                 />
-                <TextInput
+                <TextInput ref={input => { this.amount = input }}
                     style={styles.input}
                     placeholder="Amount"
                     keyboardType="numeric"
                     maxLength={10}
                     onChangeText={(value) => setAmount(value)}
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Category"
-                    onChangeText={(value) => setCategory(value)}
-                />
+                <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                        <DropdownSelector
+                            data = {categories.map((name) => ({ label: name }))}
+                            onChange={(item) => {
+                                {!isTextInputVisible (
+                                    setCategory(item.label)
+                                )}
+                            }}
+                            dropdownLabel="Category"
+                            placeHolderLabel="Category"
+                        />
+                    <TouchableOpacity onPress={handleCategoryButtonPress}>
+                        <AntDesign name="pluscircleo" size={20} color="#37c871" />
+                    </TouchableOpacity>
+                </View>
+                <View>
+                    {isTextInputVisible && (
+                        <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                            <TextInput ref={input => { this.category = input }}
+                                style={styles.input}
+                                placeholder="Category"
+                                onChangeText={(value) => setCategory(value)}
+                            />
+                        </View>
+                    )}
+                </View>
                 <DropdownSelector
                     data={[
                         { label: "Don't Repeat", value: NO_REPETION },
@@ -182,7 +230,7 @@ const styles = StyleSheet.create({
     },
     box2: {
         width: 300,
-        height: Dimensions.get('window').height * 0.4,
+        height: Dimensions.get('window').height * 0.5,
         backgroundColor: '#ffffff',
         borderRadius: 10,
         margin: 10,
