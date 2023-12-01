@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import DatePickerComponent from '../components/DatePickerComponent';
+import EditExpenseComponent from '../components/EditExpenseComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import { getCurrentDateString } from '../util/DatetimeUtils';
@@ -228,7 +229,7 @@ export default function HomePage({ navigation }) {
                     </Text>
                 </View>
             </TouchableOpacity>
-            <ExpenseInfoComponent
+            <EditExpenseComponent
                 isVisable={showExpenseInfo}
                 onClose={closeInfo}
                 expense={selectedExpense}
