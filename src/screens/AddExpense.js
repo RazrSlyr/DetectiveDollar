@@ -41,7 +41,7 @@ export default function App({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
     const todaysDate = getCurrentDateString();
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
-    const [memo, setMemo] = useState('');
+    const [memo, setMemo] = useState(null);
 
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
@@ -169,11 +169,9 @@ export default function App({ navigation }) {
                         <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>DATE</Text>
-                            {/* CHANGE TO DATE HERE */}
                             <View style={styles.dateInputContainer}>
                                 <Text
                                     style={{
-                                        // color: '#ccc',
                                         fontSize: Sizes.textSize,
                                         textAlign: 'left',
                                         flex: 1,
@@ -184,14 +182,19 @@ export default function App({ navigation }) {
                                 <DatePickerComponent
                                     onDateChange={handleDateChange}
                                     iconName="calendar"
-                                    iconSize={20}
+                                    iconSize={22}
                                 />
                             </View>
                         </View>
                         <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>CATEGORY</Text>
-                            <DropdownSelector
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Category"
+                                onChangeText={(value) => setCategory(value)}
+                            />
+                            {/* <DropdownSelector
                                 style={styles.input}
                                 data={[
                                     { label: 'Food' },
@@ -204,7 +207,7 @@ export default function App({ navigation }) {
                                 }}
                                 // dropdownLabel="e.g., Food, Entertainment"
                                 placeholderLabel="Select or add"
-                            />
+                            /> */}
                         </View>
                         <GreenLine />
                         <View style={styles.inputContainer}>
@@ -325,7 +328,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     upperPart: {
-        height: 50,
+        height: Dimensions.get('window').height * 0.06,
         backgroundColor: Colors.secondaryColor,
     },
     content: {
@@ -346,8 +349,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     box: {
-        width: 300,
-        height: 100,
+        width: Dimensions.get('window').width * 0.75,
+        height: Dimensions.get('window').height * 0.1,
         backgroundColor: '#ffffff',
         borderRadius: 10,
         margin: 20,
@@ -355,9 +358,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     box2: {
-        width: 300,
-        height: '66%',
-        // height: Dimensions.get('window').height * 0.4,
+        width: Dimensions.get('window').width * 0.75,
+        height: Dimensions.get('window').height * 0.6,
         backgroundColor: '#ffffff',
         borderRadius: 10,
         display: 'flex',
@@ -365,8 +367,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     inputContainer: {
-        //flex: 1,
-        height: 60,
+        height: Dimensions.get('window').height * 0.072,
         width: '100%',
         alignItems: 'center',
         textAlign: 'left',
@@ -390,7 +391,7 @@ const styles = StyleSheet.create({
         color: Colors.secondaryColor,
         fontFamily: 'Roboto-Bold',
         width: '60%',
-        height: 40,
+        height: '40%',
         borderRadius: 20,
         textAlign: 'center',
         justifyContent: 'center',
@@ -409,7 +410,7 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     cameraBtnsContainer: {
-        height: 100,
+        height: '20%',
         marginTop: 10,
     },
     firstInput: {
