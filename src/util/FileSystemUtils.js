@@ -100,7 +100,7 @@ export async function addRowToExpenseTable(
                     name,
                     category,
                     amount,
-                    `datetime(${timestamp / 1000}, 'unixepoch)`,
+                    `datetime(${timestamp / 1000}, 'unixepoch')`,
                     day,
                     subcategory,
                     picture,
