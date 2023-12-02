@@ -157,8 +157,8 @@ export default function App({ navigation }) {
                                 placeholder="Name of expense"
                                 onChangeText={(value) => setName(value)}
                             />
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>AMOUNT</Text>
                             <TextInput
@@ -168,8 +168,8 @@ export default function App({ navigation }) {
                                 maxLength={10}
                                 onChangeText={(value) => setAmount(parseFloat(value).toFixed(2))}
                             />
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>DATE</Text>
                             <View style={styles.dateInputContainer}>
@@ -188,8 +188,8 @@ export default function App({ navigation }) {
                                     iconSize={22}
                                 />
                             </View>
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>CATEGORY</Text>
                             <TextInput
@@ -211,8 +211,8 @@ export default function App({ navigation }) {
                                 // dropdownLabel="e.g., Food, Entertainment"
                                 placeholderLabel="Select or add"
                             /> */}
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>RECURRING</Text>
                             <DropdownSelector
@@ -229,8 +229,8 @@ export default function App({ navigation }) {
                                 dropdownLabel="Expense Frequency"
                                 placeholderLabel="Expense Frequency"
                             />
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>MEMO</Text>
                             <TextInput
@@ -239,8 +239,8 @@ export default function App({ navigation }) {
                                 /* Need to add logic to connect to backend */
                                 onChangeText={(value) => setMemo(value)}
                             />
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={[styles.inputContainer, styles.cameraBtnsContainer]}>
                             {previewURI ? (
                                 <SafeAreaView style={styles.container}>
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     box: {
         width: Dimensions.get('window').width * 0.75,
         height: Dimensions.get('window').height * 0.1,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'white',
         borderRadius: 10,
         margin: 20,
         alignItems: 'center',
@@ -369,26 +369,26 @@ const styles = StyleSheet.create({
     },
     box2: {
         width: Dimensions.get('window').width * 0.75,
-        height: Dimensions.get('window').height * 0.6,
-        backgroundColor: '#ffffff',
+        height: 'auto',
+        backgroundColor: 'white',
         borderRadius: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        paddingVertical: 10,
     },
     inputContainer: {
         height: Dimensions.get('window').height * 0.072,
         width: '100%',
         alignItems: 'center',
         textAlign: 'left',
+        marginTop: 5,
     },
     inputHeading: {
         fontSize: 12,
         fontFamily: 'Roboto-Bold',
         color: Colors.secondaryColor,
         width: '84%',
-        marginTop: 15,
-        marginBottom: 5,
     },
     input: {
         width: '84%',
@@ -417,11 +417,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     rowItem: {
-        margin: 10,
+        marginHorizontal: 10,
     },
     cameraBtnsContainer: {
         height: '20%',
-        marginTop: 10,
     },
     firstInput: {
         marginTop: 0,
