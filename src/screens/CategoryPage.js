@@ -65,6 +65,7 @@ export default function CategoryPage({ navigation }) {
                 {categories.map((category) => {
                     return (
                         <View
+                            key={category['id']}
                             style={[
                                 styles.catgeoryContainer,
                                 {
