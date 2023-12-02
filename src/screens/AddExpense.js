@@ -23,7 +23,7 @@ import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import * as Sizes from '../constants/Sizes';
-import { getCurrentDateString } from '../util/DatetimeUtils';
+import { getCurrentDateString, getDateStringFromDate } from '../util/DatetimeUtils';
 import {
     addRowToCategoryTable,
     addRowToExpenseTable,
@@ -108,9 +108,8 @@ export default function App({ navigation }) {
             timestamp,
             targetDate,
             null,
-            memo,
             imageURI,
-            null,
+            memo,
             frequency
         );
     };
