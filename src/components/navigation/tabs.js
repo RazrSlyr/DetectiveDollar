@@ -3,7 +3,7 @@
 
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Platform } from 'react-native';
+import { View, Platform, StyleSheet, Text } from 'react-native';
 
 import { HomePage, AddExpense, GraphPage } from '../../screens';
 
@@ -34,12 +34,13 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={styles.elementContainer}>
                                 <AntDesign
                                     name="home"
                                     size={30}
                                     color={focused ? '#37c871' : '#b7c8be'}
                                 />
+                                <Text style={styles.text}>Home</Text>
                             </View>
                         );
                     },
@@ -56,12 +57,13 @@ const Tabs = () => {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     backgroundColor: '#37c871',
-                                    width: Platform.OS === 'ios' ? 60 : 70,
-                                    height: Platform.OS === 'ios' ? 60 : 70,
-                                    top: Platform.OS === 'ios' ? -10 : -20,
-                                    borderRadius: Platform.OS === 'ios' ? 30 : 35,
+                                    // width: Platform.OS === 'ios' ? 70 : 80,
+                                    // height: Platform.OS === 'ios' ? 70 : 80,
+                                    // top: Platform.OS === 'ios' ?  : 10,
+                                    borderRadius: Platform.OS === 'ios' ? 40 : 50,
                                 }}>
-                                <AntDesign name="pluscircleo" size={30} color="#fff" />
+                                <AntDesign name="plus" size={30} color="#fff" />
+                                <Text style={styles.text}>Add</Text>
                             </View>
                         );
                     },
@@ -73,12 +75,13 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={styles.elementContainer}>
                                 <FontAwesome
                                     name="bar-chart"
                                     size={30}
                                     color={focused ? '#37c871' : '#b7c8be'}
                                 />
+                                <Text style={styles.text}>Statistics</Text>
                             </View>
                         );
                     },
@@ -87,5 +90,17 @@ const Tabs = () => {
         </Tab.Navigator>
     );
 };
+
+const styles = StyleSheet.create({
+    elementContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        top: 5,
+        // backgroundColor: 'red',
+    },
+    text: {
+        fontSize: 14,
+    },
+});
 
 export default Tabs;
