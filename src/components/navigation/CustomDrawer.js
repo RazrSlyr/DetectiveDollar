@@ -1,6 +1,10 @@
-import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import {
+    createDrawerNavigator,
+    DrawerContentScrollView,
+    DrawerItemList,
+} from '@react-navigation/drawer';
 import React from 'react';
-import { View, Text } from 'react-native-web';
+import { View, Text, Dimensions } from 'react-native-web';
 
 import * as Colors from '../../constants/Colors';
 import { HomePage, AddExpense, GraphPage, CategoryPage } from '../../screens';
@@ -13,6 +17,8 @@ const CustomDrawer = (props) => {
         </View>
     );
 };
+const Drawer = createDrawerNavigator();
+
 const HomeStack = () => {
     return (
         <Drawer.Navigator

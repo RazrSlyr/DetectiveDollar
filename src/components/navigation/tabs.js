@@ -3,14 +3,10 @@
 
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { View, Platform, Dimensions } from 'react-native';
+import { View, Platform } from 'react-native';
 
-import { CustomDrawer } from './CustomDrawer';
-import * as Colors from '../../constants/Colors';
 import { HomePage, AddExpense, GraphPage, CategoryPage } from '../../screens';
 
-const Drawer = createDrawerNavigator();
 
 const Tab = createBottomTabNavigator();
 const Tabs = () => {
