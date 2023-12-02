@@ -3,8 +3,10 @@
 
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useState } from 'react';
 import { View, Platform, StyleSheet, Text } from 'react-native';
 
+import * as Colors from '../../constants/Colors';
 import { HomePage, AddExpense, GraphPage } from '../../screens';
 
 const Tab = createBottomTabNavigator();
@@ -38,7 +40,7 @@ const Tabs = () => {
                                 <AntDesign
                                     name="home"
                                     size={30}
-                                    color={focused ? '#37c871' : '#b7c8be'}
+                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
                                 />
                                 <Text style={styles.text}>Home</Text>
                             </View>
@@ -52,17 +54,9 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <View
-                                style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    backgroundColor: '#37c871',
-                                    // width: Platform.OS === 'ios' ? 70 : 80,
-                                    // height: Platform.OS === 'ios' ? 70 : 80,
-                                    // top: Platform.OS === 'ios' ?  : 10,
-                                    borderRadius: Platform.OS === 'ios' ? 40 : 50,
-                                }}>
-                                <AntDesign name="plus" size={30} color="#fff" />
+                            <View style={[styles.elementContainer, styles.addBtn]}>
+                                <AntDesign name="pluscircle" size={30} color={focused ? '#C7EA46' : 'white'}
+                                />
                                 <Text style={styles.text}>Add</Text>
                             </View>
                         );
@@ -79,7 +73,7 @@ const Tabs = () => {
                                 <FontAwesome
                                     name="bar-chart"
                                     size={30}
-                                    color={focused ? '#37c871' : '#b7c8be'}
+                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
                                 />
                                 <Text style={styles.text}>Statistics</Text>
                             </View>
@@ -93,13 +87,20 @@ const Tabs = () => {
 
 const styles = StyleSheet.create({
     elementContainer: {
+        height: '100%',
+        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-        top: 5,
-        // backgroundColor: 'red',
+        top: 10,
+    },
+    addBtn: {
+        height: '120%',
+        backgroundColor: Colors.secondaryColor,
+        borderRadius: 30,
     },
     text: {
         fontSize: 14,
+        margin: 2,
     },
 });
 
