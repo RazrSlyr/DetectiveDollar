@@ -11,34 +11,7 @@ import * as Colors from '../../constants/Colors';
 import { HomePage, AddExpense, GraphPage, CategoryPage } from '../../screens';
 
 const Drawer = createDrawerNavigator();
-const HomeStack = () => {
-    return (
-        <Drawer.Navigator
-            screenOptions={{
-                drawerActiveTintColor: Colors.secondaryColor,
-                drawerInactiveTintColor: Colors.secondaryColor,
-                drawerStyle: {
-                    backgroundColor: 'white',
-                    width: Dimensions.get('screen').width / 2,
-                },
-                drawerLabelStyle: {
-                    fontSize: 20, // Set the font size for each item
-                },
-                headerTitleAlign: 'center',
-                headerTintColor: '#fff', // Set the text color of the header
-                headerStyle: {
-                    backgroundColor: Colors.secondaryColor, // Set the background color of the header
-                },
-                headerTitleStyle: {
-                    fontWeight: 'bold', // Set the font weight of the header title
-                    fontSize: 35,
-                },
-            }}>
-            <Drawer.Screen name="Home Page" component={HomePage} />
-            <Drawer.Screen name="Category" component={CategoryPage} />
-        </Drawer.Navigator>
-    );
-};
+
 const Tab = createBottomTabNavigator();
 const Tabs = () => {
     return (
@@ -61,7 +34,7 @@ const Tabs = () => {
             })}>
             <Tab.Screen
                 name="Home"
-                component={HomeStack}
+                component={HomePage}
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
@@ -115,6 +88,7 @@ const Tabs = () => {
                     },
                 }}
             />
+            <Tab.Screen name="Categories" component={CategoryPage} options={{}} />
         </Tab.Navigator>
     );
 };
