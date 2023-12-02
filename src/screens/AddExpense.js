@@ -112,6 +112,7 @@ export default function App({ navigation }) {
             memo,
             frequency
         );
+        alert('Entry added');
     };
     const clearImage = async () => {
         console.log('removed photo');
@@ -129,6 +130,8 @@ export default function App({ navigation }) {
                     <StatusBar style="auto" />
                     <View style={styles.box}>
                         <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
                             style={{
                                 position: 'absolute',
                                 fontFamily: 'Roboto-Bold',
@@ -356,6 +359,13 @@ const styles = StyleSheet.create({
         margin: 20,
         alignItems: 'center',
         justifyContent: 'center',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        elevation: 8, // For Android
     },
     box2: {
         width: Dimensions.get('window').width * 0.75,

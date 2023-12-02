@@ -63,12 +63,6 @@ const createExpenseInsert = (
     memo = null,
     reacurring_id = null
 ) => {
-    console.log(`INSERT INTO expenses (name, category, amount, timestamp, day, subcategory, picture, memo, reacurring_id)
-    VALUES ('${name}', ${category}, ${amount}, ${timestamp}, '${day}', ${
-        subcategory !== null ? `'${subcategory}'` : null
-    }, ${picture !== null ? `'${picture}'` : null}, ${memo !== null ? `'${memo}'` : null}, ${
-        reacurring_id !== null ? `${reacurring_id}` : null
-    });`);
     return `INSERT INTO expenses (name, category, amount, timestamp, day, subcategory, picture, memo, reacurring_id)
     VALUES ('${name}', ${category}, ${amount}, ${timestamp}, '${day}', ${
         subcategory !== null ? `'${subcategory}'` : null
