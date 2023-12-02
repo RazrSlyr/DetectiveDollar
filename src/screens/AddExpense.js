@@ -10,12 +10,14 @@ import {
     TextInput,
     View,
     Dimensions,
-    SafeAreaView,
     Alert,
     Button,
     TouchableWithoutFeedback,
     Keyboard,
+    KeyboardAvoidingView,
+    Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DatePickerComponent from '../components/DatePickerComponent';
 import DropdownSelector from '../components/Dropdown';
@@ -120,10 +122,8 @@ export default function App({ navigation }) {
     };
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <View style={styles.container}>
-                <View style={styles.upperPart} />
-                {/* Upper portion above SafeAreaView */}
-                <SafeAreaView style={styles.content}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.content}>
                     <View style={styles.titleContainer}>
                         <Text style={styles.title}>Add Expense</Text>
                     </View>
@@ -131,10 +131,10 @@ export default function App({ navigation }) {
                     <View style={styles.box}>
                         <Text
                             numberOfLines={1}
+                            adjustsFontSizeToFit
                             ellipsizeMode="tail"
                             style={{
                                 position: 'absolute',
-                                fontFamily: 'Roboto-Bold',
                                 color: '#d6dfda',
                                 top: 5,
                                 left: 5,
@@ -143,14 +143,19 @@ export default function App({ navigation }) {
                             Today's Spending
                         </Text>
                         <Text
+                            numberOfLines={1}
+                            adjustsFontSizeToFit
                             style={{
-                                fontSize: 50,
                                 paddingTop: 15,
                                 left: -5,
+                                fontSize: 50,
+                                fontFamily: 'Roboto-Bold',
                             }}>{`${spending}`}</Text>
                     </View>
-                    <View style={styles.box2}>
-                        <View style={[styles.inputContainer, styles.firstInput]}>
+                    <KeyboardAvoidingView
+                        style={styles.box2}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                        <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>NAME</Text>
                             <TextInput
                                 style={styles.input}
@@ -235,6 +240,7 @@ export default function App({ navigation }) {
                             <Text style={styles.inputHeading}>MEMO</Text>
                             <TextInput
                                 style={styles.input}
+                                multiline
                                 placeholder="Notes about spending"
                                 /* Need to add logic to connect to backend */
                                 onChangeText={(value) => setMemo(value)}
@@ -319,9 +325,9 @@ export default function App({ navigation }) {
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
-                </SafeAreaView>
-            </View>
+                    </KeyboardAvoidingView>
+                </View>
+            </SafeAreaView>
         </TouchableWithoutFeedback>
     );
 }
@@ -329,20 +335,18 @@ export default function App({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    upperPart: {
-        height: Dimensions.get('window').height * 0.06,
         backgroundColor: Colors.secondaryColor,
     },
     content: {
-        flex: 1,
+        height: '100%',
         alignItems: 'center',
+        backgroundColor: Colors.primaryColor,
+        flexDirection: 'column',
     },
     titleContainer: {
         width: '100%',
         alignItems: 'center',
         backgroundColor: Colors.secondaryColor,
-        paddingBottom: 10,
     },
     title: {
         color: 'white',
@@ -352,8 +356,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     box: {
-        width: Dimensions.get('window').width * 0.75,
-        height: Dimensions.get('window').height * 0.1,
+        width: '80%',
+        height: 'auto',
         backgroundColor: 'white',
         borderRadius: 10,
         margin: 20,
@@ -366,19 +370,19 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 2,
         elevation: 8, // For Android
+        padding: 5,
     },
     box2: {
-        width: Dimensions.get('window').width * 0.75,
+        width: '80%',
         height: 'auto',
         backgroundColor: 'white',
         borderRadius: 10,
-        display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         paddingVertical: 10,
     },
     inputContainer: {
-        height: Dimensions.get('window').height * 0.072,
+        height: Dimensions.get('window').height / 13.0,
         width: '100%',
         alignItems: 'center',
         textAlign: 'left',
@@ -415,6 +419,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        marginBottom: 10,
     },
     rowItem: {
         marginHorizontal: 10,
