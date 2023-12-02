@@ -24,6 +24,8 @@ import {
     getCategoryNameFromId,
     applyRecurringExpenses,
     createExampleData,
+    getCategoryColorById,
+    getCategoryColorByName,
 } from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
@@ -122,6 +124,8 @@ export default function HomePage({ navigation }) {
             expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
         setTodayExpenses(expenses);
+        const color = await getCategoryColorById(1);
+        console.log(color);
         alert('Data has been added and set');
     };
 

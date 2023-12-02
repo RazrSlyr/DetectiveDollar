@@ -358,6 +358,26 @@ export async function deleteImage(imageURI) {
     }
 }
 
+export async function getCategoryColorByName(categoryName) {
+    const db = await getDatabase();
+    let color;
+    await db.transactionAsync(async (tx) => {
+        color = (await tx.executeSqlAsync(createCategoryQueryByName(categoryName))).rows[0][
+            'color'
+        ];
+    });
+    return color;
+}
+
+export async function getCategoryColorById(categoryId) {
+    const db = await getDatabase();
+    let color;
+    await db.transactionAsync(async (tx) => {
+        color = (await tx.executeSqlAsync(createCategoryQueryById(categoryId))).rows[0]['color'];
+    });
+    return color;
+}
+
 export async function createExampleData() {
     const exampleCategories = [
         {
