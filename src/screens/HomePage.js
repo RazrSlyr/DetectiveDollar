@@ -89,10 +89,6 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
-    const goToAddPage = () => {
-        navigation.navigate('AddExpense'); // change TEMPORARY to actual page
-    };
-
     const handleDelete = async (expense) => {
         deleteImage(expense['picture']);
 
@@ -153,6 +149,9 @@ export default function HomePage({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
+            <TouchableOpacity style={styles.debug} onPress={handleAddFakeData}>
+                <FontAwesome name="wrench" size={15} color="black"/>
+            </TouchableOpacity>
             <View style={styles.totalExpensesContainer}>
                 <Text style={styles.subHeading}>Total Spendings</Text>
                 <Text style={styles.textInput}>{`${spending}`}</Text>
@@ -173,73 +172,56 @@ export default function HomePage({ navigation }) {
                         {/* Place your scrollable content here */}
                         {todayExpenses.reverse().map((expense) => {
                             return (
-                                <View key={expense['id']} style={styles.expenseBoxes}>
-                                    <View style={styles.colorAndCategoryBox}>
-                                        <View style={{...styles.colorCircle, backgroundColor: 'orange'}}/>
-                                        <Text style={{...styles.categoryName, color: 'orange'}}>{expense['category']}</Text>
-                                    </View>
-                                    <View style={styles.expenseNameBox}>
-                                        <Text style={styles.expenseName}>{expense['name']}</Text>
-                                        <Text style={styles.expenseData}>{expense['timestamp'].replace(/ /g, '\n')}</Text>
-                                        {expense['reacurring_id'] && (
-                                            <FontAwesome
-                                                name="repeat"
-                                                size={24}
-                                                color={Colors.secondaryColor}
-                                            />
-                                        )}
-                                    </View>
-                                    <View style={{width: '30%'}}>
-                                        <Text style={styles.expenseValue}>
-                                            {'$' + parseFloat(expense['amount']).toFixed(2)}
-                                        </Text>
-                                    </View>
-                                    <TouchableOpacity
+                                <TouchableOpacity
                                         onPress={async () => {
                                             setSelectedExpense(expense);
                                             openInfo();
                                         }}>
-                                        <Entypo name="chevron-thin-right" size={30} color="black" />
-                                    </TouchableOpacity>
-                                    {/* This code handles the expense deletion */}
-                                    {/* <TouchableOpacity
-                                        onPress={async () => {
-                                            Alert.alert(
-                                                'Deleting Expense',
-                                                'Are you sure you want to delete this expense? This cannot be undone.',
-                                                [
-                                                    { text: 'NO' },
-                                                    {
-                                                        text: 'YES',
-                                                        onPress: async () => handleDelete(expense),
-                                                    },
-                                                ]
-                                            );
-                                        }}>
-                                        <View>
-                                            <Text style={{ color: 'red' }}> X </Text>
+                                    <View key={expense['id']} style={styles.expenseBoxes}>
+                                        <View style={styles.colorAndCategoryBox}>
+                                            <View style={{...styles.colorCircle, backgroundColor: 'orange'}}/>
+                                            <Text style={{...styles.categoryName, color: 'orange'}}>{expense['category']}</Text>
                                         </View>
-                                    </TouchableOpacity> */}
-                                    {/* End expense deletion code */}
-                                </View>
+                                        <View style={styles.expenseNameBox}>
+                                            <Text style={styles.expenseName}>{expense['name']}</Text>
+                                            <Text style={styles.expenseData}>{expense['timestamp'].replace(/ /g, '\n')}</Text>
+                                            {expense['reacurring_id'] && (
+                                                <FontAwesome
+                                                    name="repeat"
+                                                    size={24}
+                                                    color={Colors.secondaryColor}
+                                                />
+                                            )}
+                                        </View>
+                                        <View style={{width: '30%'}}>
+                                            <Text style={styles.expenseValue}>
+                                                {'$' + parseFloat(expense['amount']).toFixed(2)}
+                                            </Text>
+                                        </View>
+                                        <TouchableOpacity
+                                            onPress={async () => {
+                                                Alert.alert(
+                                                    'Deleting Expense',
+                                                    'Are you sure you want to delete this expense? This cannot be undone.',
+                                                    [
+                                                        { text: 'NO' },
+                                                        {
+                                                            text: 'YES',
+                                                            onPress: async () => handleDelete(expense),
+                                                        },
+                                                    ]
+                                                );
+                                            }}>
+                                            <FontAwesome name="remove" size={20} color="red" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </TouchableOpacity>
                             );
                         })}
                         {/* Add more content as needed */}
                     </View>
                 </ScrollView>
             </View>
-            <TouchableOpacity style={styles.button} onPress={handleAddFakeData}>
-                <View style={styles.buttonContainer}>
-                    <Text
-                        style={{
-                            color: '#ffffff',
-                            textAlign: 'center',
-                            fontSize: 25,
-                        }}>
-                        Add Example Data
-                    </Text>
-                </View>
-            </TouchableOpacity>
             <ExpenseInfoComponent
                 isVisable={showExpenseInfo}
                 onClose={closeInfo}
@@ -356,6 +338,7 @@ const styles = StyleSheet.create({
     expenseNameBox: {
         width: '40%',
         height: 55,
+        margin: 5,
     },
     expenseName:{
         fontSize: Sizes.textSize,
@@ -404,4 +387,13 @@ const styles = StyleSheet.create({
     arrows: {
         color: Colors.secondaryColor,
     },
+    debug: {
+        backgroundColor: Colors.secondaryColor,
+        borderWidth: 2,
+        borderColor: "black",
+        width: 20,
+        height: 20,
+        right: 180,
+        top: 50,
+    }
 });
