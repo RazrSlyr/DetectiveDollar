@@ -17,7 +17,7 @@ import {
 import DropdownSelector from '../components/Dropdown';
 import { textColor } from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
-import { getCurrentDateString } from '../util/DatetimeUtils';
+import { getCurrentDateString, getDateStringFromDate } from '../util/DatetimeUtils';
 import { addRowToCategoryTable, addRowToExpenseTable, saveImage } from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
@@ -34,7 +34,9 @@ export default function App({ navigation }) {
             alert('Please Input a Name, Amount, and Category');
             return;
         }
-        const dateString = getCurrentDateString();
+        const currentDate = new Date();
+        const dateString = getDateStringFromDate(currentDate);
+        const timestamp = currentDate.getTime();
         const categoryId = await addRowToCategoryTable(category);
         console.log(categoryId);
         let imageURI = null;
@@ -45,9 +47,12 @@ export default function App({ navigation }) {
             name,
             categoryId,
             parseFloat(amount).toFixed(2),
+            timestamp,
             dateString,
-            frequency,
-            imageURI
+            null,
+            imageURI,
+            null,
+            frequency
         );
     };
     const formattedAmount = amount.toLocaleString('en-US', {

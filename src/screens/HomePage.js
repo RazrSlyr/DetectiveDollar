@@ -24,6 +24,8 @@ import {
     getCategoryNameFromId,
     applyRecurringExpenses,
     createExampleData,
+    getCategoryColorById,
+    getCategoryColorByName,
 } from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
@@ -35,6 +37,8 @@ export default function HomePage({ navigation }) {
     useEffect(() => {
         const getExpenses = async () => {
             try {
+                // Apply recurring expenses
+                await applyRecurringExpenses();
                 // Fetch expenses for today and set to state
                 const expenses = await getExpensesFromDay(targetDate);
                 // Change expense categoryId to name
@@ -48,12 +52,6 @@ export default function HomePage({ navigation }) {
                 console.error('Error fetching expenses:', error);
             }
         };
-
-        // Apply recurring expenses
-        applyRecurringExpenses();
-
-        // Call getExpenses when the component mounts
-        getExpenses();
 
         // Add an event listener for focus to re-fetch expenses when the component comes into focus
         const unsubscribe = navigation.addListener('focus', getExpenses);
