@@ -157,8 +157,8 @@ export default function App({ navigation }) {
                                 placeholder="Name of expense"
                                 onChangeText={(value) => setName(value)}
                             />
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>AMOUNT</Text>
                             <TextInput
@@ -168,8 +168,8 @@ export default function App({ navigation }) {
                                 maxLength={10}
                                 onChangeText={(value) => setAmount(parseFloat(value).toFixed(2))}
                             />
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>DATE</Text>
                             <View style={styles.dateInputContainer}>
@@ -188,8 +188,8 @@ export default function App({ navigation }) {
                                     iconSize={22}
                                 />
                             </View>
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>CATEGORY</Text>
                             <TextInput
@@ -211,8 +211,8 @@ export default function App({ navigation }) {
                                 // dropdownLabel="e.g., Food, Entertainment"
                                 placeholderLabel="Select or add"
                             /> */}
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>RECURRING</Text>
                             <DropdownSelector
@@ -229,8 +229,8 @@ export default function App({ navigation }) {
                                 dropdownLabel="Expense Frequency"
                                 placeholderLabel="Expense Frequency"
                             />
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputHeading}>MEMO</Text>
                             <TextInput
@@ -239,8 +239,8 @@ export default function App({ navigation }) {
                                 /* Need to add logic to connect to backend */
                                 onChangeText={(value) => setMemo(value)}
                             />
+                            <GreenLine />
                         </View>
-                        <GreenLine />
                         <View style={[styles.inputContainer, styles.cameraBtnsContainer]}>
                             {previewURI ? (
                                 <SafeAreaView style={styles.container}>
