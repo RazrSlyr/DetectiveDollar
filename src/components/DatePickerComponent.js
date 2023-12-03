@@ -20,7 +20,6 @@ const DatePickerComponent = ({ onDateChange }) => {
     };
 
     const handleDateChange = (event, newSelectedDate) => {
-        setModalVisibility(true);
         if (newSelectedDate) {
             setSelectedDate(newSelectedDate);
             // Extract year, month, and day
@@ -34,8 +33,8 @@ const DatePickerComponent = ({ onDateChange }) => {
             // console.log("date selected ", formattedDate);
 
             onDateChange(formattedDate); // this notify's parent component about date change
-            hideDatePicker();
         }
+        hideDatePicker();
     };
 
     return (
