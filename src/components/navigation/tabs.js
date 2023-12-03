@@ -1,13 +1,13 @@
 // Helpful source: https://github.com/bizzara/rncomponents/blob/main/react-native-bottom-tab-navigation/App.js
 // Link for icons: https://icons.expo.fyi/Index
 
-import { FontAwesome, AntDesign } from '@expo/vector-icons';
+import { FontAwesome, AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useState } from 'react';
 import { View, Platform, StyleSheet, Text } from 'react-native';
 
 import * as Colors from '../../constants/Colors';
-import { HomePage, AddExpense, GraphPage , HistoryPage, CategoryPage} from '../screens';
+import { HomePage, AddExpense, GraphPage, HistoryPage, CategoryPage } from '../../screens';
 
 const Tab = createBottomTabNavigator();
 const Tabs = () => {
@@ -72,7 +72,10 @@ const Tabs = () => {
                     tabBarIcon: ({ focused }) => {
                         return (
                             <View style={[styles.elementContainer, styles.addBtn]}>
-                                <AntDesign name="pluscircleo" size={40} color={focused ? 'green' : 'white'}
+                                <AntDesign
+                                    name="pluscircleo"
+                                    size={40}
+                                    color={focused ? 'green' : 'white'}
                                 />
                                 {/* <Text style={styles.text}>Add</Text> */}
                             </View>
@@ -98,7 +101,24 @@ const Tabs = () => {
                     },
                 }}
             />
-            <Tab.Screen name="Categories" component={CategoryPage} options={{}} />
+            <Tab.Screen
+                name="Categories"
+                component={CategoryPage}
+                options={{
+                    tabBarIcon: ({ focused }) => {
+                        return (
+                            <View style={styles.elementContainer}>
+                                <MaterialIcons
+                                    name="category"
+                                    size={30}
+                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
+                                />
+                                <Text style={styles.text}>Categories</Text>
+                            </View>
+                        );
+                    },
+                }}
+            />
         </Tab.Navigator>
     );
 };
