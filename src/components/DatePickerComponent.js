@@ -20,7 +20,6 @@ const DatePickerComponent = ({ onDateChange }) => {
     };
 
     const handleDateChange = (event, newSelectedDate) => {
-        // setModalVisibility(true);
         if (newSelectedDate) {
             setSelectedDate(newSelectedDate);
             // Extract year, month, and day

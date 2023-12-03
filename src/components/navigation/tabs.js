@@ -7,10 +7,9 @@ import { useState } from 'react';
 import { View, Platform, StyleSheet, Text } from 'react-native';
 
 import * as Colors from '../../constants/Colors';
-import { HomePage, AddExpense, GraphPage , HistoryPage} from '../../screens';
+import { HomePage, AddExpense, GraphPage , HistoryPage, CategoryPage} from '../screens';
 
 const Tab = createBottomTabNavigator();
-
 const Tabs = () => {
     return (
         <Tab.Navigator
@@ -27,7 +26,7 @@ const Tabs = () => {
                     left: 0,
                     elevation: 0,
                     height: 80,
-                    background: '#fff',
+                    background: 'black',
                 },
             })}>
             <Tab.Screen
@@ -99,6 +98,7 @@ const Tabs = () => {
                     },
                 }}
             />
+            <Tab.Screen name="Categories" component={CategoryPage} options={{}} />
         </Tab.Navigator>
     );
 };
