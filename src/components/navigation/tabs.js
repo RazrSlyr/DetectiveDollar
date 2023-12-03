@@ -132,15 +132,16 @@ const styles = StyleSheet.create({
         top: 10,
     },
     addBtn: {
-        height: 70,
-        width: 70,
+        height: 55,
+        width: 55,
         backgroundColor: Colors.secondaryColor,
-        borderRadius: 35,
-        top: -5,
+        borderRadius: 30,
+        top: 5,
     },
     text: {
-        fontSize: 14,
+        fontSize: 11,
         margin: 2,
+        color: Colors.textColor,
     },
 });
 
