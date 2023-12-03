@@ -39,7 +39,6 @@ export default function HomePage({ navigation }) {
                 // Change expense categoryId to name
                 for (let i = 0; i < expenses.length; i++) {
                     expenses[i]['category'] = await getCategoryColorById(expenses[i]['category']);
-                    console.log(expenses[i]['category']);
                 }
                 // Change expense categoryId to name
                 setTodayExpenses(expenses);
@@ -62,7 +61,7 @@ export default function HomePage({ navigation }) {
             const expenses = await getExpensesFromDay(newDate);
             // Change expense categoryId to name
             for (let i = 0; i < expenses.length; i++) {
-                expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+                expenses[i]['category'] = await getCategoryColorById(expenses[i]['category']);
             }
             setTodayExpenses(expenses);
             setTargetDate(newDate);
@@ -99,7 +98,7 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
-            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+            expenses[i]['category'] = await getCategoryColorById(expenses[i]['category']);
         }
         setTodayExpenses(expenses);
     };
@@ -113,7 +112,7 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
-            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+            expenses[i]['category'] = await getCategoryColorById(expenses[i]['category']);
         }
         setTodayExpenses(expenses);
         alert('Data has been added and set');
