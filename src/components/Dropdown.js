@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         width: '100%',
-        height: 20,
+        height: 'auto',
     },
     icon: {
         marginRight: 5,

@@ -10,12 +10,14 @@ import {
     TextInput,
     View,
     Dimensions,
-    SafeAreaView,
     Alert,
     Button,
     TouchableWithoutFeedback,
     Keyboard,
+    KeyboardAvoidingView,
+    ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DatePickerComponent from '../components/DatePickerComponent';
 import DropdownSelector from '../components/Dropdown';
@@ -120,10 +122,8 @@ export default function App({ navigation }) {
     };
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <View style={styles.container}>
-                <View style={styles.upperPart} />
-                {/* Upper portion above SafeAreaView */}
-                <SafeAreaView style={styles.content}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.content}>
                     <View style={styles.titleContainer}>
                         <Text style={styles.title}>Add Expense</Text>
                     </View>
@@ -149,179 +149,199 @@ export default function App({ navigation }) {
                                 left: -5,
                             }}>{`${spending}`}</Text>
                     </View>
-                    <View style={styles.box2}>
-                        <View style={[styles.inputContainer, styles.firstInput]}>
-                            <Text style={styles.inputHeading}>NAME</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Name of expense"
-                                onChangeText={(value) => setName(value)}
-                            />
-                            <GreenLine />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.inputHeading}>AMOUNT</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="$0.00"
-                                keyboardType="numeric"
-                                maxLength={10}
-                                onChangeText={(value) => setAmount(parseFloat(value).toFixed(2))}
-                            />
-                            <GreenLine />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.inputHeading}>DATE</Text>
-                            <View style={styles.dateInputContainer}>
-                                <Text
-                                    style={{
-                                        fontSize: Sizes.textSize,
-                                        textAlign: 'left',
-                                        flex: 1,
-                                        fontFamily: 'Roboto-Bold',
-                                    }}>
-                                    {formattedDate}
-                                </Text>
-                                <DatePickerComponent
-                                    onDateChange={handleDateChange}
-                                    iconName="calendar"
-                                    iconSize={22}
-                                />
-                            </View>
-                            <GreenLine />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.inputHeading}>CATEGORY</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Category"
-                                onChangeText={(value) => setCategory(value)}
-                            />
-                            {/* <DropdownSelector
-                                style={styles.input}
-                                data={[
-                                    { label: 'Food' },
-                                    { label: 'Entertainment' },
-                                    { label: 'Rent/Utility' },
-                                    { label: 'Create a new category...', value: MONTHLY },
-                                ]}
-                                onChange={(item) => {
-                                    setCategory(item.label);
-                                }}
-                                // dropdownLabel="e.g., Food, Entertainment"
-                                placeholderLabel="Select or add"
-                            /> */}
-                            <GreenLine />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.inputHeading}>RECURRING</Text>
-                            <DropdownSelector
-                                style={styles.input}
-                                data={[
-                                    { label: "Don't Repeat", value: NO_REPETION },
-                                    { label: 'Daily', value: DAILY },
-                                    { label: 'Weekly', value: WEEKLY },
-                                    { label: 'Monthly', value: MONTHLY },
-                                ]}
-                                onChange={(item) => {
-                                    setFrequency(item.value);
-                                }}
-                                dropdownLabel="Expense Frequency"
-                                placeholderLabel="Expense Frequency"
-                            />
-                            <GreenLine />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.inputHeading}>MEMO</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Notes about spending"
-                                /* Need to add logic to connect to backend */
-                                onChangeText={(value) => setMemo(value)}
-                            />
-                            <GreenLine />
-                        </View>
-                        <View style={[styles.inputContainer, styles.cameraBtnsContainer]}>
-                            {previewURI ? (
-                                <SafeAreaView style={styles.container}>
-                                    <Image style={styles.preview} source={{ uri: previewURI }} />
-                                    <TouchableOpacity
-                                        style={{
-                                            position: 'absolute',
-                                            right: -30,
-                                            alignSelf: 'center',
+                    <KeyboardAvoidingView style={{ flex: 1 }}>
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                            <View style={styles.box2}>
+                                <View style={[styles.inputContainer, styles.firstInput]}>
+                                    <Text style={styles.inputHeading}>NAME</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Name of expense"
+                                        onChangeText={(value) => setName(value)}
+                                    />
+                                    <GreenLine />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputHeading}>AMOUNT</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="$0.00"
+                                        keyboardType="numeric"
+                                        maxLength={10}
+                                        onChangeText={(value) =>
+                                            setAmount(parseFloat(value).toFixed(2))
+                                        }
+                                    />
+                                    <GreenLine />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputHeading}>DATE</Text>
+                                    <View style={styles.dateInputContainer}>
+                                        <Text
+                                            style={{
+                                                fontSize: Sizes.textSize,
+                                                textAlign: 'left',
+                                                flex: 1,
+                                                fontFamily: 'Roboto-Bold',
+                                            }}>
+                                            {formattedDate}
+                                        </Text>
+                                        <DatePickerComponent
+                                            onDateChange={handleDateChange}
+                                            iconName="calendar"
+                                            iconSize={22}
+                                        />
+                                    </View>
+                                    <GreenLine />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputHeading}>CATEGORY</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Category"
+                                        onChangeText={(value) => setCategory(value)}
+                                    />
+                                    {/* <DropdownSelector
+                                    style={styles.input}
+                                    data={[
+                                        { label: 'Food' },
+                                        { label: 'Entertainment' },
+                                        { label: 'Rent/Utility' },
+                                        { label: 'Create a new category...', value: MONTHLY },
+                                    ]}
+                                    onChange={(item) => {
+                                        setCategory(item.label);
+                                    }}
+                                    // dropdownLabel="e.g., Food, Entertainment"
+                                    placeholderLabel="Select or add"
+                                /> */}
+                                    <GreenLine />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputHeading}>RECURRING</Text>
+                                    <DropdownSelector
+                                        style={styles.input}
+                                        data={[
+                                            { label: "Don't Repeat", value: NO_REPETION },
+                                            { label: 'Daily', value: DAILY },
+                                            { label: 'Weekly', value: WEEKLY },
+                                            { label: 'Monthly', value: MONTHLY },
+                                        ]}
+                                        onChange={(item) => {
+                                            setFrequency(item.value);
                                         }}
-                                        onPress={async () => {
-                                            await clearImage();
-                                        }}>
-                                        <Feather name="x-circle" size={30} color="red" />
-                                    </TouchableOpacity>
-                                </SafeAreaView>
-                            ) : (
-                                <View style={styles.rowContainer}>
+                                        dropdownLabel="Expense Frequency"
+                                        placeholderLabel="Expense Frequency"
+                                    />
+                                    <View style={{ height: 15, width: 15, marginBottom: 1 }} />
+                                    <GreenLine />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputHeading}>MEMO</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Notes about spending"
+                                        /* Need to add logic to connect to backend */
+                                        onChangeText={(value) => setMemo(value)}
+                                    />
+                                    <GreenLine />
+                                </View>
+                                <View style={[styles.inputContainer, styles.cameraBtnsContainer]}>
+                                    {previewURI ? (
+                                        <SafeAreaView style={styles.container}>
+                                            <Image
+                                                style={styles.preview}
+                                                source={{ uri: previewURI }}
+                                            />
+                                            <TouchableOpacity
+                                                style={{
+                                                    position: 'absolute',
+                                                    right: -30,
+                                                    alignSelf: 'center',
+                                                }}
+                                                onPress={async () => {
+                                                    await clearImage();
+                                                }}>
+                                                <Feather name="x-circle" size={30} color="red" />
+                                            </TouchableOpacity>
+                                        </SafeAreaView>
+                                    ) : (
+                                        <View style={styles.rowContainer}>
+                                            <TouchableOpacity
+                                                style={styles.rowItem}
+                                                onPress={async () => {
+                                                    const cameraPermission =
+                                                        await ImagePicker.requestCameraPermissionsAsync();
+                                                    if (cameraPermission.status === 'granted') {
+                                                        const imageURI = await captureImage();
+                                                        console.log(
+                                                            'uri from imagepicker: ',
+                                                            imageURI
+                                                        );
+                                                        setImageURI(imageURI);
+                                                    } else {
+                                                        Alert.alert(
+                                                            'Camera Permission Not Set',
+                                                            'Please change app permission in settings',
+                                                            [{ text: 'OK' }]
+                                                        );
+                                                    }
+                                                }}>
+                                                <Feather
+                                                    name="camera"
+                                                    size={36}
+                                                    color={Colors.secondaryColor}
+                                                />
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                style={styles.rowItem}
+                                                onPress={async () => {
+                                                    const mediaLibaryPermission =
+                                                        await ImagePicker.requestMediaLibraryPermissionsAsync();
+                                                    if (
+                                                        mediaLibaryPermission.status === 'granted'
+                                                    ) {
+                                                        const imageURI = await pickImage();
+                                                        console.log(
+                                                            'uri from imagepicker: ',
+                                                            imageURI
+                                                        );
+                                                        setImageURI(imageURI);
+                                                    } else {
+                                                        Alert.alert(
+                                                            'Media Library Permission Not Set',
+                                                            'Please change app permission in settings',
+                                                            [{ text: 'OK' }]
+                                                        );
+                                                    }
+                                                }}>
+                                                <AntDesign
+                                                    name="upload"
+                                                    size={36}
+                                                    color={Colors.secondaryColor}
+                                                />
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
                                     <TouchableOpacity
-                                        style={styles.rowItem}
-                                        onPress={async () => {
-                                            const cameraPermission =
-                                                await ImagePicker.requestCameraPermissionsAsync();
-                                            if (cameraPermission.status === 'granted') {
-                                                const imageURI = await captureImage();
-                                                console.log('uri from imagepicker: ', imageURI);
-                                                setImageURI(imageURI);
-                                            } else {
-                                                Alert.alert(
-                                                    'Camera Permission Not Set',
-                                                    'Please change app permission in settings',
-                                                    [{ text: 'OK' }]
-                                                );
-                                            }
-                                        }}>
-                                        <Feather
-                                            name="camera"
-                                            size={36}
-                                            color={Colors.secondaryColor}
-                                        />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.rowItem}
-                                        onPress={async () => {
-                                            const mediaLibaryPermission =
-                                                await ImagePicker.requestMediaLibraryPermissionsAsync();
-                                            if (mediaLibaryPermission.status === 'granted') {
-                                                const imageURI = await pickImage();
-                                                console.log('uri from imagepicker: ', imageURI);
-                                                setImageURI(imageURI);
-                                            } else {
-                                                Alert.alert(
-                                                    'Media Library Permission Not Set',
-                                                    'Please change app permission in settings',
-                                                    [{ text: 'OK' }]
-                                                );
-                                            }
-                                        }}>
-                                        <AntDesign
-                                            name="upload"
-                                            size={36}
-                                            color={Colors.secondaryColor}
-                                        />
+                                        style={styles.button}
+                                        onPress={handleButtonPress}>
+                                        <Text
+                                            style={{
+                                                fontFamily: 'Roboto-Bold',
+                                                color: '#ffffff',
+                                                textAlign: 'center',
+                                                fontSize: 24,
+                                            }}>
+                                            Add
+                                        </Text>
                                     </TouchableOpacity>
                                 </View>
-                            )}
-                            <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
-                                <Text
-                                    style={{
-                                        fontFamily: 'Roboto-Bold',
-                                        color: '#ffffff',
-                                        textAlign: 'center',
-                                        fontSize: 24,
-                                    }}>
-                                    Add
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </SafeAreaView>
-            </View>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                </View>
+            </SafeAreaView>
         </TouchableWithoutFeedback>
     );
 }
@@ -329,14 +349,12 @@ export default function App({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    upperPart: {
-        height: Dimensions.get('window').height * 0.06,
         backgroundColor: Colors.secondaryColor,
     },
     content: {
-        flex: 1,
+        height: '100%',
         alignItems: 'center',
+        backgroundColor: Colors.primaryColor,
     },
     titleContainer: {
         width: '100%',
@@ -354,23 +372,16 @@ const styles = StyleSheet.create({
     box: {
         width: Dimensions.get('window').width * 0.75,
         height: Dimensions.get('window').height * 0.1,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'white',
         borderRadius: 10,
         margin: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 8, // For Android
     },
     box2: {
         width: Dimensions.get('window').width * 0.75,
         height: Dimensions.get('window').height * 0.6,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'white',
         borderRadius: 10,
         display: 'flex',
         flexDirection: 'column',
