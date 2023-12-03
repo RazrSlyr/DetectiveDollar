@@ -128,25 +128,15 @@ export default function App({ navigation }) {
                         <Text style={styles.title}>Add Expense</Text>
                     </View>
                     <StatusBar style="auto" />
-                    <View style={styles.box}>
-                        <Text
-                            numberOfLines={1}
-                            ellipsizeMode="tail"
-                            style={{
-                                position: 'absolute',
-                                fontFamily: 'Roboto-Bold',
-                                color: '#d6dfda',
-                                top: 5,
-                                left: 5,
-                                fontSize: Sizes.textSize,
-                            }}>
+                    <View style={styles.totalExpenseContainer}>
+                        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subHeading}>
                             Today's Spending
                         </Text>
                         <Text
                             style={{
-                                fontSize: 50,
-                                paddingTop: 15,
-                                left: -5,
+                                fontSize: Sizes.largeText,
+                                margin: 'auto',
+                                textAlign: 'center',
                             }}>{`${spending}`}</Text>
                     </View>
                     <KeyboardAvoidingView
@@ -372,14 +362,22 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
     },
-    box: {
-        width: Dimensions.get('window').width * 0.8,
-        height: 'auto',
+    totalExpenseContainer: {
         backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderRadius: 15,
+        marginTop: 0,
+        marginBottom: 20,
+        height: 'auto',
+        width: '80%',
+        margin: 30,
+        top: 10,
+    },
+    subHeading: {
+        color: Colors.subHeadingColor,
+        fontSize: Sizes.subText,
+        margin: 'auto',
+        paddingLeft: 10,
+        paddingTop: 5,
     },
     box2: {
         width: Dimensions.get('window').width * 0.8,
