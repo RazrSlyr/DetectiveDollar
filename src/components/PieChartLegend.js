@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
 const PieChartLegend = ({ chartData }) => {
     // create dot for legend
@@ -18,24 +18,29 @@ const PieChartLegend = ({ chartData }) => {
     };
 
     return (
-        <View style={styles.legendBox}>
-            {chartData.map((item, index) => (
-                <View key={index} style={styles.categoryBoxes}>
-                    <View style={styles.categoryInfo}>
-                        {item.label === 'No Data Available' && chartData.length === 1 ? (
-                            <Text>No Data Available</Text>
-                        ) : (
-                            <>
-                                <Text style={styles.categoryData}>{item.label}</Text>
-                                <Text> - </Text>
-                                <Text style={styles.categoryData}>${item.value}</Text>
-                            </>
-                        )}
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContentContainer}>
+            <View style={styles.legendBox}>
+                {chartData.map((item, index) => (
+                    <View key={index} style={styles.categoryBoxes}>
+                        <View style={styles.categoryInfo}>
+                            {item.label === 'No Data Available' && chartData.length === 1 ? (
+                                <Text>No Data Available</Text>
+                            ) : (
+                                <>
+                                    <Text style={styles.categoryData}>{item.label}</Text>
+                                    <Text> - </Text>
+                                    <Text style={styles.categoryData}>${item.value}</Text>
+                                </>
+                            )}
+                        </View>
+                        {renderDot(item.color)}
                     </View>
-                    {renderDot(item.color)}
-                </View>
-            ))}
-        </View>
+                ))}
+            </View>
+        </ScrollView>
+        
     );
 };
 
@@ -65,6 +70,9 @@ const styles = StyleSheet.create({
     categoryData: {
         textAlign: 'center',
         fontSize: 14,
+    },
+    scrollContentContainer: {
+        paddingBottom: 20,
     },
 });
 

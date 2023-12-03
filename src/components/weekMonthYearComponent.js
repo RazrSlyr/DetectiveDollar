@@ -60,7 +60,7 @@ const WeekMonthYearButtons = ({ onSelect }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        //flex: 1,
         alignItems: 'center',
         margin: 'auto',
         height: 100,

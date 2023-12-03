@@ -93,9 +93,7 @@ const GraphPage = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.scrollContentContainer}>
+            <View>
                 <Text style={styles.title}>Statistics</Text>
                 <View style={styles.dateContainer}>
                     <View style={styles.dateRange}>
@@ -135,9 +133,8 @@ const GraphPage = ({ navigation }) => {
                         dotStyle={styles.customDot}
                         activeDotStyle={styles.customActiveDot}
                         paginationStyle={{
-                            bottom: 820,
+                            top: -500,
                             left: 300,
-                            //top: -820,
                         }}
                         loop={false}
                         index={activeSlide}
@@ -164,7 +161,7 @@ const GraphPage = ({ navigation }) => {
                         </View>
                     </Swiper>
                 </View>
-            </ScrollView>
+            </View>
         </SafeAreaView>
     );
 };
@@ -174,14 +171,14 @@ export default GraphPage;
 const styles = StyleSheet.create({
     // Need to figure out why there is a big gab at the top of the screen
     container: {
-        paddingTop: StatusBar.currentHeight,
+        //paddingTop: StatusBar.currentHeight,
         flex: 1,
         alignItems: 'center',
     },
     scrollableContent: {
         flex: 1,
         width: '100%', // Adjust the width as needed
-        height: '100%',
+        height: 'auto',
         alignItems: 'center',
         marginTop: -20,
     },
@@ -193,7 +190,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     dateContainer: {
-        flex: 1,
+        //flex: 1,
         alignItems: 'center',
     },
     arrow: {
@@ -224,14 +221,16 @@ const styles = StyleSheet.create({
         //showsPagination: true,
     },
     lineChartSlide: {
-        //flex: 1,
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingBottom: 60,
     },
     pieChartSlide: {
-        //flex: 1,
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingBottom: 60,
     },
     customDot: {
         width: 10,

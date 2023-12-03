@@ -272,7 +272,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                         endOpacity={0.3}
                         color="#37c871"
                         thickness={4}
-                        width={310}
+                        width={300}
                         height={220}
                         scrollToIndex={-1}
                         spacing={spacing}
