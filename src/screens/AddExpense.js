@@ -11,7 +11,7 @@ import {
     View,
     Dimensions,
     Alert,
-    Button,
+    Platform,
     TouchableWithoutFeedback,
     Keyboard,
     KeyboardAvoidingView,
@@ -149,7 +149,9 @@ export default function App({ navigation }) {
                                 left: -5,
                             }}>{`${spending}`}</Text>
                     </View>
-                    <KeyboardAvoidingView style={{ flex: 1 }}>
+                    <KeyboardAvoidingView
+                        style={{ flex: 1 }}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={styles.box2}>
                                 <View style={[styles.inputContainer, styles.firstInput]}>
@@ -355,6 +357,7 @@ const styles = StyleSheet.create({
         height: '100%',
         alignItems: 'center',
         backgroundColor: Colors.primaryColor,
+        flexDirection: 'column',
     },
     titleContainer: {
         width: '100%',
@@ -370,8 +373,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     box: {
-        width: Dimensions.get('window').width * 0.75,
-        height: Dimensions.get('window').height * 0.1,
+        width: Dimensions.get('window').width * 0.8,
+        height: 'auto',
         backgroundColor: 'white',
         borderRadius: 10,
         margin: 20,
@@ -379,13 +382,19 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     box2: {
-        width: Dimensions.get('window').width * 0.75,
+        width: Dimensions.get('window').width * 0.8,
         height: Dimensions.get('window').height * 0.6,
         backgroundColor: 'white',
         borderRadius: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+    },
+    scrollableContainer: {
+        width: '100%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        flexDirection: 'column',
     },
     inputContainer: {
         height: Dimensions.get('window').height * 0.072,
