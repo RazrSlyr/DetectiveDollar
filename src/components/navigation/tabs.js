@@ -48,6 +48,42 @@ const Tabs = () => {
                 }}
             />
             <Tab.Screen
+                name="Categories"
+                component={CategoryPage}
+                options={{
+                    tabBarIcon: ({ focused }) => {
+                        return (
+                            <View style={styles.elementContainer}>
+                                <MaterialIcons
+                                    name="category"
+                                    size={30}
+                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
+                                />
+                                <Text style={styles.text}>Categories</Text>
+                            </View>
+                        );
+                    },
+                }}
+            />
+            <Tab.Screen
+                name="Add"
+                component={AddExpense}
+                options={{
+                    tabBarIcon: ({ focused }) => {
+                        return (
+                            <View style={[styles.elementContainer, styles.addBtn]}>
+                                <AntDesign
+                                    name="pluscircleo"
+                                    size={40}
+                                    color={focused ? '#00792A' : 'white'}
+                                />
+                                {/* <Text style={styles.text}>Add</Text> */}
+                            </View>
+                        );
+                    },
+                }}
+            />
+            <Tab.Screen
                 name="History"
                 component={HistoryPage}
                 options={{
@@ -66,24 +102,6 @@ const Tabs = () => {
                 }}
             />
             <Tab.Screen
-                name="Add"
-                component={AddExpense}
-                options={{
-                    tabBarIcon: ({ focused }) => {
-                        return (
-                            <View style={[styles.elementContainer, styles.addBtn]}>
-                                <AntDesign
-                                    name="pluscircleo"
-                                    size={40}
-                                    color={focused ? 'green' : 'white'}
-                                />
-                                {/* <Text style={styles.text}>Add</Text> */}
-                            </View>
-                        );
-                    },
-                }}
-            />
-            <Tab.Screen
                 name="Graph"
                 component={GraphPage}
                 options={{
@@ -96,24 +114,6 @@ const Tabs = () => {
                                     color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
                                 />
                                 <Text style={styles.text}>Statistics</Text>
-                            </View>
-                        );
-                    },
-                }}
-            />
-            <Tab.Screen
-                name="Categories"
-                component={CategoryPage}
-                options={{
-                    tabBarIcon: ({ focused }) => {
-                        return (
-                            <View style={styles.elementContainer}>
-                                <MaterialIcons
-                                    name="category"
-                                    size={30}
-                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
-                                />
-                                <Text style={styles.text}>Categories</Text>
                             </View>
                         );
                     },
