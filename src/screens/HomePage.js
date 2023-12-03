@@ -25,6 +25,8 @@ import {
     getCategoryNameFromId,
     applyRecurringExpenses,
     createExampleData,
+    getCategoryColorById,
+    getCategoryColorByName,
 } from '../util/FileSystemUtils';
 
 export default function HomePage({ navigation }) {
