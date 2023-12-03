@@ -253,24 +253,22 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     }
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', }}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
             {lineGraphData.length > 0 ? (
                 <View
                     style={{
                         flex: 1,
-                        //justifyContent: 'center',
                         alignItems: 'center',
-                        //padding: 20,
                     }}>
                     <LineChart
                         hideDataPoints
                         areaChart
                         data={lineGraphData}
-                        startFillColor="#37C871"
+                        startFillColor={Colors.secondaryColor}
                         startOpacity={0.8}
                         endFillColor="#D5FADD"
                         endOpacity={0.3}
-                        color="#37c871"
+                        color={Colors.secondaryColor}
                         thickness={4}
                         width={300}
                         height={220}
@@ -280,20 +278,20 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                         endSpacing={0}
                         label={['0', '30']}
                         xAxisLabelTextStyle={{
-                            color: '#545454',
-                            fontSize: fontSize,
+                            color: Colors.textColor,
+                            fontSize,
                             textAlign: 'left',
                             marginRight: -9,
                         }}
                         yAxisTextStyle={{
-                            color: '#545454',
+                            color: Colors.textColor,
                             fontSize: 12,
                             textAlign: 'left',
                         }}
                         noOfSections={5}
                         yAxisLabelPrefix="$"
                         yAxisThickness={0}
-                        yAxisLabelWidth={45}
+                        yAxisLabelWidth={48}
                         maxValue={Math.ceil(maxDataValue * 2)}
                         formatYLabel={(label) => {
                             const labelVal = Number(label);
@@ -305,9 +303,9 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                         }}
                         pointerConfig={{
                             pointerStripHeight: 160,
-                            pointerStripColor: 'lightgray',
+                            pointerStripColor: Colors.subHeadingColor,
                             pointerStripWidth: 2,
-                            pointerColor: 'lightgray',
+                            pointerColor: Colors.subHeadingColor,
                             radius: 6,
                             pointerLabelWidth: 100,
                             pointerLabelHeight: 90,
@@ -327,7 +325,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                                         }}>
                                         <Text
                                             style={{
-                                                color: 'black',
+                                                color: Colors.textColor,
                                                 fontSize: 14,
                                                 marginBottom: 6,
                                                 textAlign: 'center',

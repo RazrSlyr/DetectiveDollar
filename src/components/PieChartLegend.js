@@ -40,7 +40,6 @@ const PieChartLegend = ({ chartData }) => {
                 ))}
             </View>
         </ScrollView>
-        
     );
 };
 

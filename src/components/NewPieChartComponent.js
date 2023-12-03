@@ -4,6 +4,7 @@ import { View, Text } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 
 import PieChartLegend from './PieChartLegend';
+import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
     getCurrentDateString,
@@ -11,10 +12,11 @@ import {
     getMonthStartEndDate,
     getYearStartEndDate,
 } from '../util/DatetimeUtils';
-import { getExpensesbyCategory } from '../util/FileSystemUtils';
+import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSystemUtils';
 
 const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [pieChartData, setPieChartData] = useState([]);
+    const [categoryColors, setCategoryColors] = useState({});
 
     // Call the function to fetch and update data
     const updatePieChartData = async () => {
@@ -43,6 +45,15 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
             // console.log("categoryDict: ", categoryDict);
             let totalSpending = 0;
 
+            const categoryColors = {};
+
+            for (const key in categoryDict) {
+                if (categoryDict.hasOwnProperty(key)) {
+                    const newColor = await getCategoryColorByName(key);
+                    categoryColors[key] = newColor;
+                }
+            }
+
             // Process the data
             const pieChartData = Object.keys(categoryDict).map((category) => {
                 const total = categoryDict[category].reduce(
@@ -52,16 +63,15 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
 
                 // add to the totalOfEverything
                 totalSpending += total;
-                const randColor = getRandomColor();
                 return {
                     key: category,
                     value: total,
-                    svg: { fill: randColor },
-                    color: randColor,
+                    svg: { fill: categoryColors[category] },
+                    color: categoryColors[category],
                     label: category,
                 };
             });
-
+            setCategoryColors(categoryColors);
             setPieChartData(pieChartData);
             setTotalSpending(totalSpending);
         } catch (error) {
@@ -78,27 +88,13 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [totalSpending, setTotalSpending] = useState(0);
     const formattedTotal = `$${parseFloat(totalSpending).toFixed(2)}`;
 
-    // Helper function to generate random colors
-    const getRandomColor = () => {
-        const red = Math.floor(Math.random() * 256);
-        const green = Math.floor(Math.random() * 256);
-        const blue = Math.floor(Math.random() * 256);
-
-        // padStart used incase number generated is not 3 digits
-        // toString(16) change to hexadecimal values
-        const randomColor = `#${red.toString(16).padStart(2, '0')}${green
-            .toString(16)
-            .padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
-
-        return randomColor;
-    };
-    const noExpenseData = [{ label: 'No Data Available', value: 1, color: '#37c871' }];
+    const noExpenseData = [{ label: 'No Data Available', value: 1, color: Colors.secondaryColor }];
 
     // Check if there's data in the pieChartData object
     const hasData = Object.keys(pieChartData).length > 0;
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <View
                 style={{
                     flex: 1,
