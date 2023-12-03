@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { View, Platform, StyleSheet, Text } from 'react-native';
 
 import * as Colors from '../../constants/Colors';
-import { HomePage, AddExpense, GraphPage } from '../../screens';
+import { HomePage, AddExpense, GraphPage , HistoryPage} from '../../screens';
 
 const Tab = createBottomTabNavigator();
 
@@ -43,6 +43,24 @@ const Tabs = () => {
                                     color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
                                 />
                                 <Text style={styles.text}>Home</Text>
+                            </View>
+                        );
+                    },
+                }}
+            />
+            <Tab.Screen
+                name="History"
+                component={HistoryPage}
+                options={{
+                    tabBarIcon: ({ focused }) => {
+                        return (
+                            <View style={styles.elementContainer}>
+                                <FontAwesome
+                                    name="history"
+                                    size={30}
+                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
+                                />
+                                <Text style={styles.text}>History</Text>
                             </View>
                         );
                     },
