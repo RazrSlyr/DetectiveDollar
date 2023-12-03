@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import * as React from 'react';
