@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
+import * as Sizes from '../constants/Sizes';
 
 import { secondaryColor, textColor } from '../constants/Colors';
 
@@ -28,7 +29,7 @@ function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
                 data={data}
-                search
+                //search
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
@@ -52,23 +53,18 @@ export default DropdownSelector;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
-        padding: 16,
+        flex: 1,
+        width: '84%',
     },
     dropdown: {
-        width: 200,
-        height: 50,
-        borderColor: 'gray',
-        borderWidth: 0.5,
-        borderRadius: 8,
-        paddingHorizontal: 8,
+        width: '100%',
+        height: 'auto',
     },
     icon: {
         marginRight: 5,
     },
     label: {
         position: 'absolute',
-        backgroundColor: 'white',
         left: 22,
         top: 8,
         zIndex: 999,
@@ -77,12 +73,12 @@ const styles = StyleSheet.create({
         color: textColor,
     },
     placeholderStyle: {
-        fontSize: 16,
+        fontSize: Sizes.textSize,
         fontWeight: 'bold',
-        color: textColor,
+        color: '#ccc',
     },
     selectedTextStyle: {
-        fontSize: 16,
+        fontSize: Sizes.textSize,
         fontWeight: 'bold',
         color: textColor,
     },
@@ -92,7 +88,7 @@ const styles = StyleSheet.create({
     },
     inputSearchStyle: {
         height: 40,
-        fontSize: 16,
+        fontSize: Sizes.textSize,
         fontWeight: 'bold',
         color: textColor,
     },
