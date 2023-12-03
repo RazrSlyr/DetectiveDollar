@@ -9,7 +9,7 @@ const GreenLine = () => {
 const styles = StyleSheet.create({
     line: {
         height: 2,
-        width: '100%',
+        width: '84%',
         backgroundColor: Colors.secondaryColor,
     },
 });
