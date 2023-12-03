@@ -137,6 +137,7 @@ const GraphPage = ({ navigation }) => {
                         paginationStyle={{
                             bottom: 820,
                             left: 300,
+                            //top: -820,
                         }}
                         loop={false}
                         index={activeSlide}
@@ -153,7 +154,7 @@ const GraphPage = ({ navigation }) => {
                             </View>
                         </View>
                         <View style={styles.lineChartSlide}>
-                            <View style={styles.lineChartContainer}>
+                            <View style={styles.chartContainer} paddingTop={20}>
                                 <LineGraphComponent
                                     startDate={selectedTimeframeDates[0]}
                                     endDate={selectedTimeframeDates[1]}
@@ -250,22 +251,11 @@ const styles = StyleSheet.create({
     chartContainer: {
         margin: 5,
         height: '100%',
-        width: 360,
+        width: '90%',
         alignContent: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',
         borderRadius: 20,
-        //flex: 1,
-    },
-    lineChartContainer: {
-        margin: 5,
-        height: '100%',
-        width: 360,
-        alignContent: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        paddingTop: 20,
         //flex: 1,
     },
 });
