@@ -5,10 +5,10 @@ import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Platform } from 'react-native';
 
-import { HomePage, AddExpense, GraphPage } from '../../screens';
+import { HomePage, AddExpense, GraphPage, CategoryPage } from '../../screens';
+
 
 const Tab = createBottomTabNavigator();
-
 const Tabs = () => {
     return (
         <Tab.Navigator
@@ -25,7 +25,7 @@ const Tabs = () => {
                     left: 0,
                     elevation: 0,
                     height: 80,
-                    background: '#fff',
+                    background: 'black',
                 },
             })}>
             <Tab.Screen
@@ -84,6 +84,7 @@ const Tabs = () => {
                     },
                 }}
             />
+            <Tab.Screen name="Categories" component={CategoryPage} options={{}} />
         </Tab.Navigator>
     );
 };
