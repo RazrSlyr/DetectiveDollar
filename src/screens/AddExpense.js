@@ -381,13 +381,6 @@ const styles = StyleSheet.create({
         margin: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 8, // For Android
         padding: 5,
     },
     scrollableContainer: {
