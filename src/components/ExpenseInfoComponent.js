@@ -2,12 +2,12 @@ import { Entypo, AntDesign} from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
 import React, { useState, useEffect } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     TouchableOpacity,
     StyleSheet,
     Text,
     View,
-    SafeAreaView,
     Modal,
     Dimensions,
     Alert
@@ -28,13 +28,13 @@ const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
     return (
         <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
             {expense ? (
-                <View style={styles.container}>
-                    <View style={styles.titleContainer}>
+                <SafeAreaView style={styles.container}>
+                    <SafeAreaView style={styles.titleContainer}>
                         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                             <Entypo name="chevron-thin-left" size={50} color={Colors.primaryColor} />
                         </TouchableOpacity>
                         <Text style={styles.title}>Expense Info</Text>
-                    </View>
+                    </SafeAreaView>
                     <View style={styles.allInfoContainer}>
                         {expense.picture !== null && hasMediaLibraryPermission ? (
                             <TouchableOpacity style={styles.circleContainer}>
@@ -59,7 +59,7 @@ const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
                             <Text style={styles.infoText}>{"Memo: " + expense.memo}</Text>
                         </View>
                     </View>
-                </View>
+                </SafeAreaView>
             ) : (
                 <View style={styles.container}>
                     <Text>Expense is null</Text>

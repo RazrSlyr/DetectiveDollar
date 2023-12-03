@@ -1,6 +1,7 @@
 import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     TouchableOpacity,
     StyleSheet,
@@ -8,7 +9,6 @@ import {
     Text,
     ScrollView,
     Alert,
-    SafeAreaView,
 } from 'react-native';
 
 import DatePickerComponent from '../components/DatePickerComponent';
@@ -172,7 +172,7 @@ export default function HomePage({ navigation }) {
                         {/* Place your scrollable content here */}
                         {todayExpenses.reverse().map((expense) => {
                             return (
-                                <TouchableOpacity
+                                <TouchableOpacity key={expense.id}
                                         onPress={async () => {
                                             setSelectedExpense(expense);
                                             openInfo();
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     totalExpensesContainer: {
         backgroundColor: 'white',
         borderRadius: 15,
-        marginTop: 20,
+        marginTop: 0,
         marginBottom: 20,
         height: 'auto',
         width: '70%',
@@ -315,8 +315,9 @@ const styles = StyleSheet.create({
         height: '70%',
         padding: 10,
         margin: 10,
-        borderTopLeftRadius: 32, // Radius for the top-left corner
-        borderTopRightRadius: 32, // Radius for the top-right corner
+        borderRadius: 32,
+        //borderTopLeftRadius: 32, // Radius for the top-left corner
+        //borderTopRightRadius: 32, // Radius for the top-right corner
     },
     scrollableContent: {
         flex: 1,
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
         color: Colors.subHeadingColor,
     },
     expenseValue: {
-        fontSize: 30,
+        fontSize: 20,
         color: 'red',
     },
     colorAndCategoryBox:{
