@@ -55,9 +55,9 @@ const Tabs = () => {
                     tabBarIcon: ({ focused }) => {
                         return (
                             <View style={[styles.elementContainer, styles.addBtn]}>
-                                <AntDesign name="pluscircle" size={30} color={focused ? '#C7EA46' : 'white'}
+                                <AntDesign name="pluscircleo" size={40} color={focused ? 'green' : 'white'}
                                 />
-                                <Text style={styles.text}>Add</Text>
+                                {/* <Text style={styles.text}>Add</Text> */}
                             </View>
                         );
                     },
@@ -94,9 +94,11 @@ const styles = StyleSheet.create({
         top: 10,
     },
     addBtn: {
-        height: '120%',
+        height: 70,
+        width: 70,
         backgroundColor: Colors.secondaryColor,
-        borderRadius: 30,
+        borderRadius: 35,
+        top: -5,
     },
     text: {
         fontSize: 14,
