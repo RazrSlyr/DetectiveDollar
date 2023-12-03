@@ -15,7 +15,6 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     KeyboardAvoidingView,
-    Platform,
     ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -132,10 +131,10 @@ export default function App({ navigation }) {
                     <View style={styles.box}>
                         <Text
                             numberOfLines={1}
-                            adjustsFontSizeToFit
                             ellipsizeMode="tail"
                             style={{
                                 position: 'absolute',
+                                fontFamily: 'Roboto-Bold',
                                 color: '#d6dfda',
                                 top: 5,
                                 left: 5,
@@ -144,19 +143,16 @@ export default function App({ navigation }) {
                             Today's Spending
                         </Text>
                         <Text
-                            numberOfLines={1}
-                            adjustsFontSizeToFit
                             style={{
+                                fontSize: 50,
                                 paddingTop: 15,
                                 left: -5,
-                                fontSize: 50,
-                                fontFamily: 'Roboto-Bold',
                             }}>{`${spending}`}</Text>
                     </View>
                     <KeyboardAvoidingView style={{ flex: 1 }}>
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={styles.box2}>
-                                <View style={styles.inputContainer}>
+                                <View style={[styles.inputContainer, styles.firstInput]}>
                                     <Text style={styles.inputHeading}>NAME</Text>
                                     <TextInput
                                         style={styles.input}
@@ -206,19 +202,19 @@ export default function App({ navigation }) {
                                         onChangeText={(value) => setCategory(value)}
                                     />
                                     {/* <DropdownSelector
-                                style={styles.input}
-                                data={[
-                                    { label: 'Food' },
-                                    { label: 'Entertainment' },
-                                    { label: 'Rent/Utility' },
-                                    { label: 'Create a new category...', value: MONTHLY },
-                                ]}
-                                onChange={(item) => {
-                                    setCategory(item.label);
-                                }}
-                                // dropdownLabel="e.g., Food, Entertainment"
-                                placeholderLabel="Select or add"
-                            /> */}
+                                    style={styles.input}
+                                    data={[
+                                        { label: 'Food' },
+                                        { label: 'Entertainment' },
+                                        { label: 'Rent/Utility' },
+                                        { label: 'Create a new category...', value: MONTHLY },
+                                    ]}
+                                    onChange={(item) => {
+                                        setCategory(item.label);
+                                    }}
+                                    // dropdownLabel="e.g., Food, Entertainment"
+                                    placeholderLabel="Select or add"
+                                /> */}
                                     <GreenLine />
                                 </View>
                                 <View style={styles.inputContainer}>
@@ -237,13 +233,13 @@ export default function App({ navigation }) {
                                         dropdownLabel="Expense Frequency"
                                         placeholderLabel="Expense Frequency"
                                     />
+                                    <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
                                 </View>
                                 <View style={styles.inputContainer}>
                                     <Text style={styles.inputHeading}>MEMO</Text>
                                     <TextInput
                                         style={styles.input}
-                                        multiline
                                         placeholder="Notes about spending"
                                         /* Need to add logic to connect to backend */
                                         onChangeText={(value) => setMemo(value)}
@@ -359,12 +355,12 @@ const styles = StyleSheet.create({
         height: '100%',
         alignItems: 'center',
         backgroundColor: Colors.primaryColor,
-        flexDirection: 'column',
     },
     titleContainer: {
         width: '100%',
         alignItems: 'center',
         backgroundColor: Colors.secondaryColor,
+        paddingBottom: 10,
     },
     title: {
         color: 'white',
@@ -374,52 +370,43 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     box: {
-        width: '80%',
-        height: 'auto',
+        width: Dimensions.get('window').width * 0.75,
+        height: Dimensions.get('window').height * 0.1,
         backgroundColor: 'white',
         borderRadius: 10,
         margin: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 5,
-    },
-    scrollableContainer: {
-        width: '100%',
-        backgroundColor: 'white',
-        borderRadius: 10,
-        flexDirection: 'column',
     },
     box2: {
-        width: Dimensions.get('screen').width * 0.8,
-        height: '100%',
+        width: Dimensions.get('window').width * 0.75,
+        height: Dimensions.get('window').height * 0.6,
         backgroundColor: 'white',
         borderRadius: 10,
-        alignItems: 'left',
-        padding: 20,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
     },
     inputContainer: {
+        height: Dimensions.get('window').height * 0.072,
         width: '100%',
-        alignItems: 'left',
+        alignItems: 'center',
         textAlign: 'left',
-        marginTop: 10,
     },
     inputHeading: {
         fontSize: 12,
         fontFamily: 'Roboto-Bold',
         color: Colors.secondaryColor,
-        width: '100%',
+        width: '84%',
+        marginTop: 15,
+        marginBottom: 5,
     },
     input: {
-        width: '100%',
-        color: Colors.textColor,
-        fontFamily: 'Roboto-Bold',
-        fontSize: Sizes.textSize,
-    },
-    inputMultiLine: {
         width: '84%',
         color: Colors.textColor,
         fontFamily: 'Roboto-Bold',
         fontSize: Sizes.textSize,
+        textAlign: 'left',
     },
     button: {
         color: Colors.secondaryColor,
@@ -430,7 +417,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         justifyContent: 'center',
         backgroundColor: Colors.secondaryColor,
-        alignSelf: 'center',
     },
     preview: {
         height: '100%',
@@ -440,13 +426,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 10,
     },
     rowItem: {
-        marginHorizontal: 10,
+        margin: 10,
     },
     cameraBtnsContainer: {
         height: '20%',
+        marginTop: 10,
     },
     firstInput: {
         marginTop: 0,
