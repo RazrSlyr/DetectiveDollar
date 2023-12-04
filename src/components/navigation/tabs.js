@@ -14,6 +14,7 @@ const Tabs = () => {
         <Tab.Navigator
             initialRouteName="Home"
             screenOptions={({ route }) => ({
+                tabBarHideOnKeyboard: true,
                 initialRouteName: 'Home',
                 tabBarShowLabel: false,
                 headerShown: false,

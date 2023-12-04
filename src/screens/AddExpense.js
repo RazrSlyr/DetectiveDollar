@@ -11,7 +11,7 @@ import {
     View,
     Dimensions,
     Alert,
-    Button,
+    Platform,
     TouchableWithoutFeedback,
     Keyboard,
     KeyboardAvoidingView,
@@ -128,28 +128,20 @@ export default function App({ navigation }) {
                         <Text style={styles.title}>Add Expense</Text>
                     </View>
                     <StatusBar style="auto" />
-                    <View style={styles.box}>
-                        <Text
-                            numberOfLines={1}
-                            ellipsizeMode="tail"
-                            style={{
-                                position: 'absolute',
-                                fontFamily: 'Roboto-Bold',
-                                color: '#d6dfda',
-                                top: 5,
-                                left: 5,
-                                fontSize: Sizes.textSize,
-                            }}>
+                    <View style={styles.totalExpenseContainer}>
+                        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subHeading}>
                             Today's Spending
                         </Text>
                         <Text
                             style={{
-                                fontSize: 50,
-                                paddingTop: 15,
-                                left: -5,
+                                fontSize: Sizes.largeText,
+                                margin: 'auto',
+                                textAlign: 'center',
                             }}>{`${spending}`}</Text>
                     </View>
-                    <KeyboardAvoidingView style={{ flex: 1 }}>
+                    <KeyboardAvoidingView
+                        style={{ flex: 1 }}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={styles.box2}>
                                 <View style={[styles.inputContainer, styles.firstInput]}>
@@ -355,6 +347,7 @@ const styles = StyleSheet.create({
         height: '100%',
         alignItems: 'center',
         backgroundColor: Colors.primaryColor,
+        flexDirection: 'column',
     },
     titleContainer: {
         width: '100%',
@@ -369,23 +362,37 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
     },
-    box: {
-        width: Dimensions.get('window').width * 0.75,
-        height: Dimensions.get('window').height * 0.1,
+    totalExpenseContainer: {
         backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderRadius: 15,
+        marginTop: 0,
+        marginBottom: 20,
+        height: 'auto',
+        width: '80%',
+        margin: 30,
+        top: 10,
+    },
+    subHeading: {
+        color: Colors.subHeadingColor,
+        fontSize: Sizes.subText,
+        margin: 'auto',
+        paddingLeft: 10,
+        paddingTop: 5,
     },
     box2: {
-        width: Dimensions.get('window').width * 0.75,
+        width: Dimensions.get('window').width * 0.8,
         height: Dimensions.get('window').height * 0.6,
         backgroundColor: 'white',
         borderRadius: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+    },
+    scrollableContainer: {
+        width: '100%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        flexDirection: 'column',
     },
     inputContainer: {
         height: Dimensions.get('window').height * 0.072,
