@@ -4,6 +4,7 @@ import { View, Text } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 
 import PieChartLegend from './PieChartLegend';
+import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
     getCurrentDateString,
@@ -11,37 +12,26 @@ import {
     getMonthStartEndDate,
     getYearStartEndDate,
 } from '../util/DatetimeUtils';
-import { getExpensesbyCategory } from '../util/FileSystemUtils';
+import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSystemUtils';
 
 const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [pieChartData, setPieChartData] = useState([]);
+    const [categoryColors, setCategoryColors] = useState({});
 
     // Call the function to fetch and update data
     const updatePieChartData = async () => {
         try {
-            timeFrame = timeFrame || WEEKLY;
-
-            if (timeFrame === WEEKLY) {
-                const week = getWeekStartEndDate(getCurrentDateString());
-                startDate = startDate || week[0];
-                endDate = endDate || week[1];
-            } else if (timeFrame === MONTHLY) {
-                const month = getMonthStartEndDate(getCurrentDateString());
-                startDate = startDate || month[0];
-                endDate = endDate || month[1];
-            } else if (timeFrame === YEARLY) {
-                const year = getYearStartEndDate(getCurrentDateString());
-                startDate = startDate || year[0];
-                endDate = endDate || year[1];
-            } else {
-                // else return day
-                startDate = getCurrentDateString();
-                endDate = getCurrentDateString();
-            }
-
             const categoryDict = await getExpensesbyCategory(startDate, endDate);
-            // console.log("categoryDict: ", categoryDict);
             let totalSpending = 0;
+
+            const categoryColors = {};
+
+            for (const key in categoryDict) {
+                if (categoryDict.hasOwnProperty(key)) {
+                    const newColor = await getCategoryColorByName(key);
+                    categoryColors[key] = newColor;
+                }
+            }
 
             // Process the data
             const pieChartData = Object.keys(categoryDict).map((category) => {
@@ -52,18 +42,15 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
 
                 // add to the totalOfEverything
                 totalSpending += total;
-                const randColor = getRandomColor();
                 return {
                     key: category,
                     value: total,
-                    svg: { fill: randColor },
-                    color: randColor,
+                    svg: { fill: categoryColors[category] },
+                    color: categoryColors[category],
                     label: category,
                 };
             });
-            // console.log("Total spending is", totalSpending);
-            // console.log(pieChartData);
-
+            setCategoryColors(categoryColors);
             setPieChartData(pieChartData);
             setTotalSpending(totalSpending);
         } catch (error) {
@@ -80,37 +67,27 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [totalSpending, setTotalSpending] = useState(0);
     const formattedTotal = `$${parseFloat(totalSpending).toFixed(2)}`;
 
-    // Helper function to generate random colors
-    const getRandomColor = () => {
-        const red = Math.floor(Math.random() * 256);
-        const green = Math.floor(Math.random() * 256);
-        const blue = Math.floor(Math.random() * 256);
+    const noExpenseData = [{ label: 'No Data Available', value: 1, color: Colors.secondaryColor }];
 
-        // padStart used incase number generated is not 3 digits
-        // toString(16) change to hexadecimal values
-        const randomColor = `#${red.toString(16).padStart(2, '0')}${green
-            .toString(16)
-            .padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
-
-        return randomColor;
-    };
+    // Check if there's data in the pieChartData object
+    const hasData = Object.keys(pieChartData).length > 0;
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            {Object.keys(pieChartData).length > 0 ? (
-                <View
-                    style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: 20,
-                    }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    paddingTop: 20,
+                    paddingBottom: 10,
+                }}>
+                <View style={{ paddingBottom: 20 }}>
                     <PieChart
                         style={{ height: 200, width: 200 }}
-                        data={pieChartData}
+                        data={hasData ? pieChartData : noExpenseData}
                         donut
-                        radius={90}
-                        innerRadius={60}
+                        radius={110}
+                        innerRadius={75}
                         centerLabelComponent={() => {
                             return (
                                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -126,11 +103,9 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
                             );
                         }}
                     />
-                    <PieChartLegend chartData={pieChartData} />
                 </View>
-            ) : (
-                <Text>No Data Available</Text>
-            )}
+                <PieChartLegend chartData={hasData ? pieChartData : noExpenseData} />
+            </View>
         </View>
     );
 };

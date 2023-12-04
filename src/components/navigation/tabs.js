@@ -3,7 +3,6 @@
 
 import { FontAwesome, AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useState } from 'react';
 import { View, Platform, StyleSheet, Text } from 'react-native';
 
 import * as Colors from '../../constants/Colors';
@@ -13,10 +12,10 @@ const Tab = createBottomTabNavigator();
 const Tabs = () => {
     return (
         <Tab.Navigator
-            initialRouteName="HomePage"
+            initialRouteName="Home"
             screenOptions={({ route }) => ({
                 tabBarHideOnKeyboard: true,
-                initialRouteName: 'HomePage',
+                initialRouteName: 'Home',
                 tabBarShowLabel: false,
                 headerShown: false,
                 showLabel: false,

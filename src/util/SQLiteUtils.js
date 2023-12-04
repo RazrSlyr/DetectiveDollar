@@ -36,7 +36,7 @@ ON expenses (category);`;
 const SET_EXPENSE_DAY_AS_INDEX = `CREATE INDEX idx_day 
 ON expenses (day);`;
 
-const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses;';
+const GET_EXPENSES_TABLE_QUERY = 'SELECT * FROM expenses ORDER BY timestamp DESC;';
 
 const GET_CATEGORY_QUERY = 'SELECT DISTINCT category FROM expenses;';
 
@@ -107,7 +107,7 @@ const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
 };
 
 const createExpenseByDayFrameQuery = (startDay, endDay) => {
-    return `SELECT * FROM expenses WHERE DAY BETWEEN "${startDay}" AND "${endDay}" ORDER BY DAY`;
+    return `SELECT * FROM expenses WHERE DATE(day) BETWEEN '${startDay}' AND '${endDay}' ORDER BY DAY;`;
 };
 /* const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
     return `

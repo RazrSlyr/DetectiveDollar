@@ -1,23 +1,33 @@
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Dimensions } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Dimensions, Modal, TextInput, KeyboardAvoidingView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ColorPicker from 'react-native-wheel-color-picker';
 
 import CategoryEditComponent from '../components/CategoryEditComponent';
 import * as Colors from '../constants/Colors';
-import { getCategoryTable } from '../util/FileSystemUtils';
+import * as Sizes from '../constants/Sizes';
+import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';
 export default function CategoryPage({ navigation }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [showEditor, setShowEditor] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [categoryName, setCategoryName] = useState('');
+    const [categoryColor, setColor] = useState('');
+
+    const onColorChange = color => {
+        setColor(color);
+    };
+
     useEffect(() => {
         const getCategories = async () => {
             try {
                 // Fetch expenses for today and set to state
                 const categories = await getCategoryTable();
                 setCategories(categories);
-                console.log('Categories set!');
+                //console.log('Categories set!');
             } catch (error) {
                 console.error('Error fetching categories:', error);
             }
@@ -42,7 +52,7 @@ export default function CategoryPage({ navigation }) {
             // Fetch expenses for today and set to state
             const categories = await getCategoryTable();
             setCategories(categories);
-            console.log('Categories set!');
+            //console.log('Categories set!');
         } catch (error) {
             console.error('Error fetching categories:', error);
         }
@@ -62,6 +72,65 @@ export default function CategoryPage({ navigation }) {
             <ScrollView
                 style={styles.scrollableContainer}
                 contentContainerStyle={styles.scrollableContent}>
+                <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+                    <Text style={styles.addButtonText}>Add Category</Text>
+                </TouchableOpacity>
+                <View style={styles.dividerLine}/>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                    }}>
+                    <KeyboardAvoidingView style={styles.modalShadow}>
+                        <KeyboardAvoidingView style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                                <Text style={styles.modalTitle}>Add Category</Text>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputHeading}>Name</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={ categoryName }
+                                        onChangeText={(cName) => setCategoryName(cName)}
+                                    />
+                                    <View style={styles.line} />
+                                    <Text style={styles.inputHeading}>Color</Text>
+                                    <View style={styles.colorPickerBox}>
+                                        <ColorPicker
+                                            color={categoryColor}
+                                            onColorChangeComplete={(categoryColor) => onColorChange(categoryColor)}
+                                            thumbSize={30}
+                                            sliderSize={30}
+                                            noSnap={true}
+                                            row={false}
+                                        />
+                                    </View>
+                                </View>
+                                <View style={styles.addCancelBox}>
+                                    <TouchableOpacity
+                                        style={[styles.addButton, { backgroundColor: Colors.secondaryColor, width: "40%", alignSelf: "right",}]}
+                                        onPress={async () => {
+                                            addRowToCategoryTable(categoryName, categoryColor)
+                                            setModalVisible(!modalVisible);
+                                            updateCategories();
+                                            setCategoryName(undefined);
+                                        }}>
+                                        <Text style={styles.addButtonText}>Add</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.addButton, { backgroundColor: 'red', width: "40%", alignSelf: "right",}]}
+                                        onPress={async () => {
+                                            setModalVisible(!modalVisible);
+                                            setCategoryName(undefined);
+                                        }}>
+                                        <Text style={styles.addButtonText}>Cancel</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </KeyboardAvoidingView>
+                </Modal>
                 {categories.map((category) => {
                     return (
                         <View
@@ -79,7 +148,6 @@ export default function CategoryPage({ navigation }) {
                                 style={styles.editButtonContainer}
                                 onPress={async () => {
                                     setSelectedCategory(category);
-                                    console.log('edit', category.name);
                                     openCategoryEditor();
                                 }}>
                                 <Text style={styles.editText}>Edit</Text>
@@ -128,6 +196,28 @@ const styles = StyleSheet.create({
     titleContainer: {
         width: 'auto',
     },
+    addButton: {
+        color: Colors.secondaryColor,
+        width: '60%',
+        height: 50,
+        borderRadius: 20,
+        textAlign: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.secondaryColor,
+        margin: 20,
+    },
+    addButtonText: {
+        color: Colors.primaryColor,
+        alignSelf: 'center',
+        fontSize: Sizes.textSize,
+        fontWeight: 'bold',
+    },
+    dividerLine: {
+        width: "70%",
+        borderBottomWidth: 3,
+        borderColor: Colors.secondaryColor,
+        alignSelf: 'center',
+    },
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
@@ -142,6 +232,8 @@ const styles = StyleSheet.create({
         margin: 10,
         borderRadius: 10,
         paddingHorizontal: 10,
+        borderColor: 'black',
+        borderWidth: 2,
     },
     categoryText: {
         color: Colors.primaryColor,
@@ -165,5 +257,68 @@ const styles = StyleSheet.create({
     },
     backButton: {
         width: 'auto',
+    },
+    // Starting now, add category modal styles
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalShadow: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    },
+    modalView: {
+        backgroundColor: Colors.primaryColor,
+        borderRadius: 20,
+        padding: 10,
+        alignItems: 'center',
+        elevation: 5,
+        width: "80%",
+        height: "70%",
+    },
+    modalTitle: {
+        textAlign: 'center',
+        color: Colors.secondaryColor,
+        fontWeight: 'bold',
+        fontSize: Sizes.titleSize,
+    },
+    inputContainer: {
+        height: '50%',
+        width: "80%",
+        marginBottom: 10,
+    },
+    inputHeading: {
+        fontSize: 15,
+        fontFamily: 'Roboto-Bold',
+        color: Colors.secondaryColor,
+        width: '84%',
+        marginTop: 15,
+        marginBottom: 5,
+    },
+    input: {
+        width: '80%',
+        color: Colors.textColor,
+        fontFamily: 'Roboto-Bold',
+        fontSize: 20,
+        textAlign: 'left',
+    },
+    line: {
+        height: 2,
+        width: '100%',
+        backgroundColor: Colors.secondaryColor,
+        alignSelf: 'center',
+    },
+    addCancelBox: {
+        width: "80%",
+        height: 'auto',
+        flexDirection: 'row',
+        alignItems: "center",
+        justifyContent: 'center',
+        margin: 120,
+    },
+    colorPickerBox: {
+        width: "100%",
+        height: 300,
     },
 });

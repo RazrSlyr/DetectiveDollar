@@ -132,7 +132,7 @@ export async function addRowToExpenseTable(
     });
 }
 
-export async function addRowToCategoryTable(categoryName, icon = null, color = null) {
+export async function addRowToCategoryTable(categoryName, color = 'black', icon = null) {
     const db = await getDatabase();
     let categoryId = null;
     await db.transactionAsync(async (tx) => {
@@ -163,13 +163,16 @@ export async function updateRowFromCategoryTable(row_id, name, color) {
     if (row_id === undefined || row_id === null) {
         return;
     }
+    if (name == null && color == null) return;
     console.log('attempt to update category', row_id);
     const db = await getDatabase();
     try {
         // Need to update Category Table
         await db.transactionAsync(async (tx) => {
             await tx.executeSqlAsync(
-                `UPDATE categories SET name = '${name}', color = '${color}' WHERE id = ${row_id};`
+                `UPDATE OR IGNORE categories SET ${name != null ? `name = '${name}', ` : ''}${
+                    color != null ? `color = '${color}' ` : ''
+                }WHERE id = ${row_id};`
             );
         });
         console.log('success');
@@ -269,16 +272,26 @@ export async function getCategoryNameFromId(categoryId) {
     });
     return categoryName;
 }
-
+export async function getCategoryFromId(categoryId) {
+    let category = null;
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        category = (await tx.executeSqlAsync(createCategoryQueryById(categoryId))).rows[0];
+    });
+    return category;
+}
 export async function getExpensesbyCategory(startDate, endDate) {
     const categoryDict = {};
     const rows = await getExpensesFromDayframe(startDate, endDate);
 
     for (const row of rows) {
-        if (row['category'] in categoryDict) {
-            categoryDict[await getCategoryNameFromId(row['category'])].push(row);
+        const categoryId = row['category'];
+        const categoryName = await getCategoryNameFromId(categoryId);
+
+        if (categoryName in categoryDict) {
+            categoryDict[categoryName].push(row);
         } else {
-            categoryDict[await getCategoryNameFromId(row['category'])] = [row];
+            categoryDict[categoryName] = [row];
         }
     }
 
@@ -424,32 +437,32 @@ export async function createExampleData() {
         {
             name: 'Food',
             icon: 'fastfood',
-            color: 'red',
+            color: '#92BFB1',
         },
         {
             name: 'Housing',
             icon: 'house',
-            color: 'blue',
+            color: '#F4AC45',
         },
         {
             name: 'Social',
             icon: 'people',
-            color: 'purple',
+            color: '#694A38',
         },
         {
             name: 'Personal',
             icon: 'person',
-            color: 'blue',
+            color: '#A61C3C',
         },
         {
             name: 'Entertainment',
             icon: 'videogame-asset',
-            color: 'orange',
+            color: '#0B3C49',
         },
         {
             name: 'Other',
             icon: 'attach-money',
-            color: 'green',
+            color: '#4B2E39',
         },
     ];
 
@@ -461,8 +474,8 @@ export async function createExampleData() {
         const createCategoryAndSetId = async () => {
             const categoryId = await addRowToCategoryTable(
                 category['name'],
-                category['icon'],
-                category['color']
+                category['color'],
+                category['icon']
             );
             exampleCategories[i]['id'] = categoryId;
         };
