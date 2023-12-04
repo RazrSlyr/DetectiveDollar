@@ -93,10 +93,6 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
             const [startYear, startMonth, startDay] = startDate.split('-');
 
             if (timeFrame === WEEKLY) {
-                const week = getWeekStartEndDate(getCurrentDateString());
-                startDate = startDate || week[0];
-                endDate = endDate || week[1];
-
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
                 setTotalSpending(calculateTotalExpense(transactions));
                 setAverageExpense(
@@ -129,9 +125,6 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 setlineGraphData(lineGraphData);
                 setMaxDataValue(maxDataValue);
             } else if (timeFrame === MONTHLY) {
-                const month = getMonthStartEndDate(getCurrentDateString());
-                startDate = startDate || month[0];
-                endDate = endDate || month[1];
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
                 setTotalSpending(calculateTotalExpense(transactions));
                 setAverageExpense(
@@ -171,9 +164,6 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 setlineGraphData(lineGraphData);
                 setMaxDataValue(maxDataValue);
             } else if (timeFrame === YEARLY) {
-                const year = getYearStartEndDate(getCurrentDateString());
-                startDate = startDate || year[0];
-                endDate = endDate || year[1];
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
                 setTotalSpending(calculateTotalExpense(transactions));
                 setAverageExpense(
