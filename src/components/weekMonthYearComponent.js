@@ -1,3 +1,4 @@
+import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 
@@ -14,7 +15,11 @@ const WeekMonthYearButtons = ({ onSelect }) => {
             onSelect(dateStep[value]);
         }
     };
-
+    useFocusEffect(
+        React.useCallback(() => {
+            setSelection(0);
+        }, [])
+    );
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.btnGroup}>
@@ -55,7 +60,7 @@ const WeekMonthYearButtons = ({ onSelect }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        //flex: 1,
         alignItems: 'center',
         margin: 'auto',
         height: 100,
