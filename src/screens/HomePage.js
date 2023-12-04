@@ -1,6 +1,7 @@
 import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     TouchableOpacity,
     StyleSheet,
@@ -8,7 +9,6 @@ import {
     Text,
     ScrollView,
     Alert,
-    SafeAreaView,
 } from 'react-native';
 
 import DatePickerComponent from '../components/DatePickerComponent';
@@ -28,6 +28,7 @@ import {
     getCategoryColorById,
     getCategoryColorByName,
 } from '../util/FileSystemUtils';
+import * as Sizes from '../constants/Sizes';
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
@@ -91,10 +92,6 @@ export default function HomePage({ navigation }) {
         return todaySpending;
     }, [todayExpenses]);
 
-    const goToAddPage = () => {
-        navigation.navigate('AddExpense'); // change TEMPORARY to actual page
-    };
-
     const handleDelete = async (expense) => {
         deleteImage(expense['picture']);
 
@@ -155,83 +152,80 @@ export default function HomePage({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-            <Text style={[styles.title, styles.topTitle]}>Daily Spending</Text>
-            <TouchableOpacity style={styles.calendarContainer} activeOpacity={0.7}>
-                <DatePickerComponent onDateChange={handleDateChange} />
+            <TouchableOpacity style={styles.debug} onPress={handleAddFakeData}>
+                <FontAwesome name="wrench" size={15} color="black"/>
             </TouchableOpacity>
             <View style={styles.totalExpensesContainer}>
-                <Text style={styles.subHeading}>Expenses for {formattedDate}</Text>
+                <Text style={styles.subHeading}>Total Spendings</Text>
                 <Text style={styles.textInput}>{`${spending}`}</Text>
             </View>
+            <View style={styles.calendarContainer} activeOpacity={0.7}>
+                <Text
+                    style={styles.calendarDate}>
+                    {formattedDate}
+                </Text>
+                <View style={{position: 'absolute', right: 10}}>
+                    <DatePickerComponent onDateChange={handleDateChange}/>
+                </View>
+            </View>
             <View style={styles.expensesContainer}>
-                <Text style={styles.subHeading}>History</Text>
+                <Text style={styles.subHeading2}>Transactions</Text>
                 <ScrollView>
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
                         {todayExpenses.reverse().map((expense) => {
                             return (
-                                <View key={expense['id']} style={styles.expenseBoxes}>
-                                    <Text style={styles.expenseData}>{expense['category']}</Text>
-                                    <View style={styles.expenseNameBox}>
-                                        <Text style={styles.expenseData}>{expense['name']}</Text>
-                                        {expense['reacurring_id'] && (
-                                            <FontAwesome
-                                                name="repeat"
-                                                size={24}
-                                                color={Colors.secondaryColor}
-                                            />
-                                        )}
-                                    </View>
-                                    <Text style={styles.expenseData}>
-                                        {parseFloat(expense['amount']).toFixed(2)}
-                                    </Text>
-                                    {/* This code handles the expense deletion */}
-                                    <TouchableOpacity
+                                <TouchableOpacity key={expense.id}
                                         onPress={async () => {
                                             setSelectedExpense(expense);
                                             openInfo();
                                         }}>
-                                        <Entypo name="info-with-circle" size={40} color="black" />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        onPress={async () => {
-                                            Alert.alert(
-                                                'Deleting Expense',
-                                                'Are you sure you want to delete this expense? This cannot be undone.',
-                                                [
-                                                    { text: 'NO' },
-                                                    {
-                                                        text: 'YES',
-                                                        onPress: async () => handleDelete(expense),
-                                                    },
-                                                ]
-                                            );
-                                        }}>
-                                        <View>
-                                            <Text style={{ color: 'red' }}> X </Text>
+                                    <View key={expense['id']} style={styles.expenseBoxes}>
+                                        <View style={styles.colorAndCategoryBox}>
+                                            <View style={{...styles.colorCircle, backgroundColor: 'orange'}}/>
+                                            <Text style={{...styles.categoryName, color: 'orange'}}>{expense['category']}</Text>
                                         </View>
-                                    </TouchableOpacity>
-                                    {/* End expense deletion code */}
-                                </View>
+                                        <View style={styles.expenseNameBox}>
+                                            <Text style={styles.expenseName}>{expense['name']}</Text>
+                                            <Text style={styles.expenseData}>{expense['timestamp'].replace(/ /g, '\n')}</Text>
+                                            {expense['reacurring_id'] && (
+                                                <FontAwesome
+                                                    name="repeat"
+                                                    size={24}
+                                                    color={Colors.secondaryColor}
+                                                />
+                                            )}
+                                        </View>
+                                        <View style={{width: '30%'}}>
+                                            <Text style={styles.expenseValue}>
+                                                {'$' + parseFloat(expense['amount']).toFixed(2)}
+                                            </Text>
+                                        </View>
+                                        <TouchableOpacity
+                                            onPress={async () => {
+                                                Alert.alert(
+                                                    'Deleting Expense',
+                                                    'Are you sure you want to delete this expense? This cannot be undone.',
+                                                    [
+                                                        { text: 'NO' },
+                                                        {
+                                                            text: 'YES',
+                                                            onPress: async () => handleDelete(expense),
+                                                        },
+                                                    ]
+                                                );
+                                            }}>
+                                            <FontAwesome name="remove" size={20} color="red" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </TouchableOpacity>
                             );
                         })}
                         {/* Add more content as needed */}
                     </View>
                 </ScrollView>
             </View>
-            <TouchableOpacity style={styles.button} onPress={handleAddFakeData}>
-                <View style={styles.buttonContainer}>
-                    <Text
-                        style={{
-                            color: '#ffffff',
-                            textAlign: 'center',
-                            fontSize: 25,
-                        }}>
-                        Add Example Data
-                    </Text>
-                </View>
-            </TouchableOpacity>
-            <EditExpenseComponent
+            <ExpenseInfoComponent
                 isVisable={showExpenseInfo}
                 onClose={closeInfo}
                 expense={selectedExpense}
@@ -244,8 +238,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.secondaryColor,
         // figure out fontStyles
+    },
+    secondaryContainer: {
+        flex: 1,
+        alignItems: 'center',
+        backgroundColor: Colors.textColor,
     },
     button: {
         color: '#ffffff',
@@ -279,37 +278,49 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        fontSize: 36,
+        fontSize: Sizes.titleSize,
         color: Colors.secondaryColor,
         marginRight: 15,
     },
     totalExpensesContainer: {
         backgroundColor: 'white',
         borderRadius: 15,
-        marginTop: 20,
+        marginTop: 0,
         marginBottom: 20,
         height: 'auto',
-        width: 270,
-        alignItems: 'center',
-        justifyContent: 'center',
+        width: '70%',
         margin: 30,
+        top: 10,
     },
     subHeading: {
         color: Colors.subHeadingColor,
-        fontSize: 13,
+        fontSize: Sizes.subText,
         margin: 'auto',
         paddingLeft: 10,
-        paddingTop: 10,
+        paddingTop: 5,
+    },
+    subHeading2: {
+        color: Colors.textColor,
+        fontSize: Sizes.textSize,
+        margin: 'auto',
+        paddingLeft: 10,
+        padding: 5,
+        textAlign: 'left',
     },
     textInput: {
-        fontSize: 50,
+        fontSize: Sizes.largeText,
         margin: 'auto',
+        textAlign: 'center',
     },
     expensesContainer: {
-        // backgroundColor: 'green',
-        flex: 1 / 2,
-        width: '70%',
-        borderRadius: 10,
+        backgroundColor: Colors.primaryColor,
+        width: '100%',
+        height: '70%',
+        padding: 10,
+        margin: 10,
+        borderRadius: 32,
+        //borderTopLeftRadius: 32, // Radius for the top-left corner
+        //borderTopRightRadius: 32, // Radius for the top-right corner
     },
     scrollableContent: {
         flex: 1,
@@ -318,29 +329,60 @@ const styles = StyleSheet.create({
     },
     expenseBoxes: {
         width: '100%',
-        height: 60,
+        height: 70,
         backgroundColor: 'white',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
         alignItems: 'center',
         borderRadius: 10,
         borderWidth: 2,
-        borderColor: Colors.secondaryColor,
-    },
-    expenseData: {
-        textAlign: 'center',
+        borderColor: 'white',
+        margin: 5,
     },
     expenseNameBox: {
-        flexDirection: 'row',
-        justifyContent: 'center',
+        width: '40%',
+        height: 55,
+        margin: 5,
+    },
+    expenseName:{
+        fontSize: Sizes.textSize,
+        color: Colors.textColor,
+    },
+    expenseData: {
+        fontSize: Sizes.subText,
+        color: Colors.subHeadingColor,
+    },
+    expenseValue: {
+        fontSize: 20,
+        color: 'red',
+    },
+    colorAndCategoryBox:{
+        width: '20%',
+        height: 50,
         alignItems: 'center',
-        gap: 8,
+        justifyContent: 'center',
+    },
+    colorCircle: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+    },
+    categoryName: {
+        fontSize: 10,
     },
     calendarContainer: {
-        borderRadius: 35,
+        flex: 0,
+        borderRadius: 10,
+        height: '5%',
         backgroundColor: 'white',
-        padding: 15,
+        padding: 2,
+        width: '50%',
+        justifyContent: 'center',
+    },
+    calendarDate: {
+        color: Colors.textColor,
+        fontSize: Sizes.textSize,
+        textAlign: 'left',
     },
     arrowsAndTotalExpenseContainer: {
         flexDirection: 'row',
@@ -349,4 +391,13 @@ const styles = StyleSheet.create({
     arrows: {
         color: Colors.secondaryColor,
     },
+    debug: {
+        backgroundColor: Colors.secondaryColor,
+        borderWidth: 2,
+        borderColor: "black",
+        width: 20,
+        height: 20,
+        right: 180,
+        top: 50,
+    }
 });
