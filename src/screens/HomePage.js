@@ -37,11 +37,14 @@ export default function HomePage({ navigation }) {
                 const expenses = await getExpensesFromDay(targetDate);
                 // Change expense categoryId to name
                 for (let i = 0; i < expenses.length; i++) {
+                    expenses[i]['categoryColor'] = await getCategoryColorById(
+                        expenses[i]['category']
+                    );
                     expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
                 }
                 // Change expense categoryId to name
                 setTodayExpenses(expenses);
-                // console.log('expenses set!');
+                //console.log('expenses set!', expenses);
             } catch (error) {
                 console.error('Error fetching expenses:', error);
             }
@@ -60,6 +63,7 @@ export default function HomePage({ navigation }) {
             const expenses = await getExpensesFromDay(newDate);
             // Change expense categoryId to name
             for (let i = 0; i < expenses.length; i++) {
+                expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
                 expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
             }
             setTodayExpenses(expenses);
@@ -97,6 +101,7 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
             expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
         setTodayExpenses(expenses);
@@ -111,6 +116,7 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
             expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
         setTodayExpenses(expenses);
@@ -175,11 +181,14 @@ export default function HomePage({ navigation }) {
                                             <View
                                                 style={{
                                                     ...styles.colorCircle,
-                                                    backgroundColor: 'orange',
+                                                    backgroundColor: expense['categoryColor'],
                                                 }}
                                             />
                                             <Text
-                                                style={{ ...styles.categoryName, color: 'orange' }}>
+                                                style={{
+                                                    ...styles.categoryName,
+                                                    color: expense['categoryColor'],
+                                                }}>
                                                 {expense['category']}
                                             </Text>
                                         </View>
@@ -340,7 +349,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 2,
         borderColor: 'white',
-        margin: 5,
+        marginVertical: 5,
+        paddingHorizontal: 5,
+        paddingVertical: 5,
     },
     expenseNameBox: {
         width: '40%',
@@ -360,10 +371,11 @@ const styles = StyleSheet.create({
         color: 'red',
     },
     colorAndCategoryBox: {
-        width: '20%',
+        width: 'auto',
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
+        marginHorizontal: 5,
     },
     colorCircle: {
         width: 30,
