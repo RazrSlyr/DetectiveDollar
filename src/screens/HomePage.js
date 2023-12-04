@@ -16,7 +16,6 @@ import {
     getRowFromExpenseTable,
     deleteImage,
     getCategoryNameFromId,
-    getCategoryFromId,
     applyRecurringExpenses,
     createExampleData,
     getCategoryColorById,
@@ -38,11 +37,14 @@ export default function HomePage({ navigation }) {
                 const expenses = await getExpensesFromDay(targetDate);
                 // Change expense categoryId to name
                 for (let i = 0; i < expenses.length; i++) {
-                    expenses[i]['category'] = await getCategoryColorById(expenses[i]['category']);
+                    expenses[i]['categoryColor'] = await getCategoryColorById(
+                        expenses[i]['category']
+                    );
+                    expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
                 }
                 // Change expense categoryId to name
                 setTodayExpenses(expenses);
-                // console.log('expenses set!');
+                //console.log('expenses set!', expenses);
             } catch (error) {
                 console.error('Error fetching expenses:', error);
             }
@@ -61,7 +63,8 @@ export default function HomePage({ navigation }) {
             const expenses = await getExpensesFromDay(newDate);
             // Change expense categoryId to name
             for (let i = 0; i < expenses.length; i++) {
-                expenses[i]['category'] = await getCategoryColorById(expenses[i]['category']);
+                expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
+                expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
             }
             setTodayExpenses(expenses);
             setTargetDate(newDate);
@@ -98,7 +101,8 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
-            expenses[i]['category'] = await getCategoryColorById(expenses[i]['category']);
+            expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
+            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
         setTodayExpenses(expenses);
     };
@@ -112,7 +116,8 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
-            expenses[i]['category'] = await getCategoryColorById(expenses[i]['category']);
+            expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
+            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
         setTodayExpenses(expenses);
         alert('Data has been added and set');
@@ -176,9 +181,16 @@ export default function HomePage({ navigation }) {
                                             <View
                                                 style={{
                                                     ...styles.colorCircle,
-                                                    backgroundColor: expense['category'],
+                                                    backgroundColor: expense['categoryColor'],
                                                 }}
                                             />
+                                            <Text
+                                                style={{
+                                                    ...styles.categoryName,
+                                                    color: expense['categoryColor'],
+                                                }}>
+                                                {expense['category']}
+                                            </Text>
                                         </View>
                                         <View style={styles.expenseNameBox}>
                                             <Text style={styles.expenseName}>
@@ -337,7 +349,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 2,
         borderColor: 'white',
-        margin: 5,
+        marginVertical: 5,
+        paddingHorizontal: 5,
+        paddingVertical: 5,
     },
     expenseNameBox: {
         width: '40%',
@@ -361,12 +375,12 @@ const styles = StyleSheet.create({
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
-        marginHorizontal: 10,
+        marginHorizontal: 5,
     },
     colorCircle: {
-        width: 15,
-        height: 15,
-        borderRadius: 8,
+        width: 30,
+        height: 30,
+        borderRadius: 15,
     },
     categoryName: {
         fontSize: 10,
