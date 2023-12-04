@@ -63,15 +63,6 @@ async function getDatabase() {
     return db;
 }
 
-export async function getCategoryTable() {
-    const db = await getDatabase();
-    let rows = [];
-    await db.transactionAsync(async (tx) => {
-        rows = (await tx.executeSqlAsync(GET_ALL_CATEGORIES_QUERY)).rows;
-    });
-    return rows;
-}
-
 export async function getExpenseTable() {
     const db = await getDatabase();
     let rows = [];
@@ -132,18 +123,6 @@ export async function addRowToExpenseTable(
     });
 }
 
-export async function addRowToCategoryTable(categoryName, icon = null, color = null) {
-    const db = await getDatabase();
-    let categoryId = null;
-    await db.transactionAsync(async (tx) => {
-        await tx.executeSqlAsync(createCategoryInsert(categoryName, icon, color));
-        categoryId = (await tx.executeSqlAsync(createCategoryQueryByName(categoryName))).rows[0][
-            'id'
-        ];
-    });
-    return categoryId;
-}
-
 export async function getRowFromExpenseTable(row) {
     const db = await getDatabase();
     let rowData = null;
@@ -159,6 +138,27 @@ export async function deleteRowFromExpenseTable(row) {
         await tx.executeSqlAsync(deleteExpense(row));
     });
 }
+
+export async function getCategoryTable() {
+    const db = await getDatabase();
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        rows = (await tx.executeSqlAsync(GET_ALL_CATEGORIES_QUERY)).rows;
+    });
+    return rows;
+}
+export async function addRowToCategoryTable(categoryName, icon = null, color = null) {
+    const db = await getDatabase();
+    let categoryId = null;
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(createCategoryInsert(categoryName, icon, color));
+        categoryId = (await tx.executeSqlAsync(createCategoryQueryByName(categoryName))).rows[0][
+            'id'
+        ];
+    });
+    return categoryId;
+}
+
 export async function updateRowFromCategoryTable(row_id, name, color) {
     if (row_id === undefined || row_id === null) {
         return;
@@ -354,51 +354,6 @@ export async function applyRecurringExpenses() {
     appliedReacurring = true;
 }
 
-async function getImageDirectory() {
-    const specificDirectory = ALBUMNNAME;
-    const directory = `${FileSystem.documentDirectory}${specificDirectory}/`;
-
-    // Check if the directory exists, if not, create it
-    const directoryInfo = await FileSystem.getInfoAsync(directory);
-
-    if (!directoryInfo.exists) {
-        await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
-    }
-    return directory;
-}
-export async function saveImage(imageURI) {
-    if (!imageURI) {
-        return null;
-    }
-    const dir = await getImageDirectory();
-    const fileName = `IMG_${Date.now()}.jpg`;
-    const newImageUri = `${dir}${fileName}`;
-    try {
-        await FileSystem.moveAsync({
-            from: imageURI,
-            to: newImageUri,
-        });
-
-        console.log('Image saved:', newImageUri);
-        return newImageUri;
-    } catch (error) {
-        console.error('Error saving image:', error);
-        return null;
-    }
-}
-
-export async function deleteImage(imageURI) {
-    if (!imageURI) {
-        return;
-    }
-    try {
-        await FileSystem.deleteAsync(imageURI, { intermediates: true });
-        console.log('Image deleted');
-    } catch (error) {
-        console.error('Error deleting image:', error);
-    }
-}
-
 export async function getCategoryColorByName(categoryName) {
     const db = await getDatabase();
     let color;
@@ -520,4 +475,49 @@ export async function createExampleData() {
         });
         await Promise.all(promises);
     });
+}
+
+async function getImageDirectory() {
+    const specificDirectory = ALBUMNNAME;
+    const directory = `${FileSystem.documentDirectory}${specificDirectory}/`;
+
+    // Check if the directory exists, if not, create it
+    const directoryInfo = await FileSystem.getInfoAsync(directory);
+
+    if (!directoryInfo.exists) {
+        await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
+    }
+    return directory;
+}
+export async function saveImage(imageURI) {
+    if (!imageURI) {
+        return null;
+    }
+    const dir = await getImageDirectory();
+    const fileName = `IMG_${Date.now()}.jpg`;
+    const newImageUri = `${dir}${fileName}`;
+    try {
+        await FileSystem.moveAsync({
+            from: imageURI,
+            to: newImageUri,
+        });
+
+        console.log('Image saved:', newImageUri);
+        return newImageUri;
+    } catch (error) {
+        console.error('Error saving image:', error);
+        return null;
+    }
+}
+
+export async function deleteImage(imageURI) {
+    if (!imageURI) {
+        return;
+    }
+    try {
+        await FileSystem.deleteAsync(imageURI, { intermediates: true });
+        console.log('Image deleted');
+    } catch (error) {
+        console.error('Error deleting image:', error);
+    }
 }
