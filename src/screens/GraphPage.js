@@ -1,8 +1,10 @@
 import { AntDesign } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Swiper from 'react-native-swiper';
 
 import LineGraphComponent from '../components/LineGraphComponent';
 import NewPieChartComponent from '../components/NewPieChartComponent';
@@ -77,10 +79,24 @@ const GraphPage = ({ navigation }) => {
         return `${month}/${day}/${year}`;
     };
 
+    const [activeSlide, setActiveSlide] = useState(0);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('state', () => {
+            // When the page comes into focus, set the active slide to 0 (the first slide)
+            setActiveSlide(0);
+            setSelectedTimeframe(WEEKLY);
+            setSelectedTimeframeDates(getWeekStartEndDate(getCurrentDateString()));
+        });
+        return unsubscribe;
+    }, []);
+
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <Text style={styles.title}>Reports</Text>
+            <View style={styles.titleContainer}>
+                <Text style={styles.titleText}>Statistics</Text>
+            </View>
+            <View style={{ backgroundColor: Colors.primaryColor }}>
                 <View style={styles.dateContainer}>
                     <View style={styles.dateRange}>
                         <TouchableOpacity onPress={handleDecrementTimeFrame}>
@@ -114,22 +130,40 @@ const GraphPage = ({ navigation }) => {
                 </View>
                 <WeekMonthYearButtons onSelect={handleTimeframeSelect} />
                 <View style={styles.scrollableContent}>
-                    <View style={styles.lineChartContainer}>
-                        <LineGraphComponent
-                            startDate={selectedTimeframeDates[0]}
-                            endDate={selectedTimeframeDates[1]}
-                            timeFrame={selectedTimeframe}
-                        />
-                    </View>
-                    <View style={styles.chartContainer}>
-                        <NewPieChartComponent
-                            startDate={selectedTimeframeDates[0]}
-                            endDate={selectedTimeframeDates[1]}
-                            timeFrame={selectedTimeframe}
-                        />
-                    </View>
+                    <Swiper
+                        style={styles.wrapper}
+                        dotStyle={styles.customDot}
+                        activeDotStyle={styles.customActiveDot}
+                        paginationStyle={{
+                            top: -560,
+                            left: 300,
+                        }}
+                        loop={false}
+                        index={activeSlide}
+                        onIndexChanged={(index) => {
+                            setActiveSlide(index);
+                        }}>
+                        <View style={styles.pieChartSlide}>
+                            <View style={styles.chartContainer}>
+                                <NewPieChartComponent
+                                    startDate={selectedTimeframeDates[0]}
+                                    endDate={selectedTimeframeDates[1]}
+                                    timeFrame={selectedTimeframe}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.lineChartSlide}>
+                            <View style={styles.chartContainer} paddingTop={20}>
+                                <LineGraphComponent
+                                    startDate={selectedTimeframeDates[0]}
+                                    endDate={selectedTimeframeDates[1]}
+                                    timeFrame={selectedTimeframe}
+                                />
+                            </View>
+                        </View>
+                    </Swiper>
                 </View>
-            </ScrollView>
+            </View>
         </SafeAreaView>
     );
 };
@@ -139,46 +173,29 @@ export default GraphPage;
 const styles = StyleSheet.create({
     // Need to figure out why there is a big gab at the top of the screen
     container: {
-        paddingTop: StatusBar.currentHeight,
+        //paddingTop: StatusBar.currentHeight,
         flex: 1,
         alignItems: 'center',
+        backgroundColor: Colors.secondaryColor,
     },
     scrollableContent: {
         flex: 1,
         width: '100%', // Adjust the width as needed
-        height: '100%',
+        height: 'auto',
         alignItems: 'center',
         marginTop: -20,
     },
-    title: {
+    titleContainer: {
+        width: 'auto',
+    },
+    titleText: {
         fontWeight: 'bold',
-        fontSize: 36,
-        textAlign: 'center',
-        color: Colors.secondaryColor,
-        marginTop: 20,
-    },
-    chartContainer: {
-        margin: 5,
-        height: 320,
-        width: 290,
-        alignContent: 'center',
+        fontSize: 35,
+        color: Colors.primaryColor,
         justifyContent: 'center',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        flex: 1,
-    },
-    lineChartContainer: {
-        margin: 5,
-        height: 280,
-        width: 290,
-        alignContent: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        paddingTop: 40,
     },
     dateContainer: {
-        flex: 1,
+        //flex: 1,
         alignItems: 'center',
     },
     arrow: {
@@ -198,12 +215,50 @@ const styles = StyleSheet.create({
         fontSize: 14,
         flex: 1,
         borderWidth: 1,
-        borderColor: '#37c871',
-        backgroundColor: '#f9f9f9',
+        borderColor: Colors.secondaryColor,
+        backgroundColor: Colors.primaryColor,
         borderRadius: 15,
         marginTop: 20,
         marginHorizontal: 2,
-        //marginBottom: 10,
         overflow: 'hidden',
+    },
+    wrapper: {
+        //showsPagination: true,
+    },
+    lineChartSlide: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingBottom: 100,
+    },
+    pieChartSlide: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingBottom: 100,
+    },
+    customDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: 'gray', // Color for non-active dots
+    },
+    customActiveDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: Colors.secondaryColor, // Color for the active dot
+    },
+    scrollContentContainer: {
+        paddingBottom: 60,
+    },
+    chartContainer: {
+        margin: 5,
+        height: '100%',
+        width: '90%',
+        alignContent: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        borderRadius: 20,
     },
 });

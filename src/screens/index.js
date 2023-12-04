@@ -1,6 +1,7 @@
 import AddExpense from './AddExpense';
-import GraphPage from './GraphPage';
-import HomePage from './HomePage';
 import CategoryPage from './CategoryPage';
+import GraphPage from './GraphPage';
+import HistoryPage from './HistoryPage';
+import HomePage from './HomePage';
 
-export { HomePage, AddExpense, GraphPage, CategoryPage };
+export { HomePage, AddExpense, GraphPage, HistoryPage, CategoryPage };
