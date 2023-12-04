@@ -9,17 +9,17 @@ import {
     Modal,
     TextInput,
 } from 'react-native';
+import ColorPicker from 'react-native-wheel-color-picker';
 
 import * as Colors from '../constants/Colors';
-import { deleteRowFromCategoryTable, updateRowFromCategoryTable } from '../util/FileSystemUtils';
-import ColorPicker from 'react-native-wheel-color-picker';
+import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
 
 const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }) => {
     const [enableSave, setEnableSave] = useState(false);
     const [categoryName, setCategoryName] = useState(category?.name);
     const [categoryColor, setColor] = useState(category?.color); //use to update color
 
-    const onColorChange = color => {
+    const onColorChange = (color) => {
         setColor(color);
     };
 
@@ -27,10 +27,9 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
         const updateEnableSave = () => {
             if (
                 (categoryName === undefined ||
-                categoryName === '' ||
-                categoryName === category.name) &&
-                (!categoryColor ||
-                categoryColor === category.color)
+                    categoryName === '' ||
+                    categoryName === category.name) &&
+                (!categoryColor || categoryColor === category.color)
             ) {
                 setEnableSave(false);
             } else {
@@ -68,11 +67,13 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                 <Text style={styles.inputHeading}>Color</Text>
                                 <View style={styles.colorPickerContainer}>
                                     <ColorPicker
-                                        color={categoryColor}
-                                        onColorChangeComplete={(categoryColor) => onColorChange(categoryColor)}
+                                        color={!category?.color ? '#ffffff' : category.color}
+                                        onColorChangeComplete={(categoryColor) =>
+                                            onColorChange(categoryColor)
+                                        }
                                         thumbSize={30}
                                         sliderSize={30}
-                                        noSnap={true}
+                                        noSnap
                                         row={false}
                                     />
                                 </View>
@@ -94,8 +95,8 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                 //console.log('attempt to update');
                                 await updateRowFromCategoryTable(
                                     category.id,
-                                    categoryName,
-                                    categoryColor
+                                    categoryName === category?.name ? null : categoryName,
+                                    categoryColor === category?.color ? null : categoryColor
                                 );
                                 await onUpdate();
                                 onClose();
