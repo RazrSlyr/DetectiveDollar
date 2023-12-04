@@ -11,7 +11,7 @@ import {
     View,
     Dimensions,
     Alert,
-    Button,
+    Platform,
     TouchableWithoutFeedback,
     Keyboard,
     KeyboardAvoidingView,
@@ -31,12 +31,14 @@ import {
     addRowToExpenseTable,
     saveImage,
     getExpensesFromDay,
+    getCategoryTable,
 } from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
+    const [allCategories, setAllCategories] = useState([]);
     const [category, setCategory] = useState('');
     const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
@@ -62,11 +64,12 @@ export default function App({ navigation }) {
     }, [todayExpenses]);
 
     useEffect(() => {
-        const getExpenses = async () => {
+        const getExpensesAndCategories = async () => {
             setTodayExpenses(await getExpensesFromDay(todaysDate));
+            setAllCategories(await getCategoryTable());
         };
         navigation.addListener('focus', () => {
-            getExpenses();
+            getExpensesAndCategories();
         });
     }, []);
 
@@ -95,9 +98,7 @@ export default function App({ navigation }) {
             return;
         }
         const currentDate = new Date();
-        const dateString = getDateStringFromDate(currentDate);
         const timestamp = currentDate.getTime();
-        const categoryId = await addRowToCategoryTable(category);
         // console.log(categoryId);
         let imageURI = null;
         if (previewURI) {
@@ -105,7 +106,7 @@ export default function App({ navigation }) {
         }
         await addRowToExpenseTable(
             name,
-            categoryId,
+            category,
             parseFloat(amount).toFixed(2),
             timestamp,
             targetDate,
@@ -128,28 +129,20 @@ export default function App({ navigation }) {
                         <Text style={styles.title}>Add Expense</Text>
                     </View>
                     <StatusBar style="auto" />
-                    <View style={styles.box}>
-                        <Text
-                            numberOfLines={1}
-                            ellipsizeMode="tail"
-                            style={{
-                                position: 'absolute',
-                                fontFamily: 'Roboto-Bold',
-                                color: '#d6dfda',
-                                top: 5,
-                                left: 5,
-                                fontSize: Sizes.textSize,
-                            }}>
+                    <View style={styles.totalExpenseContainer}>
+                        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subHeading}>
                             Today's Spending
                         </Text>
                         <Text
                             style={{
-                                fontSize: 50,
-                                paddingTop: 15,
-                                left: -5,
+                                fontSize: Sizes.largeText,
+                                margin: 'auto',
+                                textAlign: 'center',
                             }}>{`${spending}`}</Text>
                     </View>
-                    <KeyboardAvoidingView style={{ flex: 1 }}>
+                    <KeyboardAvoidingView
+                        style={{ flex: 1 }}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={styles.box2}>
                                 <View style={[styles.inputContainer, styles.firstInput]}>
@@ -196,10 +189,25 @@ export default function App({ navigation }) {
                                 </View>
                                 <View style={styles.inputContainer}>
                                     <Text style={styles.inputHeading}>CATEGORY</Text>
-                                    <TextInput
+                                    <DropdownSelector
                                         style={styles.input}
-                                        placeholder="Category"
-                                        onChangeText={(value) => setCategory(value)}
+                                        data={allCategories.map((category) => {
+                                            return {
+                                                label: category['name'],
+                                                value: category['id'],
+                                            };
+                                        })}
+                                        // data={[
+                                        //     { label: "Don't Repeat", value: NO_REPETION },
+                                        //     { label: 'Daily', value: DAILY },
+                                        //     { label: 'Weekly', value: WEEKLY },
+                                        //     { label: 'Monthly', value: MONTHLY },
+                                        // ]}
+                                        onChange={(item) => {
+                                            setCategory(item.value);
+                                        }}
+                                        dropdownLabel="Expense Frequency"
+                                        placeholderLabel="Expense Frequency"
                                     />
                                     {/* <DropdownSelector
                                     style={styles.input}
@@ -215,6 +223,7 @@ export default function App({ navigation }) {
                                     // dropdownLabel="e.g., Food, Entertainment"
                                     placeholderLabel="Select or add"
                                 /> */}
+                                    <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
                                 </View>
                                 <View style={styles.inputContainer}>
@@ -355,6 +364,7 @@ const styles = StyleSheet.create({
         height: '100%',
         alignItems: 'center',
         backgroundColor: Colors.primaryColor,
+        flexDirection: 'column',
     },
     titleContainer: {
         width: '100%',
@@ -369,23 +379,37 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
     },
-    box: {
-        width: Dimensions.get('window').width * 0.75,
-        height: Dimensions.get('window').height * 0.1,
+    totalExpenseContainer: {
         backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderRadius: 15,
+        marginTop: 0,
+        marginBottom: 20,
+        height: 'auto',
+        width: '80%',
+        margin: 30,
+        top: 10,
+    },
+    subHeading: {
+        color: Colors.subHeadingColor,
+        fontSize: Sizes.subText,
+        margin: 'auto',
+        paddingLeft: 10,
+        paddingTop: 5,
     },
     box2: {
-        width: Dimensions.get('window').width * 0.75,
+        width: Dimensions.get('window').width * 0.8,
         height: Dimensions.get('window').height * 0.6,
         backgroundColor: 'white',
         borderRadius: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+    },
+    scrollableContainer: {
+        width: '100%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        flexDirection: 'column',
     },
     inputContainer: {
         height: Dimensions.get('window').height * 0.072,

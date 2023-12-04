@@ -1,20 +1,14 @@
 import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    View,
-    Text,
-    ScrollView,
-    Alert,
-} from 'react-native';
 
 import DatePickerComponent from '../components/DatePickerComponent';
 import EditExpenseComponent from '../components/EditExpenseComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
+import * as Sizes from '../constants/Sizes';
 import { getCurrentDateString } from '../util/DatetimeUtils';
 import {
     deleteRowFromExpenseTable,
@@ -26,9 +20,7 @@ import {
     applyRecurringExpenses,
     createExampleData,
     getCategoryColorById,
-    getCategoryColorByName,
 } from '../util/FileSystemUtils';
-import * as Sizes from '../constants/Sizes';
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
@@ -46,11 +38,14 @@ export default function HomePage({ navigation }) {
                 // Change expense categoryId to name
                 for (let i = 0; i < expenses.length; i++) {
                     expenses[i]['categoryId'] = expenses[i]['category'];
+                    expenses[i]['categoryColor'] = await getCategoryColorById(
+                        expenses[i]['category']
+                    );
                     expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
                 }
                 // Change expense categoryId to name
                 setTodayExpenses(expenses);
-                // console.log('expenses set!');
+                //console.log('expenses set!', expenses);
             } catch (error) {
                 console.error('Error fetching expenses:', error);
             }
@@ -70,6 +65,7 @@ export default function HomePage({ navigation }) {
             // Change expense categoryId to name
             for (let i = 0; i < expenses.length; i++) {
                 expenses[i]['categoryId'] = expenses[i]['category'];
+                expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
                 expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
             }
             setTodayExpenses(expenses);
@@ -107,6 +103,7 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
             expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
         setTodayExpenses(expenses);
@@ -121,6 +118,7 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
             expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
         setTodayExpenses(expenses);
@@ -155,7 +153,7 @@ export default function HomePage({ navigation }) {
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
             <TouchableOpacity style={styles.debug} onPress={handleAddFakeData}>
-                <FontAwesome name="wrench" size={15} color="black"/>
+                <FontAwesome name="wrench" size={15} color="black" />
             </TouchableOpacity>
             <View style={styles.totalExpensesContainer}>
                 <Text style={styles.subHeading}>Total Spendings</Text>
@@ -172,7 +170,7 @@ export default function HomePage({ navigation }) {
                 <ScrollView>
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
-                        {todayExpenses.reverse().map((expense) => {
+                        {todayExpenses.map((expense) => {
                             return (
                                 <TouchableOpacity
                                     key={expense.id}
@@ -185,11 +183,14 @@ export default function HomePage({ navigation }) {
                                             <View
                                                 style={{
                                                     ...styles.colorCircle,
-                                                    backgroundColor: 'orange',
+                                                    backgroundColor: expense['categoryColor'],
                                                 }}
                                             />
                                             <Text
-                                                style={{ ...styles.categoryName, color: 'orange' }}>
+                                                style={{
+                                                    ...styles.categoryName,
+                                                    color: expense['categoryColor'],
+                                                }}>
                                                 {expense['category']}
                                             </Text>
                                         </View>
@@ -222,7 +223,8 @@ export default function HomePage({ navigation }) {
                                                         { text: 'NO' },
                                                         {
                                                             text: 'YES',
-                                                            onPress: async () => handleDelete(expense),
+                                                            onPress: async () =>
+                                                                handleDelete(expense),
                                                         },
                                                     ]
                                                 );
@@ -349,14 +351,16 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 2,
         borderColor: 'white',
-        margin: 5,
+        marginVertical: 5,
+        paddingHorizontal: 5,
+        paddingVertical: 5,
     },
     expenseNameBox: {
         width: '40%',
         height: 55,
         margin: 5,
     },
-    expenseName:{
+    expenseName: {
         fontSize: Sizes.textSize,
         color: Colors.textColor,
     },
@@ -368,11 +372,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: 'red',
     },
-    colorAndCategoryBox:{
-        width: '20%',
+    colorAndCategoryBox: {
+        width: 'auto',
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
+        marginHorizontal: 5,
     },
     colorCircle: {
         width: 30,
@@ -406,10 +411,10 @@ const styles = StyleSheet.create({
     debug: {
         backgroundColor: Colors.secondaryColor,
         borderWidth: 2,
-        borderColor: "black",
+        borderColor: 'black',
         width: 20,
         height: 20,
         right: 180,
         top: 50,
-    }
+    },
 });

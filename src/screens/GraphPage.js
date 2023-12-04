@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     chartContainer: {
         margin: 5,
         height: '100%',
-        width: '90%',
+        width: '92%',
         alignContent: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',

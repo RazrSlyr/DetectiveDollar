@@ -21,28 +21,7 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     // Call the function to fetch and update data
     const updatePieChartData = async () => {
         try {
-            timeFrame = timeFrame || WEEKLY;
-
-            if (timeFrame === WEEKLY) {
-                const week = getWeekStartEndDate(getCurrentDateString());
-                startDate = startDate || week[0];
-                endDate = endDate || week[1];
-            } else if (timeFrame === MONTHLY) {
-                const month = getMonthStartEndDate(getCurrentDateString());
-                startDate = startDate || month[0];
-                endDate = endDate || month[1];
-            } else if (timeFrame === YEARLY) {
-                const year = getYearStartEndDate(getCurrentDateString());
-                startDate = startDate || year[0];
-                endDate = endDate || year[1];
-            } else {
-                // else return day
-                startDate = getCurrentDateString();
-                endDate = getCurrentDateString();
-            }
-
             const categoryDict = await getExpensesbyCategory(startDate, endDate);
-            // console.log("categoryDict: ", categoryDict);
             let totalSpending = 0;
 
             const categoryColors = {};

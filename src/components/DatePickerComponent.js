@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, Platform, Modal, StyleSheet, Text } from 'react-native';
 
 import { secondaryColor } from '../constants/Colors';
+import { getDateStringFromDate } from '../util/DatetimeUtils';
 
 const DatePickerComponent = ({ onDateChange }) => {
     const isIOS = Platform.OS === 'ios';
@@ -29,10 +30,10 @@ const DatePickerComponent = ({ onDateChange }) => {
             if (day < 10) {
                 day = '0' + day;
             }
-            const formattedDate = `${year}-${month}-${day}`;
+            // const formattedDate = `${year}-${month}-${day}`;
             // console.log("date selected ", formattedDate);
 
-            onDateChange(formattedDate); // this notify's parent component about date change
+            onDateChange(getDateStringFromDate(newSelectedDate)); // this notify's parent component about date change
         }
         hideDatePicker();
     };
