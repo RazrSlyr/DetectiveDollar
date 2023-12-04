@@ -31,12 +31,14 @@ import {
     addRowToExpenseTable,
     saveImage,
     getExpensesFromDay,
+    getCategoryTable,
 } from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
+    const [allCategories, setAllCategories] = useState([]);
     const [category, setCategory] = useState('');
     const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
@@ -62,11 +64,12 @@ export default function App({ navigation }) {
     }, [todayExpenses]);
 
     useEffect(() => {
-        const getExpenses = async () => {
+        const getExpensesAndCategories = async () => {
             setTodayExpenses(await getExpensesFromDay(todaysDate));
+            setAllCategories(await getCategoryTable());
         };
         navigation.addListener('focus', () => {
-            getExpenses();
+            getExpensesAndCategories();
         });
     }, []);
 
@@ -95,9 +98,7 @@ export default function App({ navigation }) {
             return;
         }
         const currentDate = new Date();
-        const dateString = getDateStringFromDate(currentDate);
         const timestamp = currentDate.getTime();
-        const categoryId = await addRowToCategoryTable(category);
         // console.log(categoryId);
         let imageURI = null;
         if (previewURI) {
@@ -105,7 +106,7 @@ export default function App({ navigation }) {
         }
         await addRowToExpenseTable(
             name,
-            categoryId,
+            category,
             parseFloat(amount).toFixed(2),
             timestamp,
             targetDate,
@@ -196,10 +197,25 @@ export default function App({ navigation }) {
                                 </View>
                                 <View style={styles.inputContainer}>
                                     <Text style={styles.inputHeading}>CATEGORY</Text>
-                                    <TextInput
+                                    <DropdownSelector
                                         style={styles.input}
-                                        placeholder="Category"
-                                        onChangeText={(value) => setCategory(value)}
+                                        data={allCategories.map((category) => {
+                                            return {
+                                                label: category['name'],
+                                                value: category['id'],
+                                            };
+                                        })}
+                                        // data={[
+                                        //     { label: "Don't Repeat", value: NO_REPETION },
+                                        //     { label: 'Daily', value: DAILY },
+                                        //     { label: 'Weekly', value: WEEKLY },
+                                        //     { label: 'Monthly', value: MONTHLY },
+                                        // ]}
+                                        onChange={(item) => {
+                                            setCategory(item.value);
+                                        }}
+                                        dropdownLabel="Expense Frequency"
+                                        placeholderLabel="Expense Frequency"
                                     />
                                     {/* <DropdownSelector
                                     style={styles.input}
@@ -215,6 +231,7 @@ export default function App({ navigation }) {
                                     // dropdownLabel="e.g., Food, Entertainment"
                                     placeholderLabel="Select or add"
                                 /> */}
+                                    <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
                                 </View>
                                 <View style={styles.inputContainer}>

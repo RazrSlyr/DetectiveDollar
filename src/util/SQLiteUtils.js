@@ -91,7 +91,7 @@ const createCategoryInsert = (name, icon = null, color = null) => {
 };
 
 const createExpenseByDayQuery = (day) => {
-    return `SELECT * FROM expenses WHERE day = '${day}' ORDER BY timestamp ASC`;
+    return `SELECT * FROM expenses WHERE day = '${day}' ORDER BY timestamp DESC`;
 };
 
 const createExpenseByIdQuery = (id) => {
