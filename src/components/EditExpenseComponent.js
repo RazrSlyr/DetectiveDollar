@@ -23,29 +23,28 @@ const EditExpenseComponent = ({ isVisable, onClose, expense = null }) => {
             setMediaLibraryPermission(mediaLibaryPermission.status === 'granted');
         })();
     }, []);
-    {
-        /* <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}> */}
+
     return (
-        <Modal isVisible={isVisable} onBackdropPress={onClose}>
-            {expense ? (
-                <SafeAreaView style={styles.container}>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.title}>Edit</Text>
-                    </View>
-                    <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.saveButton} onPress={onClose}>
-                            <Text style={styles.buttonText}>Save</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-                            <Text style={styles.buttonText}>Cancel</Text>
-                        </TouchableOpacity>
-                    </View>
-                </SafeAreaView>
-            ) : (
-                <View style={styles.container}>
-                    <Text>Expense is null</Text>
+        <Modal 
+            isVisible={isVisable}
+            animationInTiming={500}
+            animationOutTiming={500}
+            backdropTransitionInTiming={300}
+            backdropTransitionOutTiming={300}
+            onBackdropPress={onClose}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.title}>Edit</Text>
                 </View>
-            )}
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.saveButton} onPress={onClose}>
+                        <Text style={styles.buttonText}>Save</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                        <Text style={styles.buttonText}>Cancel</Text>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
         </Modal>
     );
 };
@@ -79,7 +78,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     cancelButton: {
-        backgroundColor: 'red',
+        backgroundColor: '#FF3F48',
         padding: 10,
         borderRadius: 20,
         height: 40,
@@ -87,7 +86,7 @@ const styles = StyleSheet.create({
         margin:10,
     },
     saveButton: {
-        backgroundColor: 'green',
+        backgroundColor: Colors.secondaryColor,
         padding: 10,
         borderRadius: 20,
         height: 40,
