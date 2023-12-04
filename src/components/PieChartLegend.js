@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
 const PieChartLegend = ({ chartData }) => {
     // create dot for legend
@@ -7,9 +7,9 @@ const PieChartLegend = ({ chartData }) => {
         return (
             <View
                 style={{
-                    height: 10,
-                    width: 10,
-                    borderRadius: 5,
+                    height: 15,
+                    width: 15,
+                    borderRadius: 10,
                     backgroundColor: color,
                     marginRight: 5,
                 }}
@@ -18,33 +18,60 @@ const PieChartLegend = ({ chartData }) => {
     };
 
     return (
-        <View style={styles.legendGrid}>
-            {chartData.map((item, index) => (
-                <View key={index} style={styles.legendItem}>
-                    {renderDot(item.color)}
-                    <Text style={styles.legendLabel}>{item.label}</Text>
-                </View>
-            ))}
-        </View>
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContentContainer}>
+            <View style={styles.legendBox}>
+                {chartData.map((item, index) => (
+                    <View key={index} style={styles.categoryBoxes}>
+                        <View style={styles.categoryInfo}>
+                            {item.label === 'No Data Available' && chartData.length === 1 ? (
+                                <Text>No Data Available</Text>
+                            ) : (
+                                <>
+                                    <Text style={styles.categoryData}>{item.label}</Text>
+                                    <Text> - </Text>
+                                    <Text style={styles.categoryData}>${item.value}</Text>
+                                </>
+                            )}
+                        </View>
+                        {renderDot(item.color)}
+                    </View>
+                ))}
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
-    legendGrid: {
-        flexGrow: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+    legendBox: {
         justifyContent: 'center',
-        marginTop: 10,
+        marginTop: 40,
     },
-    legendItem: {
+    categoryBoxes: {
+        width: 300,
+        height: 40,
+        backgroundColor: 'white',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between', // Adjust this to control spacing
+        alignItems: 'center',
+        borderRadius: 10,
+        borderWidth: 1.5,
+        borderColor: '#b7c8be',
+        marginTop: 2,
+    },
+    categoryInfo: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginRight: 20,
-        marginBottom: 10,
+        marginLeft: 10, // Adjust this to control space between text and dot
     },
-    legendLabel: {
-        marginLeft: 5,
+    categoryData: {
+        textAlign: 'center',
+        fontSize: 14,
+    },
+    scrollContentContainer: {
+        paddingBottom: 20,
     },
 });
 

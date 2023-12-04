@@ -272,7 +272,14 @@ export async function getCategoryNameFromId(categoryId) {
     });
     return categoryName;
 }
-
+export async function getCategoryFromId(categoryId) {
+    let category = null;
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        category = (await tx.executeSqlAsync(createCategoryQueryById(categoryId))).rows[0];
+    });
+    return category;
+}
 export async function getExpensesbyCategory(startDate, endDate) {
     const categoryDict = {};
     const rows = await getExpensesFromDayframe(startDate, endDate);
