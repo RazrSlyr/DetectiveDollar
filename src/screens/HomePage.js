@@ -172,7 +172,7 @@ export default function HomePage({ navigation }) {
                 <ScrollView>
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
-                        {todayExpenses.reverse().map((expense) => {
+                        {todayExpenses.map((expense) => {
                             return (
                                 <TouchableOpacity key={expense.id}
                                         onPress={async () => {
