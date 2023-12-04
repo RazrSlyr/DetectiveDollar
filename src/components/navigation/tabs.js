@@ -1,12 +1,13 @@
 // Helpful source: https://github.com/bizzara/rncomponents/blob/main/react-native-bottom-tab-navigation/App.js
 // Link for icons: https://icons.expo.fyi/Index
 
-import { FontAwesome, AntDesign } from '@expo/vector-icons';
+import { FontAwesome, AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Platform } from 'react-native';
+import { useState } from 'react';
+import { View, Platform, StyleSheet, Text } from 'react-native';
 
-import { HomePage, AddExpense, GraphPage, CategoryPage } from '../../screens';
-
+import * as Colors from '../../constants/Colors';
+import { HomePage, AddExpense, GraphPage, HistoryPage, CategoryPage } from '../../screens';
 
 const Tab = createBottomTabNavigator();
 const Tabs = () => {
@@ -35,12 +36,31 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={styles.elementContainer}>
                                 <AntDesign
                                     name="home"
                                     size={30}
-                                    color={focused ? '#37c871' : '#b7c8be'}
+                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
                                 />
+                                <Text style={styles.text}>Home</Text>
+                            </View>
+                        );
+                    },
+                }}
+            />
+            <Tab.Screen
+                name="Categories"
+                component={CategoryPage}
+                options={{
+                    tabBarIcon: ({ focused }) => {
+                        return (
+                            <View style={styles.elementContainer}>
+                                <MaterialIcons
+                                    name="category"
+                                    size={30}
+                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
+                                />
+                                <Text style={styles.text}>Categories</Text>
                             </View>
                         );
                     },
@@ -52,17 +72,31 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <View
-                                style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    backgroundColor: '#37c871',
-                                    width: Platform.OS === 'ios' ? 60 : 70,
-                                    height: Platform.OS === 'ios' ? 60 : 70,
-                                    top: Platform.OS === 'ios' ? -10 : -20,
-                                    borderRadius: Platform.OS === 'ios' ? 30 : 35,
-                                }}>
-                                <AntDesign name="pluscircleo" size={30} color="#fff" />
+                            <View style={[styles.elementContainer, styles.addBtn]}>
+                                <AntDesign
+                                    name="pluscircleo"
+                                    size={40}
+                                    color={focused ? '#00792A' : 'white'}
+                                />
+                                {/* <Text style={styles.text}>Add</Text> */}
+                            </View>
+                        );
+                    },
+                }}
+            />
+            <Tab.Screen
+                name="History"
+                component={HistoryPage}
+                options={{
+                    tabBarIcon: ({ focused }) => {
+                        return (
+                            <View style={styles.elementContainer}>
+                                <FontAwesome
+                                    name="history"
+                                    size={30}
+                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
+                                />
+                                <Text style={styles.text}>History</Text>
                             </View>
                         );
                     },
@@ -74,20 +108,42 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={styles.elementContainer}>
                                 <FontAwesome
                                     name="bar-chart"
                                     size={30}
-                                    color={focused ? '#37c871' : '#b7c8be'}
+                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
                                 />
+                                <Text style={styles.text}>Statistics</Text>
                             </View>
                         );
                     },
                 }}
             />
-            <Tab.Screen name="Categories" component={CategoryPage} options={{}} />
         </Tab.Navigator>
     );
 };
+
+const styles = StyleSheet.create({
+    elementContainer: {
+        height: '100%',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        top: 10,
+    },
+    addBtn: {
+        height: 55,
+        width: 55,
+        backgroundColor: Colors.secondaryColor,
+        borderRadius: 30,
+        top: 5,
+    },
+    text: {
+        fontSize: 11,
+        margin: 2,
+        color: Colors.textColor,
+    },
+});
 
 export default Tabs;
