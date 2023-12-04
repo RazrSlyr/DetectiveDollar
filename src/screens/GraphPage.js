@@ -93,8 +93,10 @@ const GraphPage = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View>
-                <Text style={styles.title}>Statistics</Text>
+            <View style={styles.titleContainer}>
+                <Text style={styles.titleText}>Statistics</Text>
+            </View>
+            <View style={{ backgroundColor: Colors.primaryColor }}>
                 <View style={styles.dateContainer}>
                     <View style={styles.dateRange}>
                         <TouchableOpacity onPress={handleDecrementTimeFrame}>
@@ -133,7 +135,7 @@ const GraphPage = ({ navigation }) => {
                         dotStyle={styles.customDot}
                         activeDotStyle={styles.customActiveDot}
                         paginationStyle={{
-                            top: -500,
+                            top: -560,
                             left: 300,
                         }}
                         loop={false}
@@ -174,6 +176,7 @@ const styles = StyleSheet.create({
         //paddingTop: StatusBar.currentHeight,
         flex: 1,
         alignItems: 'center',
+        backgroundColor: Colors.secondaryColor,
     },
     scrollableContent: {
         flex: 1,
@@ -182,12 +185,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: -20,
     },
-    title: {
+    titleContainer: {
+        width: 'auto',
+    },
+    titleText: {
         fontWeight: 'bold',
-        fontSize: 36,
-        textAlign: 'center',
-        color: Colors.secondaryColor,
-        marginTop: 20,
+        fontSize: 35,
+        color: Colors.primaryColor,
+        justifyContent: 'center',
     },
     dateContainer: {
         //flex: 1,
@@ -224,13 +229,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingBottom: 60,
+        paddingBottom: 100,
     },
     pieChartSlide: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingBottom: 60,
+        paddingBottom: 100,
     },
     customDot: {
         width: 10,
@@ -255,6 +260,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'white',
         borderRadius: 20,
-        //flex: 1,
     },
 });
