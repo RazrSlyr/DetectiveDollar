@@ -141,6 +141,26 @@ const createCategoryQueryById = (id) => {
     return `SELECT * FROM categories WHERE id = ${id} LIMIT 1;`;
 };
 
+const createEditExpenseQuery = (
+    id,
+    new_name,
+    new_category,
+    new_amount,
+    new_day,
+    new_picture,
+    new_memo
+) => {
+    return `UPDATE expenses 
+            SET 
+                name = '${new_name}',
+                category = ${new_category},
+                amount = ${new_amount},
+                day = '${new_day}',
+                picture = '${new_picture}',
+                memo = '${new_memo}'
+            WHERE id = ${id};`;
+};
+
 export {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
@@ -166,4 +186,5 @@ export {
     createExpenseByDayFrameQuery,
     createCategoryQueryByName,
     createCategoryQueryById,
+    createEditExpenseQuery,
 };

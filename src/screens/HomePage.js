@@ -45,6 +45,7 @@ export default function HomePage({ navigation }) {
                 const expenses = await getExpensesFromDay(targetDate);
                 // Change expense categoryId to name
                 for (let i = 0; i < expenses.length; i++) {
+                    expenses[i]['categoryId'] = expenses[i]['category'];
                     expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
                 }
                 // Change expense categoryId to name
@@ -68,6 +69,7 @@ export default function HomePage({ navigation }) {
             const expenses = await getExpensesFromDay(newDate);
             // Change expense categoryId to name
             for (let i = 0; i < expenses.length; i++) {
+                expenses[i]['categoryId'] = expenses[i]['category'];
                 expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
             }
             setTodayExpenses(expenses);
@@ -160,12 +162,9 @@ export default function HomePage({ navigation }) {
                 <Text style={styles.textInput}>{`${spending}`}</Text>
             </View>
             <View style={styles.calendarContainer} activeOpacity={0.7}>
-                <Text
-                    style={styles.calendarDate}>
-                    {formattedDate}
-                </Text>
-                <View style={{position: 'absolute', right: 10}}>
-                    <DatePickerComponent onDateChange={handleDateChange}/>
+                <Text style={styles.calendarDate}>{formattedDate}</Text>
+                <View style={{ position: 'absolute', right: 10 }}>
+                    <DatePickerComponent onDateChange={handleDateChange} />
                 </View>
             </View>
             <View style={styles.expensesContainer}>
@@ -175,19 +174,32 @@ export default function HomePage({ navigation }) {
                         {/* Place your scrollable content here */}
                         {todayExpenses.reverse().map((expense) => {
                             return (
-                                <TouchableOpacity key={expense.id}
-                                        onPress={async () => {
-                                            setSelectedExpense(expense);
-                                            openInfo();
-                                        }}>
+                                <TouchableOpacity
+                                    key={expense.id}
+                                    onPress={async () => {
+                                        setSelectedExpense(expense);
+                                        openInfo();
+                                    }}>
                                     <View key={expense['id']} style={styles.expenseBoxes}>
                                         <View style={styles.colorAndCategoryBox}>
-                                            <View style={{...styles.colorCircle, backgroundColor: 'orange'}}/>
-                                            <Text style={{...styles.categoryName, color: 'orange'}}>{expense['category']}</Text>
+                                            <View
+                                                style={{
+                                                    ...styles.colorCircle,
+                                                    backgroundColor: 'orange',
+                                                }}
+                                            />
+                                            <Text
+                                                style={{ ...styles.categoryName, color: 'orange' }}>
+                                                {expense['category']}
+                                            </Text>
                                         </View>
                                         <View style={styles.expenseNameBox}>
-                                            <Text style={styles.expenseName}>{expense['name']}</Text>
-                                            <Text style={styles.expenseData}>{expense['timestamp'].replace(/ /g, '\n')}</Text>
+                                            <Text style={styles.expenseName}>
+                                                {expense['name']}
+                                            </Text>
+                                            <Text style={styles.expenseData}>
+                                                {expense['timestamp'].replace(/ /g, '\n')}
+                                            </Text>
                                             {expense['reacurring_id'] && (
                                                 <FontAwesome
                                                     name="repeat"
@@ -196,7 +208,7 @@ export default function HomePage({ navigation }) {
                                                 />
                                             )}
                                         </View>
-                                        <View style={{width: '30%'}}>
+                                        <View style={{ width: '30%' }}>
                                             <Text style={styles.expenseValue}>
                                                 {'$' + parseFloat(expense['amount']).toFixed(2)}
                                             </Text>
