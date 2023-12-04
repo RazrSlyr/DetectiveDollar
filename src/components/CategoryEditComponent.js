@@ -46,7 +46,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                     {category ? (
                         <View style={{ width: '100%' }}>
                             <View style={styles.titleContainer}>
-                                <Text style={styles.titleText}>Edit Expense</Text>
+                                <Text style={styles.titleText}>Edit Category</Text>
                             </View>
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputHeading}>Name</Text>

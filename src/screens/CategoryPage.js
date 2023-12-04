@@ -1,7 +1,17 @@
 import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Dimensions, Modal, TextInput, KeyboardAvoidingView } from 'react-native';
+import {
+    TouchableOpacity,
+    StyleSheet,
+    View,
+    Text,
+    ScrollView,
+    Dimensions,
+    Modal,
+    TextInput,
+    KeyboardAvoidingView,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ColorPicker from 'react-native-wheel-color-picker';
 
@@ -17,7 +27,7 @@ export default function CategoryPage({ navigation }) {
     const [categoryName, setCategoryName] = useState('');
     const [categoryColor, setColor] = useState('');
 
-    const onColorChange = color => {
+    const onColorChange = (color) => {
         setColor(color);
     };
 
@@ -75,13 +85,13 @@ export default function CategoryPage({ navigation }) {
                 <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
                     <Text style={styles.addButtonText}>Add Category</Text>
                 </TouchableOpacity>
-                <View style={styles.dividerLine}/>
+                <View style={styles.dividerLine} />
                 <Modal
                     animationType="slide"
-                    transparent={true}
+                    transparent
                     visible={modalVisible}
                     onRequestClose={() => {
-                    setModalVisible(!modalVisible);
+                        setModalVisible(!modalVisible);
                     }}>
                     <KeyboardAvoidingView style={styles.modalShadow}>
                         <KeyboardAvoidingView style={styles.centeredView}>
@@ -91,7 +101,7 @@ export default function CategoryPage({ navigation }) {
                                     <Text style={styles.inputHeading}>Name</Text>
                                     <TextInput
                                         style={styles.input}
-                                        value={ categoryName }
+                                        value={categoryName}
                                         onChangeText={(cName) => setCategoryName(cName)}
                                     />
                                     <View style={styles.line} />
@@ -99,19 +109,28 @@ export default function CategoryPage({ navigation }) {
                                     <View style={styles.colorPickerBox}>
                                         <ColorPicker
                                             color={categoryColor}
-                                            onColorChangeComplete={(categoryColor) => onColorChange(categoryColor)}
+                                            onColorChangeComplete={(categoryColor) =>
+                                                onColorChange(categoryColor)
+                                            }
                                             thumbSize={30}
                                             sliderSize={30}
-                                            noSnap={true}
+                                            noSnap
                                             row={false}
                                         />
                                     </View>
                                 </View>
                                 <View style={styles.addCancelBox}>
                                     <TouchableOpacity
-                                        style={[styles.addButton, { backgroundColor: Colors.secondaryColor, width: "40%", alignSelf: "right",}]}
+                                        style={[
+                                            styles.addButton,
+                                            {
+                                                backgroundColor: Colors.secondaryColor,
+                                                width: '40%',
+                                                alignSelf: 'right',
+                                            },
+                                        ]}
                                         onPress={async () => {
-                                            addRowToCategoryTable(categoryName, categoryColor)
+                                            addRowToCategoryTable(categoryName, categoryColor);
                                             setModalVisible(!modalVisible);
                                             updateCategories();
                                             setCategoryName(undefined);
@@ -119,7 +138,14 @@ export default function CategoryPage({ navigation }) {
                                         <Text style={styles.addButtonText}>Add</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={[styles.addButton, { backgroundColor: 'red', width: "40%", alignSelf: "right",}]}
+                                        style={[
+                                            styles.addButton,
+                                            {
+                                                backgroundColor: 'red',
+                                                width: '40%',
+                                                alignSelf: 'right',
+                                            },
+                                        ]}
                                         onPress={async () => {
                                             setModalVisible(!modalVisible);
                                             setCategoryName(undefined);
@@ -213,7 +239,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     dividerLine: {
-        width: "70%",
+        width: '70%',
         borderBottomWidth: 3,
         borderColor: Colors.secondaryColor,
         alignSelf: 'center',
@@ -274,8 +300,8 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         elevation: 5,
-        width: "80%",
-        height: "70%",
+        width: '80%',
+        height: '70%',
     },
     modalTitle: {
         textAlign: 'center',
@@ -285,7 +311,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         height: '50%',
-        width: "80%",
+        width: '80%',
         marginBottom: 10,
     },
     inputHeading: {
@@ -310,15 +336,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     addCancelBox: {
-        width: "80%",
+        width: '80%',
         height: 'auto',
         flexDirection: 'row',
-        alignItems: "center",
+        alignItems: 'center',
         justifyContent: 'center',
         margin: 120,
     },
     colorPickerBox: {
-        width: "100%",
+        width: '100%',
         height: 300,
     },
 });
