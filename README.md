@@ -1,4 +1,15 @@
-# ESLint Setup and Prettier setup
+# Detective Dollar
+
+### Installation guide and setup
+First, install NodeJS. You can download NodeJS for all platforms here:
+https://nodejs.org/en/download
+
+Clone this repository to an empty folder with the following command:
+```
+git clone
+``` 
+
+### ESLint Setup and Prettier setup
 You can read about it [here](https://docs.expo.dev/guides/using-eslint/)
 
 Step 2-3 should already be complete
@@ -12,7 +23,7 @@ Also install [EsLint](https://marketplace.visualstudio.com/items?itemName=dbaeum
 Takes some time to load, may meed to reload project
 
 
-# Automatically Format a file
+### Automatically Format a file
 
 `Ctrl/Cmd  + Shift + p` to bring up command list
 
