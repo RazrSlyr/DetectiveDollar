@@ -39,16 +39,18 @@ import {
     addRowToExpenseTable,
     saveImage,
     getExpensesFromDay,
+    getCategoryTable,
 } from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
-const EditExpenseComponent = ({ isVisable, onClose, expense = null }) => {
+const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
+    const [allCategories, setAllCategories] = useState([]);
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
     const [previewURI, setImageURI] = useState(null);
     const [memo, setMemo] = useState(null);
-    console.log(expense);
+    // console.log(expense);
 
     const handleButtonPress = async () => {
         // Need to get new category ID
@@ -66,7 +68,7 @@ const EditExpenseComponent = ({ isVisable, onClose, expense = null }) => {
             imageURI !== null ? imageURI : expense.picture,
             memo !== null ? imageURI : expense.memo
         );
-        alert('Entry changed');
+        Alert.alert('Success', 'Entry changed', [{ text: 'OK', onPress: onClose }]);
     };
 
     const clearImage = async () => {
@@ -74,9 +76,18 @@ const EditExpenseComponent = ({ isVisable, onClose, expense = null }) => {
         setImageURI(null);
     };
 
+    useEffect(() => {
+        const getCategories = async () => {
+            setAllCategories(await getCategoryTable());
+        };
+        if (isVisible) {
+            getCategories();
+        }
+    }, [isVisible]);
+
     return (
         <Modal
-            isVisible={isVisable}
+            isVisible={isVisible}
             animationInTiming={500}
             animationOutTiming={500}
             backdropTransitionInTiming={300}
@@ -113,6 +124,21 @@ const EditExpenseComponent = ({ isVisable, onClose, expense = null }) => {
                                 </View>
                                 <View style={styles.inputContainer}>
                                     <Text style={styles.inputHeading}>CATEGORY</Text>
+                                    <DropdownSelector
+                                        style={styles.input}
+                                        data={allCategories.map((category) => {
+                                            return {
+                                                label: category['name'],
+                                                value: category['id'],
+                                            };
+                                        })}
+                                        onChange={(item) => {
+                                            setCategory(item.value);
+                                        }}
+                                        dropdownLabel="Category"
+                                        placeholderLabel="Category"
+                                    />
+                                    <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
                                 </View>
                                 <View style={styles.inputContainer}>

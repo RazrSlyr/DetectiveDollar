@@ -16,7 +16,7 @@ import {
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
-const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
+const ExpenseInfoComponent = ({ isVisible, onClose, expense = null }) => {
     const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
 
     useEffect(() => {
@@ -26,7 +26,7 @@ const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
         })();
     }, []);
     return (
-        <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
+        <Modal animationType="slide" transparent visible={isVisible} onRequestClose={() => onClose}>
             {expense ? (
                 <SafeAreaView style={styles.container}>
                     <SafeAreaView style={styles.titleContainer}>
