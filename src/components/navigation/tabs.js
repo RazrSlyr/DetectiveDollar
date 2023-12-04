@@ -29,23 +29,6 @@ const Tabs = () => {
                 },
             })}>
             <Tab.Screen
-                name="History"
-                component={HistoryPage}
-                options={{
-                    tabBarIcon: ({ focused }) => {
-                        return (
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                <AntDesign
-                                    name="clockcircleo"
-                                    size={30}
-                                    color={focused ? '#37c871' : '#b7c8be'}
-                                />
-                            </View>
-                        );
-                    },
-                }}
-            />
-            <Tab.Screen
                 name="Home"
                 component={HomePage}
                 options={{
