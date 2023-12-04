@@ -1,4 +1,4 @@
-import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import {
@@ -13,12 +13,11 @@ import {
     KeyboardAvoidingView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ColorPicker from 'react-native-wheel-color-picker';
 
 import CategoryEditComponent from '../components/CategoryEditComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';
+import { getCategoryTable } from '../util/FileSystemUtils';
 export default function CategoryPage({ navigation }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -37,7 +36,7 @@ export default function CategoryPage({ navigation }) {
                 // Fetch expenses for today and set to state
                 const categories = await getCategoryTable();
                 setCategories(categories);
-                //console.log('Categories set!');
+                console.log('Categories set!');
             } catch (error) {
                 console.error('Error fetching categories:', error);
             }
@@ -62,7 +61,7 @@ export default function CategoryPage({ navigation }) {
             // Fetch expenses for today and set to state
             const categories = await getCategoryTable();
             setCategories(categories);
-            //console.log('Categories set!');
+            console.log('Categories set!');
         } catch (error) {
             console.error('Error fetching categories:', error);
         }
@@ -174,6 +173,7 @@ export default function CategoryPage({ navigation }) {
                                 style={styles.editButtonContainer}
                                 onPress={async () => {
                                     setSelectedCategory(category);
+                                    console.log('edit', category.name);
                                     openCategoryEditor();
                                 }}>
                                 <Text style={styles.editText}>Edit</Text>
@@ -258,8 +258,6 @@ const styles = StyleSheet.create({
         margin: 10,
         borderRadius: 10,
         paddingHorizontal: 10,
-        borderColor: 'black',
-        borderWidth: 2,
     },
     categoryText: {
         color: Colors.primaryColor,
