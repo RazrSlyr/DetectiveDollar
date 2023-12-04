@@ -1,7 +1,15 @@
 import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
+import {
+    TouchableOpacity,
+    StyleSheet,
+    View,
+    Text,
+    ScrollView,
+    Alert,
+    Dimensions,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DatePickerComponent from '../components/DatePickerComponent';
@@ -184,6 +192,8 @@ export default function HomePage({ navigation }) {
                                                 }}
                                             />
                                             <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
                                                 style={{
                                                     ...styles.categoryName,
                                                     color: expense['categoryColor'],
@@ -383,6 +393,11 @@ const styles = StyleSheet.create({
     },
     categoryName: {
         fontSize: 10,
+        overflow: 'hidden',
+        width: 60,
+        justifyContent: 'center',
+        alignContent: 'center',
+        textAlign: 'center',
     },
     calendarContainer: {
         flex: 0,

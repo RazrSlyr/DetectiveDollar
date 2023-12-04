@@ -170,9 +170,9 @@ export async function updateRowFromCategoryTable(row_id, name, color) {
         // Need to update Category Table
         await db.transactionAsync(async (tx) => {
             await tx.executeSqlAsync(
-                `UPDATE OR IGNORE categories SET ${name != null ? `name = '${name}', ` : ''}${
-                    color != null ? `color = '${color}' ` : ''
-                }WHERE id = ${row_id};`
+                `UPDATE OR IGNORE categories SET ${name != null ? `name = '${name}'` : ''}${
+                    name != null && color != null ? ', ' : ''
+                }${color != null ? `color = '${color}'` : ''} WHERE id = ${row_id};`
             );
         });
         console.log('success');
