@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Platform } from 'react-native';
 
 import { HomePage, AddExpense, GraphPage, CategoryPage } from '../../screens';
-
+import HistoryPage from '../../screens/HistoryPage';
 
 const Tab = createBottomTabNavigator();
 const Tabs = () => {
@@ -28,6 +28,23 @@ const Tabs = () => {
                     background: 'black',
                 },
             })}>
+            <Tab.Screen
+                name="History"
+                component={HistoryPage}
+                options={{
+                    tabBarIcon: ({ focused }) => {
+                        return (
+                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                <AntDesign
+                                    name="clockcircleo"
+                                    size={30}
+                                    color={focused ? '#37c871' : '#b7c8be'}
+                                />
+                            </View>
+                        );
+                    },
+                }}
+            />
             <Tab.Screen
                 name="Home"
                 component={HomePage}

@@ -1,46 +1,61 @@
-import { FontAwesome, Entypo } from '@expo/vector-icons';
+import { FontAwesome, Entypo, AntDesign } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
+import {
+    TouchableOpacity,
+    StyleSheet,
+    View,
+    Text,
+    Alert,
+    FlatList,
+    TextInput,
+    ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import DatePickerComponent from '../components/DatePickerComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { getCurrentDateString } from '../util/DatetimeUtils';
 import {
     deleteRowFromExpenseTable,
     deleteRowFromReacurringTable,
-    getExpensesFromDay,
     getRowFromExpenseTable,
     deleteImage,
     getCategoryNameFromId,
     applyRecurringExpenses,
-    createExampleData,
-    getCategoryColorById,
-    getCategoryColorByName,
+    getExpenseTable,
 } from '../util/FileSystemUtils';
 
-export default function HomePage({ navigation }) {
-    const [todayExpenses, setTodayExpenses] = useState([]);
-    const [targetDate, setTargetDate] = useState(getCurrentDateString());
+export default function HistoryPage({ navigation }) {
+    const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [allExpenses, setAllExpeneses] = useState([]);
+    const expensesToDisplay = useMemo(() => {
+        return searchQuery.length === 0
+            ? allExpenses
+            : allExpenses.filter((expense) =>
+                  expense['name'].toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
+              );
+    }, [allExpenses, searchQuery]);
+
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
 
     useEffect(() => {
         const getExpenses = async () => {
             try {
+                setLoading(true);
                 // Apply recurring expenses
                 await applyRecurringExpenses();
-                // Fetch expenses for today and set to state
-                const expenses = await getExpensesFromDay(targetDate);
+                // Fetch expenses and set to state
+                const expenses = await getExpenseTable();
                 // Change expense categoryId to name
                 for (let i = 0; i < expenses.length; i++) {
                     expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
                 }
                 // Change expense categoryId to name
-                setTodayExpenses(expenses);
+                setAllExpeneses(expenses);
+                setLoading(false);
                 // console.log('expenses set!');
             } catch (error) {
                 console.error('Error fetching expenses:', error);
@@ -52,40 +67,11 @@ export default function HomePage({ navigation }) {
 
         // Clean up the event listener when the component unmounts
         return () => unsubscribe();
-    }, [targetDate, navigation]);
-
-    const handleDateChange = async (newDate) => {
-        try {
-            // Fetch expenses for new date and set to new state
-            const expenses = await getExpensesFromDay(newDate);
-            // Change expense categoryId to name
-            for (let i = 0; i < expenses.length; i++) {
-                expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
-            }
-            setTodayExpenses(expenses);
-            setTargetDate(newDate);
-        } catch (error) {
-            console.error('Error fetching expenses for new date:', error);
-        }
-    };
-
-    const spending = useMemo(() => {
-        if (todayExpenses?.length === 0) {
-            return 0;
-        }
-        let newSpending = 0;
-        todayExpenses.forEach(async (expense) => {
-            newSpending += parseFloat(expense['amount']);
-        });
-        const todaySpending = newSpending.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        });
-        return todaySpending;
-    }, [todayExpenses]);
+    }, [navigation]);
 
     const handleDelete = async (expense) => {
         deleteImage(expense['picture']);
+        const expenseId = expense['id'];
 
         const rowData = await getRowFromExpenseTable(expense['id']);
         const promises = [deleteRowFromExpenseTable(expense['id'])];
@@ -93,45 +79,9 @@ export default function HomePage({ navigation }) {
             promises.push(deleteRowFromReacurringTable(rowData['reacurring_id']));
         }
         await Promise.all(promises);
-        // Fetch expenses for today and set to state
-        const expenses = await getExpensesFromDay(targetDate);
-        // Change expense categoryId to name
-        for (let i = 0; i < expenses.length; i++) {
-            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
-        }
-        setTodayExpenses(expenses);
+        const expenses = allExpenses.filter((expense) => expense['id'] !== expenseId);
+        setAllExpeneses(expenses);
     };
-
-    const handleAddFakeData = async () => {
-        alert('Adding example data...');
-        // Add expenses
-        await createExampleData();
-
-        // Fetch expenses for today and set to state
-        const expenses = await getExpensesFromDay(targetDate);
-        // Change expense categoryId to name
-        for (let i = 0; i < expenses.length; i++) {
-            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
-        }
-        setTodayExpenses(expenses);
-        alert('Data has been added and set');
-    };
-
-    // make date more readable
-    const parts = targetDate.split('-');
-    const year = parts[0];
-    const month = parts[1];
-    const day = parts[2];
-
-    // Format the date as "month/day/year"
-    const formattedDate = `${month}/${day}/${year}`;
-
-    // error says too many re-renders
-    // // for arrow buttons
-    // const dayPlusOne = Number(day) + 1;
-    // const datePlusOne = `${year}-${month}-${dayPlusOne}`;
-    // const dayMinusOne = Number(day) - 1;
-    // const dateMinusOne = `${year}-${month}-${dayMinusOne}`;
 
     const openInfo = async () => {
         setShowExpenseInfo(true);
@@ -144,28 +94,27 @@ export default function HomePage({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-            <TouchableOpacity style={styles.debug} onPress={handleAddFakeData}>
-                <FontAwesome name="wrench" size={15} color="black" />
-            </TouchableOpacity>
-            <View style={styles.totalExpensesContainer}>
-                <Text style={styles.subHeading}>Total Spendings</Text>
-                <Text style={styles.textInput}>{`${spending}`}</Text>
-            </View>
-            <View style={styles.calendarContainer} activeOpacity={0.7}>
-                <Text style={styles.calendarDate}>{formattedDate}</Text>
-                <View style={{ position: 'absolute', right: 10 }}>
-                    <DatePickerComponent onDateChange={handleDateChange} />
+            <Text style={styles.titleText}>All Expenses</Text>
+            {!loading && (
+                <View style={styles.searchBar}>
+                    <AntDesign name="search1" size={20} color={Colors.textColor} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Search Expenses..."
+                        onChangeText={(text) => setSearchQuery(text)}
+                    />
                 </View>
-            </View>
+            )}
             <View style={styles.expensesContainer}>
-                <Text style={styles.subHeading2}>Transactions</Text>
-                <ScrollView>
-                    <View style={styles.scrollableContent}>
-                        {/* Place your scrollable content here */}
-                        {todayExpenses.reverse().map((expense) => {
+                {loading && <ActivityIndicator size={200} color={Colors.secondaryColor} />}
+                {!loading && (
+                    <FlatList
+                        contentContainerStyle={styles.scrollableContent}
+                        data={expensesToDisplay}
+                        renderItem={(row) => {
+                            const expense = row['item'];
                             return (
                                 <TouchableOpacity
-                                    key={expense.id}
                                     onPress={async () => {
                                         setSelectedExpense(expense);
                                         openInfo();
@@ -223,10 +172,11 @@ export default function HomePage({ navigation }) {
                                     </View>
                                 </TouchableOpacity>
                             );
-                        })}
-                        {/* Add more content as needed */}
-                    </View>
-                </ScrollView>
+                        }}
+                        keyExtractor={(expense) => expense['id']}
+                        scrollEnabled
+                    />
+                )}
             </View>
             <ExpenseInfoComponent
                 isVisable={showExpenseInfo}
@@ -242,78 +192,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         backgroundColor: Colors.secondaryColor,
-        // figure out fontStyles
-    },
-    secondaryContainer: {
-        flex: 1,
-        alignItems: 'center',
-        backgroundColor: Colors.textColor,
-    },
-    button: {
-        color: '#ffffff',
-        fontSize: 20,
-        width: 250,
-        height: 40,
-        outlineColor: '#37c871',
-        borderColor: '#37c871',
-        borderRadius: 10,
-        textAlign: 'center',
-    },
-    buttonContainer: {
-        backgroundColor: '#37c871',
-        padding: 10,
-        borderRadius: 10,
-        height: 60,
-    },
-    topTitle: {
-        paddingTop: 20,
-        margin: 'auto',
-    },
-    titleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 60,
-        width: 270,
-        height: 80,
-        backgroundColor: 'white',
-        borderRadius: 15,
-    },
-    title: {
-        fontWeight: 'bold',
-        fontSize: Sizes.titleSize,
-        color: Colors.secondaryColor,
-        marginRight: 15,
-    },
-    totalExpensesContainer: {
-        backgroundColor: 'white',
-        borderRadius: 15,
-        marginTop: 0,
-        marginBottom: 20,
-        height: 'auto',
-        width: '70%',
-        margin: 30,
-        top: 10,
-    },
-    subHeading: {
-        color: Colors.subHeadingColor,
-        fontSize: Sizes.subText,
-        margin: 'auto',
-        paddingLeft: 10,
-        paddingTop: 5,
-    },
-    subHeading2: {
-        color: Colors.textColor,
-        fontSize: Sizes.textSize,
-        margin: 'auto',
-        paddingLeft: 10,
-        padding: 5,
-        textAlign: 'left',
-    },
-    textInput: {
-        fontSize: Sizes.largeText,
-        margin: 'auto',
-        textAlign: 'center',
     },
     expensesContainer: {
         backgroundColor: Colors.primaryColor,
@@ -322,12 +200,10 @@ const styles = StyleSheet.create({
         padding: 10,
         margin: 10,
         borderRadius: 32,
-        //borderTopLeftRadius: 32, // Radius for the top-left corner
-        //borderTopRightRadius: 32, // Radius for the top-right corner
     },
     scrollableContent: {
-        flex: 1,
-        width: '100%', // Adjust the width as needed
+        display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
     },
     expenseBoxes: {
@@ -373,34 +249,25 @@ const styles = StyleSheet.create({
     categoryName: {
         fontSize: 10,
     },
-    calendarContainer: {
-        flex: 0,
-        borderRadius: 10,
-        height: '5%',
-        backgroundColor: 'white',
-        padding: 2,
-        width: '50%',
-        justifyContent: 'center',
+    titleText: {
+        fontWeight: 'bold',
+        fontSize: 35,
+        color: Colors.primaryColor,
     },
-    calendarDate: {
+    input: {
+        width: '84%',
         color: Colors.textColor,
         fontSize: Sizes.textSize,
         textAlign: 'left',
     },
-    arrowsAndTotalExpenseContainer: {
+    searchBar: {
+        display: 'flex',
         flexDirection: 'row',
+        gap: 10,
         alignItems: 'center',
-    },
-    arrows: {
-        color: Colors.secondaryColor,
-    },
-    debug: {
-        backgroundColor: Colors.secondaryColor,
-        borderWidth: 2,
-        borderColor: 'black',
-        width: 20,
-        height: 20,
-        right: 180,
-        top: 50,
+        backgroundColor: 'white',
+        paddingVertical: 2,
+        paddingHorizontal: 10,
+        borderRadius: 25,
     },
 });
