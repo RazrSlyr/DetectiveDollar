@@ -132,7 +132,7 @@ export async function addRowToExpenseTable(
     });
 }
 
-export async function addRowToCategoryTable(categoryName, icon = null, color = null) {
+export async function addRowToCategoryTable(categoryName, color = "black", icon = null) {
     const db = await getDatabase();
     let categoryId = null;
     await db.transactionAsync(async (tx) => {
@@ -169,7 +169,7 @@ export async function updateRowFromCategoryTable(row_id, name, color) {
         // Need to update Category Table
         await db.transactionAsync(async (tx) => {
             await tx.executeSqlAsync(
-                `UPDATE categories SET name = '${name}', color = '${color}' WHERE id = ${row_id};`
+                `UPDATE OR IGNORE categories SET name = '${name}', color = '${color}' WHERE id = ${row_id};`
             );
         });
         console.log('success');
@@ -461,8 +461,8 @@ export async function createExampleData() {
         const createCategoryAndSetId = async () => {
             const categoryId = await addRowToCategoryTable(
                 category['name'],
-                category['icon'],
-                category['color']
+                category['color'],
+                category['icon']
             );
             exampleCategories[i]['id'] = categoryId;
         };

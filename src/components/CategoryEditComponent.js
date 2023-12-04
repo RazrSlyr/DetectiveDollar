@@ -12,17 +12,25 @@ import {
 
 import * as Colors from '../constants/Colors';
 import { deleteRowFromCategoryTable, updateRowFromCategoryTable } from '../util/FileSystemUtils';
+import ColorPicker from 'react-native-wheel-color-picker';
+
 const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }) => {
     const [enableSave, setEnableSave] = useState(false);
-    const [categoryName, setCategoryName] = useState();
-    const [categoryColor, setCategoryColor] = useState(); //use to update color
+    const [categoryName, setCategoryName] = useState(category?.name);
+    const [categoryColor, setColor] = useState(category?.color); //use to update color
+
+    const onColorChange = color => {
+        setColor(color);
+    };
 
     useEffect(() => {
         const updateEnableSave = () => {
             if (
-                categoryName === undefined ||
+                (categoryName === undefined ||
                 categoryName === '' ||
-                categoryName === category.name
+                categoryName === category.name) &&
+                (!categoryColor ||
+                categoryColor === category.color)
             ) {
                 setEnableSave(false);
             } else {
@@ -39,26 +47,35 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                     {category ? (
                         <View style={{ width: '100%' }}>
                             <View style={styles.titleContainer}>
-                                <Text style={styles.titleText}> EDIT </Text>
+                                <Text style={styles.titleText}>Edit Expense</Text>
                             </View>
                             <View style={styles.inputContainer}>
-                                <Text style={styles.inputHeading}>NAME</Text>
+                                <Text style={styles.inputHeading}>Name</Text>
                                 <TextInput
                                     style={styles.input}
                                     value={
                                         categoryName === undefined ? category.name : categoryName
                                     }
                                     onChangeText={(value) => {
-                                        console.log('change value', value);
+                                        //console.log('change value', value);
                                         setCategoryName(value);
-                                        setCategoryColor(category.color);
+                                        //setColor(color)
                                     }}
                                 />
                             </View>
                             <View style={styles.line} />
                             <View style={styles.inputContainer}>
-                                <Text style={styles.inputHeading}>COLOR</Text>
-                                <Text>COLOR PICKER HERE</Text>
+                                <Text style={styles.inputHeading}>Color</Text>
+                                <View style={styles.colorPickerContainer}>
+                                    <ColorPicker
+                                        color={categoryColor}
+                                        onColorChangeComplete={(categoryColor) => onColorChange(categoryColor)}
+                                        thumbSize={30}
+                                        sliderSize={30}
+                                        noSnap={true}
+                                        row={false}
+                                    />
+                                </View>
                             </View>
                         </View>
                     ) : (
@@ -74,7 +91,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                             ]}
                             disabled={!enableSave}
                             onPress={async () => {
-                                console.log('attempt to update');
+                                //console.log('attempt to update');
                                 await updateRowFromCategoryTable(
                                     category.id,
                                     categoryName,
@@ -91,7 +108,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                 //await deleteRowFromCategoryTable(category.name);
                                 await onUpdate();
                                 setCategoryName(undefined);
-                                setCategoryColor(undefined);
+                                setColor(undefined);
                                 onClose();
                             }}>
                             <Text style={styles.buttonText}>Cancel</Text>
@@ -111,7 +128,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
         justifyContent: 'center',
     },
-
     container: {
         backgroundColor: Colors.primaryColor,
         justifyContent: 'center',
@@ -187,5 +203,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    colorPickerContainer: {
+        height: 300,
+        width: 300,
     },
 });
