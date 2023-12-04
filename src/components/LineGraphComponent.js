@@ -141,12 +141,11 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const totalDays = monthLabel.length;
                 const step = Math.floor(totalDays / 4);
                 const updatedData = transactions.reduce((accumulator, expense) => {
-                    const date = new Date(expense.day);
-                    const dayOfMonthIndex = date.getDate();
-                    const dayOfMonth = monthLabel[dayOfMonthIndex];
+                    const [expense_Year, expense_month, expense_day] = expense.day.split('-');
+
+                    const dayOfMonth = parseInt(expense_day, 10);
 
                     const amount = expense.amount;
-
                     accumulator[dayOfMonth] = (accumulator[dayOfMonth] || 0) + amount;
                     return accumulator;
                 }, {});
@@ -238,7 +237,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
         initialSpacing = 40;
         fontSize = 14;
     } else if (timeFrame === MONTHLY) {
-        spacing = 8.5;
+        spacing = 7.5;
         initialSpacing = 35;
         fontSize = 12;
     } else if (timeFrame === YEARLY) {
