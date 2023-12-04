@@ -446,7 +446,7 @@ export async function createExampleData() {
         {
             name: 'Personal',
             icon: 'person',
-            color: 'blue',
+            color: 'black',
         },
         {
             name: 'Entertainment',

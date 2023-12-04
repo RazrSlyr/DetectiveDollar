@@ -24,6 +24,8 @@ import {
     getCategoryNameFromId,
     applyRecurringExpenses,
     getExpenseTable,
+    getCategoryColorByName,
+    getCategoryColorById,
 } from '../util/FileSystemUtils';
 
 export default function HistoryPage({ navigation }) {
@@ -51,6 +53,9 @@ export default function HistoryPage({ navigation }) {
                 const expenses = await getExpenseTable();
                 // Change expense categoryId to name
                 for (let i = 0; i < expenses.length; i++) {
+                    expenses[i]['categoryColor'] = await getCategoryColorById(
+                        expenses[i]['category']
+                    );
                     expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
                 }
                 // Change expense categoryId to name
@@ -124,11 +129,14 @@ export default function HistoryPage({ navigation }) {
                                             <View
                                                 style={{
                                                     ...styles.colorCircle,
-                                                    backgroundColor: 'orange',
+                                                    backgroundColor: expense['categoryColor'],
                                                 }}
                                             />
                                             <Text
-                                                style={{ ...styles.categoryName, color: 'orange' }}>
+                                                style={{
+                                                    ...styles.categoryName,
+                                                    color: expense['categoryColor'],
+                                                }}>
                                                 {expense['category']}
                                             </Text>
                                         </View>
