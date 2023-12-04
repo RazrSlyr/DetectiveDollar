@@ -285,10 +285,13 @@ export async function getExpensesbyCategory(startDate, endDate) {
     const rows = await getExpensesFromDayframe(startDate, endDate);
 
     for (const row of rows) {
-        if (row['category'] in categoryDict) {
-            categoryDict[await getCategoryNameFromId(row['category'])].push(row);
+        const categoryId = row['category'];
+        const categoryName = await getCategoryNameFromId(categoryId);
+
+        if (categoryName in categoryDict) {
+            categoryDict[categoryName].push(row);
         } else {
-            categoryDict[await getCategoryNameFromId(row['category'])] = [row];
+            categoryDict[categoryName] = [row];
         }
     }
 
