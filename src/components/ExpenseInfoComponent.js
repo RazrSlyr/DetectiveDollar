@@ -9,7 +9,7 @@ import EditExpenseComponent from './EditExpenseComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
-const ExpenseInfoComponent = ({ isVisible, onClose, expense = null, onUpdateExpenses }) => {
+const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUpdateExpenses }) => {
     const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
     const [showEditExpense, setshowEditExpense] = useState(false);
     //console.log(expense);
@@ -48,15 +48,17 @@ const ExpenseInfoComponent = ({ isVisible, onClose, expense = null, onUpdateExpe
                             <Text style={styles.title}>Expense Info</Text>
                         </View>
                         <View style={styles.allInfoContainer}>
-                            <View style={styles.buttonContainer}>
-                                <TouchableOpacity
-                                    style={styles.editButton}
-                                    onPress={async () => {
-                                        openInfo();
-                                    }}>
-                                    <Text style={styles.buttonText}>Edit</Text>
-                                </TouchableOpacity>
-                            </View>
+                            {onHome ? (
+                                <View style={styles.buttonContainer}>
+                                    <TouchableOpacity
+                                        style={styles.editButton}
+                                        onPress={async () => {
+                                            openInfo();
+                                        }}>
+                                        <Text style={styles.buttonText}>Edit</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            ) : null}
                             {expense.picture !== null && hasMediaLibraryPermission ? (
                                 <TouchableOpacity style={styles.circleContainer}>
                                     <Image

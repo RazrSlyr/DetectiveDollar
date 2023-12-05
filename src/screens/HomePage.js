@@ -160,9 +160,7 @@ export default function HomePage({ navigation }) {
             }
             // Change expense categoryId to name
             setTodayExpenses(expenses);
-            //console.log('expenses set!', expenses);
             const updateCurrentExpense = expenses.find((item) => item.id === selectedExpense?.id);
-            //console.log(updateCurrentExpense);
             setSelectedExpense(updateCurrentExpense);
         } catch (error) {
             console.error('Error fetching expenses:', error);
@@ -264,6 +262,7 @@ export default function HomePage({ navigation }) {
                 onClose={() => {
                     closeInfo();
                 }}
+                onHome
                 expense={selectedExpense}
                 onUpdateExpenses={() => {
                     handleExpenseEdit();

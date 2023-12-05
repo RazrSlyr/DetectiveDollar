@@ -50,7 +50,6 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
     const [category, setCategory] = useState('');
     const [previewURI, setImageURI] = useState(null);
     const [memo, setMemo] = useState('');
-    console.log(expense);
 
     const handleButtonPress = async () => {
         let imageURI = null;

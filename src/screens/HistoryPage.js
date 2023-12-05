@@ -217,6 +217,7 @@ export default function HistoryPage({ navigation }) {
                     closeInfo();
                 }}
                 expense={selectedExpense}
+                onHome={false}
                 onUpdateExpenses={() => {
                     handleExpenseEdit();
                 }}
