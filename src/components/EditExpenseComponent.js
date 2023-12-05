@@ -49,13 +49,11 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
     const [previewURI, setImageURI] = useState(null);
-    const [memo, setMemo] = useState(null);
-    // console.log(expense);
+    const [memo, setMemo] = useState('');
+
+
 
     const handleButtonPress = async () => {
-        // Need to get new category ID
-        //const categoryId = await addRowToCategoryTable(category);
-        // console.log(categoryId);
         let imageURI = null;
         if (previewURI) {
             imageURI = await saveImage(previewURI);
@@ -66,9 +64,10 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
             category !== '' ? category : expense.categoryId,
             amount !== null && amount !== '' ? parseFloat(amount).toFixed(2) : expense.amount,
             imageURI !== null ? imageURI : expense.picture,
-            memo !== null ? imageURI : expense.memo
+            memo !== null ? memo : expense.memo
         );
         Alert.alert('Success', 'Entry changed', [{ text: 'OK', onPress: onClose }]);
+        setImageURI('');
     };
 
     const clearImage = async () => {
@@ -105,6 +104,8 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                     <Text style={styles.inputHeading}>NAME</Text>
                                     <TextInput
                                         style={styles.input}
+                                        placeholder={expense?.name}
+                                        placeholderTextColor={Colors.subHeadingColor}
                                         onChangeText={(value) => setName(value)}
                                     />
                                     <GreenLine />
@@ -113,8 +114,9 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                     <Text style={styles.inputHeading}>AMOUNT</Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="$0.00"
                                         keyboardType="numeric"
+                                        placeholder={`$${expense?.amount}`}
+                                        placeholderTextColor={Colors.subHeadingColor}
                                         maxLength={10}
                                         onChangeText={(value) =>
                                             setAmount(parseFloat(value).toFixed(2))
@@ -132,11 +134,13 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                                 value: category['id'],
                                             };
                                         })}
+                                        value={category}
                                         onChange={(item) => {
                                             setCategory(item.value);
                                         }}
                                         dropdownLabel="Category"
-                                        placeholderLabel="Category"
+                                        placeholderLabel={expense?.category}
+                                        placeholderTextColor={Colors.subHeadingColor}
                                     />
                                     <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
@@ -145,8 +149,8 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                     <Text style={styles.inputHeading}>MEMO</Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="Notes about spending"
-                                        /* Need to add logic to connect to backend */
+                                        placeholder={expense?.memo}
+                                        placeholderTextColor={Colors.subHeadingColor}
                                         onChangeText={(value) => setMemo(value)}
                                     />
                                     <GreenLine />

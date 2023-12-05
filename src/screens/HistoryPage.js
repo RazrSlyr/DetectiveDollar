@@ -187,7 +187,7 @@ export default function HistoryPage({ navigation }) {
                 )}
             </View>
             <ExpenseInfoComponent
-                isVisable={showExpenseInfo}
+                isVisible={showExpenseInfo}
                 onClose={closeInfo}
                 expense={selectedExpense}
             />

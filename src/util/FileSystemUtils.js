@@ -536,55 +536,12 @@ export async function createExampleData() {
     });
 }
 
-export async function updateExpense(
-    id,
-    newName,
-    newCategory,
-    newAmount,
-    newDay,
-    newImageURI,
-    newMemo
-) {
-    console.log(id, newName, newCategory, newAmount, newDay, newImageURI, newMemo);
+export async function updateExpense(id, newName, newCategory, newAmount, newImageURI, newMemo) {
+    //console.log(id, newName, newCategory, newAmount, newDay, newImageURI, newMemo);
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         await tx.executeSqlAsync(
-            createEditExpenseQuery(
-                id,
-                newName,
-                newCategory,
-                newAmount,
-                newDay,
-                newImageURI,
-                newMemo
-            )
+            createEditExpenseQuery(id, newName, newCategory, newAmount, newImageURI, newMemo)
         );
     });
 }
-
-
-/* export async function updateExpense(
-    id,
-    newName,
-    newCategory,
-    newAmount,
-    newDay,
-    newImageURI,
-    newMemo
-) {
-    console.log(id, newName, newCategory, newAmount, newDay, newImageURI, newMemo);
-    const db = await getDatabase();
-    await db.transactionAsync(async (tx) => {
-        await tx.executeSqlAsync(
-            createEditExpenseQuery(
-                id,
-                newName,
-                newCategory,
-                newAmount,
-                newImageURI,
-                newMemo,
-                newDay
-            )
-        );
-    });
-} */

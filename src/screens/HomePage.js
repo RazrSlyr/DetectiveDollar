@@ -27,6 +27,7 @@ export default function HomePage({ navigation }) {
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
+    const [refreshExpenses, setRefreshExpenses] = useState(false);
 
     useEffect(() => {
         const getExpenses = async () => {
@@ -51,12 +52,19 @@ export default function HomePage({ navigation }) {
             }
         };
 
+        if (refreshExpenses) {
+            setRefreshExpenses(false);
+            getExpenses();
+        }
+
         // Add an event listener for focus to re-fetch expenses when the component comes into focus
-        const unsubscribe = navigation.addListener('focus', getExpenses);
+        const unsubscribe = navigation.addListener('focus', () => {
+            getExpenses();
+        });
 
         // Clean up the event listener when the component unmounts
         return () => unsubscribe();
-    }, [targetDate, navigation]);
+    }, [targetDate, navigation, refreshExpenses]);
 
     const handleDateChange = async (newDate) => {
         try {
@@ -151,6 +159,11 @@ export default function HomePage({ navigation }) {
         setShowExpenseInfo(false);
     };
 
+    const handleExpenseEdit = () => {
+        // Trigger a refresh of expenses when the expense is edited
+        setRefreshExpenses(true);
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
@@ -243,7 +256,10 @@ export default function HomePage({ navigation }) {
             </View>
             <ExpenseInfoComponent
                 isVisible={showExpenseInfo}
-                onClose={closeInfo}
+                onClose={() => {
+                    closeInfo();
+                    handleExpenseEdit();
+                }}
                 expense={selectedExpense}
             />
         </SafeAreaView>
