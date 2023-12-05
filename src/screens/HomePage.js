@@ -29,6 +29,7 @@ export default function HomePage({ navigation }) {
     const [selectedExpense, setSelectedExpense] = useState();
     const [refreshExpenses, setRefreshExpenses] = useState(false);
 
+
     useEffect(() => {
         const getExpenses = async () => {
             try {
@@ -144,13 +145,6 @@ export default function HomePage({ navigation }) {
     // Format the date as "month/day/year"
     const formattedDate = `${month}/${day}/${year}`;
 
-    // error says too many re-renders
-    // // for arrow buttons
-    // const dayPlusOne = Number(day) + 1;
-    // const datePlusOne = `${year}-${month}-${dayPlusOne}`;
-    // const dayMinusOne = Number(day) - 1;
-    // const dateMinusOne = `${year}-${month}-${dayMinusOne}`;
-
     const openInfo = async () => {
         setShowExpenseInfo(true);
     };
@@ -258,9 +252,11 @@ export default function HomePage({ navigation }) {
                 isVisible={showExpenseInfo}
                 onClose={() => {
                     closeInfo();
-                    handleExpenseEdit();
                 }}
                 expense={selectedExpense}
+                onUpdateExpenses={() => {
+                    handleExpenseEdit();
+                }}
             />
         </SafeAreaView>
     );
