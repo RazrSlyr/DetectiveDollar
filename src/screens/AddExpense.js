@@ -98,18 +98,6 @@ export default function App({ navigation }) {
             return;
         }
         const currentDate = new Date();
-
-        const dateParts = targetDate.split('-');
-        const selectedDayOfMonth = parseInt(dateParts[2], 10);
-        const selectedYear = parseInt(dateParts[0], 10);
-        const selectedMonth = parseInt(dateParts[1] - 1, 10);
-
-        currentDate.setDate(selectedDayOfMonth);
-        currentDate.setFullYear(selectedYear);
-        currentDate.setMonth(selectedMonth);
-
-        console.log(currentDate);
-
         const timestamp = currentDate.getTime();
         // console.log(categoryId);
         let imageURI = null;

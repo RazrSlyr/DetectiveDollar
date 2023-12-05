@@ -16,11 +16,7 @@ import DatePickerComponent from '../components/DatePickerComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import {
-    getCurrentDateString,
-    getDateFromUTCDatetimeString,
-    getDatetimeString,
-} from '../util/DatetimeUtils';
+import { getCurrentDateString } from '../util/DatetimeUtils';
 import {
     deleteRowFromExpenseTable,
     deleteRowFromReacurringTable,
@@ -180,8 +176,6 @@ export default function HomePage({ navigation }) {
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
                         {todayExpenses.map((expense) => {
-                            const date = getDateFromUTCDatetimeString(expense['timestamp']);
-                            const datetime = getDatetimeString(date);
                             return (
                                 <TouchableOpacity
                                     key={expense.id}
@@ -215,7 +209,7 @@ export default function HomePage({ navigation }) {
                                                 {expense['name']}
                                             </Text>
                                             <Text style={styles.expenseData}>
-                                                {datetime.replace(' ', '\n')}
+                                                {expense['timestamp'].replace(/ /g, '\n')}
                                             </Text>
                                         </View>
                                         <View style={{ flex: 1, flexDirection: 'row' }}>
