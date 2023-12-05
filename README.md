@@ -22,7 +22,7 @@ Once all the packages have been installed, you can run a development build of th
 npx expo start
 ```
 You can preview the app by setting up Android Studio or Xcode. 
-Or you can preview the app on your device by installing the [**Expo Go**](https://expo.dev/client) App from the Play Store or App store
+Or you can preview the app on your device by scanning the QR code on the [**Expo Go**](https://expo.dev/client) App
 
 # ESLint Setup and Prettier setup for VS Code
 You can read about it [here](https://docs.expo.dev/guides/using-eslint/)
