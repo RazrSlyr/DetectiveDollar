@@ -206,8 +206,8 @@ export default function App({ navigation }) {
                                         onChange={(item) => {
                                             setCategory(item.value);
                                         }}
-                                        dropdownLabel="Expense Frequency"
-                                        placeholderLabel="Expense Frequency"
+                                        dropdownLabel="Category"
+                                        placeholderLabel="Category"
                                     />
                                     {/* <DropdownSelector
                                     style={styles.input}

@@ -27,8 +27,6 @@ export default function HomePage({ navigation }) {
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
-    const [refreshExpenses, setRefreshExpenses] = useState(false);
-
 
     useEffect(() => {
         const getExpenses = async () => {
@@ -53,19 +51,12 @@ export default function HomePage({ navigation }) {
             }
         };
 
-        if (refreshExpenses) {
-            setRefreshExpenses(false);
-            getExpenses();
-        }
-
         // Add an event listener for focus to re-fetch expenses when the component comes into focus
-        const unsubscribe = navigation.addListener('focus', () => {
-            getExpenses();
-        });
+        const unsubscribe = navigation.addListener('focus', getExpenses);
 
         // Clean up the event listener when the component unmounts
         return () => unsubscribe();
-    }, [targetDate, navigation, refreshExpenses]);
+    }, [targetDate, navigation]);
 
     const handleDateChange = async (newDate) => {
         try {
@@ -153,9 +144,29 @@ export default function HomePage({ navigation }) {
         setShowExpenseInfo(false);
     };
 
-    const handleExpenseEdit = () => {
+    const handleExpenseEdit = async () => {
         // Trigger a refresh of expenses when the expense is edited
-        setRefreshExpenses(true);
+        //setRefreshExpenses(true);
+        try {
+            // Apply recurring expenses
+            await applyRecurringExpenses();
+            // Fetch expenses for today and set to state
+            const expenses = await getExpensesFromDay(targetDate);
+            // Change expense categoryId to name
+            for (let i = 0; i < expenses.length; i++) {
+                expenses[i]['categoryId'] = expenses[i]['category'];
+                expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
+                expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+            }
+            // Change expense categoryId to name
+            setTodayExpenses(expenses);
+            //console.log('expenses set!', expenses);
+            const updateCurrentExpense = expenses.find((item) => item.id === selectedExpense?.id);
+            //console.log(updateCurrentExpense);
+            setSelectedExpense(updateCurrentExpense);
+        } catch (error) {
+            console.error('Error fetching expenses:', error);
+        }
     };
 
     return (

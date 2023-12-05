@@ -50,8 +50,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
     const [category, setCategory] = useState('');
     const [previewURI, setImageURI] = useState(null);
     const [memo, setMemo] = useState('');
-
-
+    console.log(expense);
 
     const handleButtonPress = async () => {
         let imageURI = null;
@@ -59,13 +58,14 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
             imageURI = await saveImage(previewURI);
         }
         await updateExpense(
-            expense.id,
-            name !== '' ? name : expense.name,
-            category !== '' ? category : expense.categoryId,
-            amount !== null && amount !== '' ? parseFloat(amount).toFixed(2) : expense.amount,
-            imageURI !== null ? imageURI : expense.picture,
-            memo !== null ? memo : expense.memo
+            expense?.id,
+            name !== '' && name !== null ? name : expense?.name,
+            category !== '' && category !== null ? category : expense?.categoryId,
+            amount !== null && amount !== '' ? amount : expense?.amount,
+            imageURI !== null && imageURI !== '' ? imageURI : expense?.picture,
+            memo !== null && memo !== '' ? memo : expense?.memo
         );
+        console.log(name, amount, category, previewURI, memo);
         Alert.alert('Success', 'Entry changed', [{ text: 'OK', onPress: onClose }]);
         setImageURI('');
     };

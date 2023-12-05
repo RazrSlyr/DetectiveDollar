@@ -3,19 +3,6 @@ import { View, Text, StyleSheet } from 'react-native';
 import { YEARLY } from '../constants/FrequencyConstants';
 
 const LineGraphStats = ({ totalSpending, averageExpense, timeFrame }) => {
-/* // - Total Expenses:Display the sum of all expenses for the specified time frame.
-const totalExpenses = (lineGraphData) => {
-
-};
-// - Average Expense: Calculate and display the average expense per day, week, or month. 
-const averageExpenses = (lineGraphData, timeFrame) => {
-
-};
-//- Number of Transactions: Display the total number of transactions made during the specified time frame.
-const numberOfExpenses = (lineGraphData) => {
-
-}; */
-
     return (
         <View style={styles.statsBox}>
             <View style={styles.statsDataBox}>

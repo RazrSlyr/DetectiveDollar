@@ -95,6 +95,31 @@ export default function HistoryPage({ navigation }) {
         setSelectedExpense(null);
         setShowExpenseInfo(false);
     };
+    const handleExpenseEdit = async () => {
+        // Trigger a refresh of expenses when the expense is edited
+        //setRefreshExpenses(true);
+        try {
+            setLoading(true);
+            // Apply recurring expenses
+            await applyRecurringExpenses();
+            // Fetch expenses and set to state
+            const expenses = await getExpenseTable();
+            // Change expense categoryId to name
+            for (let i = 0; i < expenses.length; i++) {
+                expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
+                expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+            }
+            // Change expense categoryId to name
+            setAllExpeneses(expenses);
+            setLoading(false);
+            //console.log('expenses set!', expenses);
+            const updateCurrentExpense = expenses.find((item) => item.id === selectedExpense?.id);
+            console.log(updateCurrentExpense);
+            setSelectedExpense(updateCurrentExpense);
+        } catch (error) {
+            console.error('Error fetching expenses:', error);
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -188,8 +213,13 @@ export default function HistoryPage({ navigation }) {
             </View>
             <ExpenseInfoComponent
                 isVisible={showExpenseInfo}
-                onClose={closeInfo}
+                onClose={() => {
+                    closeInfo();
+                }}
                 expense={selectedExpense}
+                onUpdateExpenses={() => {
+                    handleExpenseEdit();
+                }}
             />
         </SafeAreaView>
     );
@@ -204,7 +234,7 @@ const styles = StyleSheet.create({
     expensesContainer: {
         backgroundColor: Colors.primaryColor,
         width: '100%',
-        height: '70%',
+        height: '80%',
         padding: 10,
         margin: 10,
         borderRadius: 32,
