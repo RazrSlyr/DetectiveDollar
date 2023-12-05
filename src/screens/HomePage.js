@@ -202,22 +202,30 @@ export default function HomePage({ navigation }) {
                                             </Text>
                                         </View>
                                         <View style={styles.expenseNameBox}>
-                                            <Text style={styles.expenseName}>
+                                            <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                                style={styles.expenseName}>
                                                 {expense['name']}
                                             </Text>
                                             <Text style={styles.expenseData}>
                                                 {expense['timestamp'].replace(/ /g, '\n')}
                                             </Text>
-                                            {expense['reacurring_id'] && (
-                                                <FontAwesome
-                                                    name="repeat"
-                                                    size={24}
-                                                    color={Colors.secondaryColor}
-                                                />
-                                            )}
                                         </View>
-                                        <View style={{ width: '30%' }}>
-                                            <Text style={styles.expenseValue}>
+                                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                                            {expense['reacurring_id'] && (
+                                                <View style={{ marginRight: 30 }}>
+                                                    <FontAwesome
+                                                        name="repeat"
+                                                        size={24}
+                                                        color={Colors.secondaryColor}
+                                                    />
+                                                </View>
+                                            )}
+                                            <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                                style={styles.expenseValue}>
                                                 {'$' + parseFloat(expense['amount']).toFixed(2)}
                                             </Text>
                                         </View>
@@ -363,7 +371,7 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
     },
     expenseNameBox: {
-        width: '40%',
+        width: '30%',
         height: 55,
         margin: 5,
     },
@@ -378,6 +386,8 @@ const styles = StyleSheet.create({
     expenseValue: {
         fontSize: 20,
         color: 'red',
+        overflow: 'hidden',
+        width: '60%',
     },
     colorAndCategoryBox: {
         width: 'auto',
