@@ -74,7 +74,7 @@ const createReacurringDeleteById = (id) => {
  * Creates an INSERT command that adds an expense entry
  * @param {string} name - The name of the expense
  * @param {string} category - The category of the expense
- * @param {integer} amount - The amount of the expense
+ * @param {float} amount - The amount of the expense
  * @param {string} timestamp - The timestamp of the expense. Must be in SQLite Timestamp format or a SQLite datetime function call
  * @param {string} day - The day in local time of the expense in YYYY-MM-DD format
  * @param {string} subcategory - (optional) The subcategory of the expense
@@ -173,8 +173,8 @@ const createExpenseByTimeframeQuery = (startTimestamp, endTimestamp) => {
 
 /**
  * Creates a SELECT command that queries for expenses that occur between two days
- * @param {integer} startTimestamp- The local time start day in YYYY-MM-DD
- * @param {integer} endTimestamp- The local time end day in YYYY-MM-DD
+ * @param {integer} startDay- The local time start day in YYYY-MM-DD
+ * @param {integer} endDay- The local time end day in YYYY-MM-DD
  * @return {string} The SQLite SELECT command that performs the query
  */
 const createExpenseByDayFrameQuery = (startDay, endDay) => {
