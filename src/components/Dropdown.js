@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import * as Sizes from '../constants/Sizes';
 
 import { secondaryColor, textColor } from '../constants/Colors';
+import * as Sizes from '../constants/Sizes';
 
 function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
     const [value, setValue] = useState(null);

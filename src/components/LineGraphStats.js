@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+
 import { YEARLY } from '../constants/FrequencyConstants';
 
 const LineGraphStats = ({ totalSpending, averageExpense, timeFrame }) => {
-/* // - Total Expenses:Display the sum of all expenses for the specified time frame.
+    /* // - Total Expenses:Display the sum of all expenses for the specified time frame.
 const totalExpenses = (lineGraphData) => {
 
 };
