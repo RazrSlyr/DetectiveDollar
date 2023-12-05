@@ -33,7 +33,7 @@ import {
     getExpensesFromDay,
     getCategoryTable,
 } from '../util/FileSystemUtils';
-import { pickImage, captureImage } from '../util/ImagePickerUtil';
+import { pickImage, captureImage } from '../util/ImagePickerUtils';
 
 export default function App({ navigation }) {
     const [name, setName] = useState('');
