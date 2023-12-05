@@ -4,6 +4,8 @@
 First, install NodeJS. You can download NodeJS for all platforms [here](
 https://nodejs.org/en/download)
 
+To preview the app on your own mobile device install the [**Expo Go**](https://expo.dev/client) app
+
 Clone the [Detective Dollar Repository](https://github.com/RazrSlyr/DetectiveDollar) to a desired location using:
 ```
 git clone https://github.com/RazrSlyr/DetectiveDollar.git
