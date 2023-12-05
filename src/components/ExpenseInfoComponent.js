@@ -1,17 +1,9 @@
-import { Entypo, AntDesign} from '@expo/vector-icons';
+import { Entypo, AntDesign } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
 import React, { useState, useEffect } from 'react';
+import { TouchableOpacity, StyleSheet, Text, View, Modal, Dimensions, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    Text,
-    View,
-    Modal,
-    Dimensions,
-    Alert
-} from 'react-native';
 
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
@@ -28,38 +20,57 @@ const ExpenseInfoComponent = ({ isVisible, onClose, expense = null }) => {
     return (
         <Modal animationType="slide" transparent visible={isVisible} onRequestClose={() => onClose}>
             {expense ? (
-                <SafeAreaView style={styles.container}>
-                    <SafeAreaView style={styles.titleContainer}>
-                        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                            <Entypo name="chevron-thin-left" size={50} color={Colors.primaryColor} />
-                        </TouchableOpacity>
-                        <Text style={styles.title}>Expense Info</Text>
-                    </SafeAreaView>
-                    <View style={styles.allInfoContainer}>
-                        {expense.picture !== null && hasMediaLibraryPermission ? (
-                            <TouchableOpacity style={styles.circleContainer}>
-                                <Image
-                                    style={styles.circleImage}
-                                    source={{ uri: expense.picture }}
-                                    alt="unable to load image"
+                <View style={styles.container}>
+                    <View style={styles.content}>
+                        <View style={styles.titleContainer}>
+                            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                                <Entypo
+                                    name="chevron-thin-left"
+                                    size={50}
+                                    color={Colors.primaryColor}
                                 />
                             </TouchableOpacity>
-                        ) : (
-                            <TouchableOpacity style={styles.circleContainer}>
-                                <AntDesign name="upload" size={40} color="white" />
-                            </TouchableOpacity>
-                        )}
-                        <View style={styles.dividerLine}/>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.infoText}>{"Name: " + expense.name}</Text>
-                            <Text style={styles.infoText}>{"Date/Timestamp: " + getDatetimeString(getDateFromUTCDatetimeString(expense.timestamp))}</Text>
-                            <Text style={styles.infoText}>{"Amount: " + '$' + parseFloat(expense['amount']).toFixed(2)}</Text>
-                            <Text style={styles.infoText}>{"Category: " + expense.category}</Text>
-                            <Text style={styles.infoText}>{"Recurre: " + expense.reacurring_id}</Text>
-                            <Text style={styles.infoText}>{"Memo: " + expense.memo}</Text>
+                            <Text style={styles.title}>Expense Info</Text>
+                        </View>
+                        <View style={styles.allInfoContainer}>
+                            {expense.picture !== null && hasMediaLibraryPermission ? (
+                                <TouchableOpacity style={styles.circleContainer}>
+                                    <Image
+                                        style={styles.circleImage}
+                                        source={{ uri: expense.picture }}
+                                        alt="unable to load image"
+                                    />
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity style={styles.circleContainer}>
+                                    <AntDesign name="upload" size={40} color="white" />
+                                </TouchableOpacity>
+                            )}
+                            <View style={styles.dividerLine} />
+                            <View style={styles.textContainer}>
+                                <Text style={styles.infoText}>{'Name: ' + expense.name}</Text>
+                                <Text style={styles.infoText}>
+                                    {'Date/Timestamp: ' +
+                                        getDatetimeString(
+                                            getDateFromUTCDatetimeString(expense.timestamp)
+                                        )}
+                                </Text>
+                                <Text style={styles.infoText}>
+                                    {'Amount: ' + '$' + parseFloat(expense['amount']).toFixed(2)}
+                                </Text>
+                                <Text style={styles.infoText}>
+                                    {'Category: ' + expense.category}
+                                </Text>
+                                <Text style={styles.infoText}>
+                                    {'Recur: ' + (expense.reacurring_id ?? 'Does no recur')}
+                                </Text>
+                                <Text style={styles.infoText}>
+                                    {'Memo: ' + (expense.memo ?? 'None')}
+                                </Text>
+                            </View>
                         </View>
                     </View>
-                </SafeAreaView>
+                </View>
             ) : (
                 <View style={styles.container}>
                     <Text>Expense is null</Text>
@@ -72,17 +83,24 @@ export default ExpenseInfoComponent;
 
 const styles = StyleSheet.create({
     container: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-        backgroundColor: Colors.primaryColor,
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         alignItems: 'center',
-        borderTopLeftRadius: 32, // Radius for the top-left corner
-        borderTopRightRadius: 32, // Radius for the top-right corner
+        justifyContent: 'center',
+        borderRadius: 32,
         borderWidth: 5,
-        borderColor: "black",
+        borderColor: 'black',
+    },
+    content: {
+        backgroundColor: Colors.secondaryColor,
+        padding: 20,
+        borderRadius: 8,
+        width: '94%', // take 70% of the screen width
+        maxHeight: '90%', // take 70% of the screen height
+        alignItems: 'center',
     },
     titleContainer: {
-        width: "100%",
+        width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 5,
@@ -102,9 +120,9 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     allInfoContainer: {
-        width: "90%",
-        height: "85%",
-        backgroundColor: "white",
+        width: '100%',
+        height: '85%',
+        backgroundColor: 'white',
         borderRadius: 32,
         margin: 25,
     },
@@ -113,7 +131,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').width / 2, // Set the desired height of the circle
         borderRadius: Dimensions.get('window').width / 4, // Half of the width and height to create a circle
         overflow: 'hidden', // Clip the content to the circle shape
-        backgroundColor: "orange",
+        backgroundColor: 'orange',
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf: 'center',
@@ -124,7 +142,7 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     dividerLine: {
-        width: "50%",
+        width: '50%',
         borderBottomWidth: 3,
         borderColor: Colors.secondaryColor,
         marginVertical: 0,
@@ -134,7 +152,7 @@ const styles = StyleSheet.create({
         padding: 5,
         backgroundColor: 'white',
         margin: 20,
-        height: 400,
+        height: '50%',
     },
     infoText: {
         fontSize: Sizes.textSize,
