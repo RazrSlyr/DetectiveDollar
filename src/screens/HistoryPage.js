@@ -95,31 +95,6 @@ export default function HistoryPage({ navigation }) {
         setSelectedExpense(null);
         setShowExpenseInfo(false);
     };
-    const handleExpenseEdit = async () => {
-        // Trigger a refresh of expenses when the expense is edited
-        //setRefreshExpenses(true);
-        try {
-            setLoading(true);
-            // Apply recurring expenses
-            await applyRecurringExpenses();
-            // Fetch expenses and set to state
-            const expenses = await getExpenseTable();
-            // Change expense categoryId to name
-            for (let i = 0; i < expenses.length; i++) {
-                expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
-                expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
-            }
-            // Change expense categoryId to name
-            setAllExpeneses(expenses);
-            setLoading(false);
-            //console.log('expenses set!', expenses);
-            const updateCurrentExpense = expenses.find((item) => item.id === selectedExpense?.id);
-            console.log(updateCurrentExpense);
-            setSelectedExpense(updateCurrentExpense);
-        } catch (error) {
-            console.error('Error fetching expenses:', error);
-        }
-    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -218,9 +193,7 @@ export default function HistoryPage({ navigation }) {
                 }}
                 expense={selectedExpense}
                 onHome={false}
-                onUpdateExpenses={() => {
-                    handleExpenseEdit();
-                }}
+                onUpdateExpenses={() => {}}
             />
         </SafeAreaView>
     );

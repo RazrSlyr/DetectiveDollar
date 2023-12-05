@@ -1,7 +1,15 @@
 import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
+import {
+    TouchableOpacity,
+    StyleSheet,
+    View,
+    Text,
+    ScrollView,
+    Alert,
+    Dimensions,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DatePickerComponent from '../components/DatePickerComponent';
@@ -9,7 +17,11 @@ import EditExpenseComponent from '../components/EditExpenseComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { getCurrentDateString } from '../util/DatetimeUtils';
+import {
+    getCurrentDateString,
+    getDateFromUTCDatetimeString,
+    getDatetimeString,
+} from '../util/DatetimeUtils';
 import {
     deleteRowFromExpenseTable,
     deleteRowFromReacurringTable,
@@ -189,6 +201,8 @@ export default function HomePage({ navigation }) {
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
                         {todayExpenses.map((expense) => {
+                            const date = getDateFromUTCDatetimeString(expense['timestamp']);
+                            const datetime = getDatetimeString(date);
                             return (
                                 <TouchableOpacity
                                     key={expense.id}
@@ -205,6 +219,8 @@ export default function HomePage({ navigation }) {
                                                 }}
                                             />
                                             <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
                                                 style={{
                                                     ...styles.categoryName,
                                                     color: expense['categoryColor'],
@@ -213,22 +229,30 @@ export default function HomePage({ navigation }) {
                                             </Text>
                                         </View>
                                         <View style={styles.expenseNameBox}>
-                                            <Text style={styles.expenseName}>
+                                            <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                                style={styles.expenseName}>
                                                 {expense['name']}
                                             </Text>
                                             <Text style={styles.expenseData}>
-                                                {expense['timestamp'].replace(/ /g, '\n')}
+                                                {datetime.replace(' ', '\n')}
                                             </Text>
-                                            {expense['reacurring_id'] && (
-                                                <FontAwesome
-                                                    name="repeat"
-                                                    size={24}
-                                                    color={Colors.secondaryColor}
-                                                />
-                                            )}
                                         </View>
-                                        <View style={{ width: '30%' }}>
-                                            <Text style={styles.expenseValue}>
+                                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                                            {expense['reacurring_id'] && (
+                                                <View style={{ marginRight: 30 }}>
+                                                    <FontAwesome
+                                                        name="repeat"
+                                                        size={24}
+                                                        color={Colors.secondaryColor}
+                                                    />
+                                                </View>
+                                            )}
+                                            <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                                style={styles.expenseValue}>
                                                 {'$' + parseFloat(expense['amount']).toFixed(2)}
                                             </Text>
                                         </View>
@@ -380,7 +404,7 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
     },
     expenseNameBox: {
-        width: '40%',
+        width: '30%',
         height: 55,
         margin: 5,
     },
@@ -395,6 +419,8 @@ const styles = StyleSheet.create({
     expenseValue: {
         fontSize: 20,
         color: 'red',
+        overflow: 'hidden',
+        width: '60%',
     },
     colorAndCategoryBox: {
         width: 'auto',
@@ -410,6 +436,11 @@ const styles = StyleSheet.create({
     },
     categoryName: {
         fontSize: 10,
+        overflow: 'hidden',
+        width: 60,
+        justifyContent: 'center',
+        alignContent: 'center',
+        textAlign: 'center',
     },
     calendarContainer: {
         flex: 0,
