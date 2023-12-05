@@ -7,10 +7,28 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/SplashSmaller.png",
+      "image": "./assets/DD_Splash_Screen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+        [
+            "expo-image-picker",
+            {
+              "photosPermission": "Allow $(PRODUCT_NAME) to accesses your photos.",
+              "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+            
+            }
+        ],
+        [
+          "expo-media-library",
+          {
+            "photosPermission" : "Allow $(PRODUCT_NAME) to access your photos.",
+            "savePhotosPermission" : "Allow $(PRODUCT_NAME) to save photos.",
+            "isAccessMediaLocationEnabled" : "true"
+          }
+        ]
+    ],
     "assetBundlePatterns": [
       "**/*"
     ],

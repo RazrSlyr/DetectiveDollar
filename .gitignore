@@ -3,7 +3,6 @@
 # dependencies
 node_modules/
 package-lock.json
-package.json
 
 # Expo
 .expo/
@@ -37,3 +36,4 @@ yarn-error.*
 *.tsbuildinfo
 
 .vscode/
+src/screens/test.js

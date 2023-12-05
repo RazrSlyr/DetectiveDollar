@@ -1,44 +1,261 @@
+import { AntDesign } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState, useRef, useEffect } from 'react';
+import { StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Swiper from 'react-native-swiper';
 
-import ChartWithInteractivity from '../../components/ChartWithInteractivity';
-import PieChartComponent from '../../components/PieChartComponent';
-import { primaryColor, secondaryColor, subHeadingColor } from '../constants/Colors';
+import LineGraphComponent from '../components/LineGraphComponent';
+import NewPieChartComponent from '../components/NewPieChartComponent';
+import WeekMonthYearButtons from '../components/weekMonthYearComponent';
+import * as Colors from '../constants/Colors';
+import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
+import {
+    getCurrentDateString,
+    getWeekStartEndDate,
+    getNextWeekStartEndDate,
+    getPreviousWeekStartEndDate,
+    getMonthStartEndDate,
+    getNextMonthStartEndDate,
+    getPreviousMonthStartEndDate,
+    getYearStartEndDate,
+    getPreviousYearStartEndDate,
+    getNextYearStartEndDate,
+} from '../util/DatetimeUtils';
 
 const GraphPage = ({ navigation }) => {
+    const [selectedTimeframe, setSelectedTimeframe] = useState(WEEKLY);
+    const [selectedTimeframeDates, setSelectedTimeframeDates] = useState(
+        getWeekStartEndDate(getCurrentDateString())
+    );
+
+    const handleTimeframeSelect = (value) => {
+        setSelectedTimeframe(value);
+
+        if (value === WEEKLY) {
+            const selectedTimeframeDates = getWeekStartEndDate(getCurrentDateString());
+            setSelectedTimeframeDates(selectedTimeframeDates);
+        } else if (value === MONTHLY) {
+            const selectedTimeframeDates = getMonthStartEndDate(getCurrentDateString());
+            setSelectedTimeframeDates(selectedTimeframeDates);
+        } else if (value === YEARLY) {
+            const selectedTimeframeDates = getYearStartEndDate(getCurrentDateString());
+            setSelectedTimeframeDates(selectedTimeframeDates);
+        }
+    };
+
+    const handleIncrementTimeFrame = () => {
+        if (selectedTimeframe === WEEKLY) {
+            if (new Date(getCurrentDateString()) > new Date(selectedTimeframeDates[1])) {
+                setSelectedTimeframeDates(getNextWeekStartEndDate(selectedTimeframeDates[1]));
+            }
+        } else if (selectedTimeframe === MONTHLY) {
+            if (new Date(getCurrentDateString()) > new Date(selectedTimeframeDates[1])) {
+                setSelectedTimeframeDates(getNextMonthStartEndDate(selectedTimeframeDates[1]));
+            }
+        } else if (selectedTimeframe === YEARLY) {
+            if (new Date(getCurrentDateString()) > new Date(selectedTimeframeDates[1])) {
+                setSelectedTimeframeDates(getNextYearStartEndDate(selectedTimeframeDates[1]));
+            }
+        }
+    };
+
+    const handleDecrementTimeFrame = () => {
+        if (selectedTimeframe === WEEKLY) {
+            setSelectedTimeframeDates(getPreviousWeekStartEndDate(selectedTimeframeDates[1]));
+        } else if (selectedTimeframe === MONTHLY) {
+            setSelectedTimeframeDates(getPreviousMonthStartEndDate(selectedTimeframeDates[1]));
+        } else if (selectedTimeframe === YEARLY) {
+            setSelectedTimeframeDates(getPreviousYearStartEndDate(selectedTimeframeDates[1]));
+        }
+    };
+
+    const formatDateforDisplay = (dateString) => {
+        const date = new Date(dateString + 'T00:00:00Z'); // Set the time zone to UTC
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        return `${month}/${day}/${year}`;
+    };
+
+    const [activeSlide, setActiveSlide] = useState(0);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('state', () => {
+            // When the page comes into focus, set the active slide to 0 (the first slide)
+            setActiveSlide(0);
+            setSelectedTimeframe(WEEKLY);
+            setSelectedTimeframeDates(getWeekStartEndDate(getCurrentDateString()));
+        });
+        return unsubscribe;
+    }, []);
+
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Stats</Text>
-            <View style={styles.chartContainer}>
-                {/* put line chart here later */}
-                <ChartWithInteractivity />
+        <SafeAreaView style={styles.container}>
+            <View style={styles.titleContainer}>
+                <Text style={styles.titleText}>Statistics</Text>
             </View>
-            <View style={styles.chartContainer}>
-                <PieChartComponent />
+            <View style={{ backgroundColor: Colors.primaryColor }}>
+                <View style={styles.dateContainer}>
+                    <View style={styles.dateRange}>
+                        <TouchableOpacity onPress={handleDecrementTimeFrame}>
+                            <View style={styles.arrow}>
+                                <AntDesign
+                                    name="leftcircle"
+                                    color="#37c871"
+                                    backgroundColor="#f2f2f2"
+                                    size={30}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                        <Text style={styles.date}>
+                            {`${formatDateforDisplay(selectedTimeframeDates[0])}`}
+                        </Text>
+                        <Text> _ </Text>
+                        <Text style={styles.date}>
+                            {`${formatDateforDisplay(selectedTimeframeDates[1])}`}
+                        </Text>
+                        <TouchableOpacity onPress={handleIncrementTimeFrame}>
+                            <View style={styles.arrow}>
+                                <AntDesign
+                                    name="rightcircle"
+                                    color="#37c871"
+                                    backgroundColor="#f2f2f2"
+                                    size={30}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <WeekMonthYearButtons onSelect={handleTimeframeSelect} />
+                <View style={styles.scrollableContent}>
+                    <Swiper
+                        style={styles.wrapper}
+                        dotStyle={styles.customDot}
+                        activeDotStyle={styles.customActiveDot}
+                        paginationStyle={{
+                            top: -560,
+                            left: 300,
+                        }}
+                        loop={false}
+                        index={activeSlide}
+                        onIndexChanged={(index) => {
+                            setActiveSlide(index);
+                        }}>
+                        <View style={styles.pieChartSlide}>
+                            <View style={styles.chartContainer}>
+                                <NewPieChartComponent
+                                    startDate={selectedTimeframeDates[0]}
+                                    endDate={selectedTimeframeDates[1]}
+                                    timeFrame={selectedTimeframe}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.lineChartSlide}>
+                            <View style={styles.chartContainer} paddingTop={20}>
+                                <LineGraphComponent
+                                    startDate={selectedTimeframeDates[0]}
+                                    endDate={selectedTimeframeDates[1]}
+                                    timeFrame={selectedTimeframe}
+                                />
+                            </View>
+                        </View>
+                    </Swiper>
+                </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 
 export default GraphPage;
 
 const styles = StyleSheet.create({
+    // Need to figure out why there is a big gab at the top of the screen
     container: {
+        //paddingTop: StatusBar.currentHeight,
         flex: 1,
         alignItems: 'center',
-        backgroundColor: primaryColor,
+        backgroundColor: Colors.secondaryColor,
     },
-    title: {
+    scrollableContent: {
+        flex: 1,
+        width: '100%', // Adjust the width as needed
+        height: 'auto',
+        alignItems: 'center',
+        marginTop: -20,
+    },
+    titleContainer: {
+        width: 'auto',
+    },
+    titleText: {
         fontWeight: 'bold',
-        fontSize: 36,
+        fontSize: 35,
+        color: Colors.primaryColor,
+        justifyContent: 'center',
+    },
+    dateContainer: {
+        //flex: 1,
+        alignItems: 'center',
+    },
+    arrow: {
+        alignSelf: 'center',
+        alignItem: 'center',
+        margin: 5,
+        paddingTop: 15,
+    },
+    dateRange: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 310,
+    },
+    date: {
         textAlign: 'center',
-        color: secondaryColor,
-        marginTop: 95,
+        paddingVertical: 10,
+        fontSize: 14,
+        flex: 1,
+        borderWidth: 1,
+        borderColor: Colors.secondaryColor,
+        backgroundColor: Colors.primaryColor,
+        borderRadius: 15,
+        marginTop: 20,
+        marginHorizontal: 2,
+        overflow: 'hidden',
+    },
+    wrapper: {
+        //showsPagination: true,
+    },
+    lineChartSlide: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingBottom: 100,
+    },
+    pieChartSlide: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingBottom: 100,
+    },
+    customDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: 'gray', // Color for non-active dots
+    },
+    customActiveDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: Colors.secondaryColor, // Color for the active dot
+    },
+    scrollContentContainer: {
+        paddingBottom: 60,
     },
     chartContainer: {
         margin: 5,
-        height: 280,
-        width: 260,
+        height: '100%',
+        width: '92%',
         alignContent: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',

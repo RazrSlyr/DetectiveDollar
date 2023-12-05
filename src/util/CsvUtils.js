@@ -1,5 +1,4 @@
 function jsonListToCsv(jsonList) {
-    console.log(jsonList.map((item) => JSON.stringify(item)));
     const keys = Object.keys(jsonList[0]);
     let output = keys[0];
     for (let keyIndex = 1; keyIndex < keys.length; keyIndex++) {
