@@ -36,7 +36,11 @@ const DatePickerComponent = ({ onDateChange }) => {
                 <FontAwesome name="calendar" size={30} color={secondaryColor} />
             </TouchableOpacity>
 
-            <Modal transparent visible={isModalVisible} onRequestClose={hideDatePicker}>
+            <Modal
+                transparent
+                animationType="slide"
+                visible={isModalVisible}
+                onRequestClose={hideDatePicker}>
                 {isIOS && (
                     <IOSDatePicker
                         selectedDate={selectedDate}
