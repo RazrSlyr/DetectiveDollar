@@ -30,9 +30,8 @@ import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import * as Sizes from '../constants/Sizes';
-import { getCurrentDateString, getDateStringFromDate } from '../util/DatetimeUtils';
+import { getCurrentDateString } from '../util/DatetimeUtils';
 import {
-    addRowToCategoryTable,
     addRowToExpenseTable,
     saveImage,
     getExpensesFromDay,
