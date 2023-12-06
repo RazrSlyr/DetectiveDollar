@@ -76,7 +76,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
         <Modal
             isVisible={isVisible}
             animationInTiming={500}
-            animationOutTiming={600}
+            animationOutTiming={500}
             backdropTransitionInTiming={300}
             backdropTransitionOutTiming={300}
             onBackdropPress={onClose}>
