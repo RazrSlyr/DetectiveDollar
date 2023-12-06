@@ -3,8 +3,17 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Platform, Modal, StyleSheet, Text } from 'react-native';
 
+import AndroidDatePicker from './AndroidDatePicker';
+import IOSDatePicker from './IOSDatePicker';
 import { secondaryColor } from '../constants/Colors';
 import { getDateStringFromDate } from '../util/DatetimeUtils';
+
+/**
+ * Component for the selecting a date
+ * @param {object} props Props object. The only prop is onDateChange (callback)
+ * @returns {object} The component object for the Date Picker
+ * @memberof Components
+ */
 
 const DatePickerComponent = ({ onDateChange }) => {
     const isIOS = Platform.OS === 'ios';
@@ -23,16 +32,6 @@ const DatePickerComponent = ({ onDateChange }) => {
     const handleDateChange = (event, newSelectedDate) => {
         if (newSelectedDate) {
             setSelectedDate(newSelectedDate);
-            // Extract year, month, and day
-            const year = newSelectedDate.getFullYear();
-            const month = newSelectedDate.getMonth() + 1; // Months are zero-based, so add 1
-            let day = newSelectedDate.getDate();
-            if (day < 10) {
-                day = '0' + day;
-            }
-            // const formattedDate = `${year}-${month}-${day}`;
-            // console.log("date selected ", formattedDate);
-
             onDateChange(getDateStringFromDate(newSelectedDate)); // this notify's parent component about date change
         }
         hideDatePicker();
@@ -49,25 +48,22 @@ const DatePickerComponent = ({ onDateChange }) => {
                 animationType="slide"
                 visible={isModalVisible}
                 onRequestClose={hideDatePicker}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <DateTimePicker
-                            value={selectedDate}
-                            mode="date"
-                            //display="default"
-                            display="inline"
-                            onChange={handleDateChange}
-                            themeVariant="light"
-                        />
-                        {isIOS && (
-                            <TouchableOpacity
-                                style={styles.cancelButtonContainer}
-                                onPress={hideDatePicker}>
-                                <Text style={styles.cancelButtonText}>Cancel</Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
-                </View>
+                {isIOS && (
+                    <IOSDatePicker
+                        selectedDate={selectedDate}
+                        handleDateChange={handleDateChange}
+                        hideDatePicker={hideDatePicker}
+                        styles={styles}
+                    />
+                )}
+                {!isIOS && (
+                    <AndroidDatePicker
+                        selectedDate={selectedDate}
+                        handleDateChange={handleDateChange}
+                        hideDatePicker={hideDatePicker}
+                        styles={styles}
+                    />
+                )}
             </Modal>
         </View>
     );

@@ -1,8 +1,19 @@
+/**
+ * @namespace Components
+ */
+
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { secondaryColor } from '../Colors';
 
+/**
+ * Component for an Add Button
+ * @param {object} props Props object. Only prop is onPress,
+ * a function that is called when the button is pressed
+ * @returns {object} The component object for the Add Button
+ * @memberof Components
+ */
 const AddButton = ({ onPress }) => {
     return (
         <TouchableOpacity onPress={onPress}>

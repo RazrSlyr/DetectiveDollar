@@ -1,6 +1,12 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
+/**
+ * Component for displaying a legend for a pie chart
+ * @param {object} props Props object. Only prop is chartData (object)
+ * @returns {object} The component object for the pie chart legend
+ * @memberof Components
+ */
 const PieChartLegend = ({ chartData }) => {
     // create dot for legend
     const renderDot = (color) => {

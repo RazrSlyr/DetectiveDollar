@@ -1,8 +1,14 @@
+/**
+ * @file Code for the user's Graph screen.
+ * Displays line and pie charts for weekly, monthly and yearly expense data,
+ * organized by category as well
+ */
+
 import { AntDesign } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 

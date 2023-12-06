@@ -1,3 +1,11 @@
+/**
+ * @module NameUtils
+ */
+
+/**
+ * @file Used for generating random expense names
+ */
+
 const ADJECTIVES = `Good
 First
 Last
@@ -124,6 +132,10 @@ teacher
 force
 education`.split('\n');
 
+/**
+ * Generates a random expense name
+ * @returns {string} A name for an expense made of an adjective and noun
+ */
 const generateRandomName = () => {
     const adjectiveIndex = Math.floor(Math.random() * ADJECTIVES.length);
     const nounIndex = Math.floor(Math.random() * NOUNS.length);
