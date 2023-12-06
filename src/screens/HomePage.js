@@ -4,18 +4,10 @@
  * to look through different days
  */
 
-import { FontAwesome, Entypo } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    View,
-    Text,
-    ScrollView,
-    Alert,
-    Dimensions,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DatePickerComponent from '../components/DatePickerComponent';
@@ -54,6 +46,7 @@ export default function HomePage({ navigation }) {
                 const expenses = await getExpensesFromDay(targetDate);
                 // Change expense categoryId to name
                 for (let i = 0; i < expenses.length; i++) {
+                    expenses[i]['categoryId'] = expenses[i]['category'];
                     expenses[i]['categoryColor'] = await getCategoryColorById(
                         expenses[i]['category']
                     );
@@ -80,6 +73,7 @@ export default function HomePage({ navigation }) {
             const expenses = await getExpensesFromDay(newDate);
             // Change expense categoryId to name
             for (let i = 0; i < expenses.length; i++) {
+                expenses[i]['categoryId'] = expenses[i]['category'];
                 expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
                 expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
             }
@@ -118,6 +112,7 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['categoryId'] = expenses[i]['category'];
             expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
             expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
@@ -133,6 +128,7 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
+            expenses[i]['categoryId'] = expenses[i]['category'];
             expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
             expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
@@ -149,19 +145,34 @@ export default function HomePage({ navigation }) {
     // Format the date as "month/day/year"
     const formattedDate = `${month}/${day}/${year}`;
 
-    // error says too many re-renders
-    // // for arrow buttons
-    // const dayPlusOne = Number(day) + 1;
-    // const datePlusOne = `${year}-${month}-${dayPlusOne}`;
-    // const dayMinusOne = Number(day) - 1;
-    // const dateMinusOne = `${year}-${month}-${dayMinusOne}`;
-
     const openInfo = async () => {
         setShowExpenseInfo(true);
     };
     const closeInfo = () => {
         setSelectedExpense(null);
         setShowExpenseInfo(false);
+    };
+
+    const handleExpenseEdit = async () => {
+        // Trigger a refresh of expenses when the expense is edited
+        try {
+            // Apply recurring expenses
+            await applyRecurringExpenses();
+            // Fetch expenses for today and set to state
+            const expenses = await getExpensesFromDay(targetDate);
+            // Change expense categoryId to name
+            for (let i = 0; i < expenses.length; i++) {
+                expenses[i]['categoryId'] = expenses[i]['category'];
+                expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
+                expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+            }
+            // Change expense categoryId to name
+            setTodayExpenses(expenses);
+            const updateCurrentExpense = expenses.find((item) => item.id === selectedExpense?.id);
+            setSelectedExpense(updateCurrentExpense);
+        } catch (error) {
+            console.error('Error fetching expenses:', error);
+        }
     };
 
     return (
@@ -267,9 +278,15 @@ export default function HomePage({ navigation }) {
                 </ScrollView>
             </View>
             <ExpenseInfoComponent
-                isVisable={showExpenseInfo}
-                onClose={closeInfo}
+                isVisible={showExpenseInfo}
+                onClose={() => {
+                    closeInfo();
+                }}
+                onHome
                 expense={selectedExpense}
+                onUpdateExpenses={() => {
+                    handleExpenseEdit();
+                }}
             />
         </SafeAreaView>
     );
