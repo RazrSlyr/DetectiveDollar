@@ -31,7 +31,6 @@ import {
     createReacurringDeleteById,
     createCategoryQueryByName,
     createCategoryQueryById,
-    createEditExpenseQuery,
 } from './SQLiteUtils';
 import { DAY_LENGTH, NO_REPETION } from '../constants/FrequencyConstants';
 import { ALBUMNNAME } from '../constants/ImageConstants';
@@ -533,15 +532,5 @@ export async function createExampleData() {
             promises.push(tx.executeSqlAsync(command));
         });
         await Promise.all(promises);
-    });
-}
-
-export async function updateExpense(id, newName, newCategory, newAmount, newImageURI, newMemo) {
-    //console.log(id, newName, newCategory, newAmount, newDay, newImageURI, newMemo);
-    const db = await getDatabase();
-    await db.transactionAsync(async (tx) => {
-        await tx.executeSqlAsync(
-            createEditExpenseQuery(id, newName, newCategory, newAmount, newImageURI, newMemo)
-        );
     });
 }

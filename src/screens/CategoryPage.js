@@ -10,7 +10,6 @@ import {
     Dimensions,
     Modal,
     TextInput,
-    Platform,
     KeyboardAvoidingView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -196,7 +195,7 @@ export default function CategoryPage({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        height: '91%',
+        height: '90%',
         width: '100%',
         alignSelf: 'center',
         alignItems: 'center',

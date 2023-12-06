@@ -80,9 +80,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
             if (timeFrame === WEEKLY) {
                 return (totalSpending / 7).toFixed(2);
             } else if (timeFrame === MONTHLY) {
-                const totalDaysList = getDaysInMonth(endDateString);
-                const totalDays = totalDaysList[totalDaysList.length - 1];
-                return (totalSpending / totalDays).toFixed(2);
+                return (totalSpending / getDaysInMonth(endDateString)).toFixed(2);
             } else if (timeFrame === YEARLY) {
                 return (totalSpending / 12).toFixed(2);
             }
