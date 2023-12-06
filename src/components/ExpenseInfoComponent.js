@@ -8,6 +8,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
+
+/**
+ * Component for the inspecting expense info
+ * @param {object} props. Props object. The props are isVisible (bool), onClose (callback), 
+ * and expense (object)
+ * @returns {object} The component object for the Expense Info popup
+ * @memberof Components
+ */
 const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
     const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
 

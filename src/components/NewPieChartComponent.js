@@ -14,6 +14,13 @@ import {
 } from '../util/DatetimeUtils';
 import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSystemUtils';
 
+/**
+ * Component for displaying a pie graph of expenses separated by category
+ * @param {object} props Props object. Props are startDate (string), endDate (string), 
+ * and timeFrame (use FrequencyConstants)
+ * @returns {object} The component object for the Pie Graph
+ * @memberof Components
+ */
 const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [pieChartData, setPieChartData] = useState([]);
     const [categoryColors, setCategoryColors] = useState({});

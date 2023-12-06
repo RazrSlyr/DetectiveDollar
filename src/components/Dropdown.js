@@ -5,6 +5,13 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { secondaryColor, textColor } from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 
+/**
+ * Component for the selecting an element from a dropdown
+ * @param {object} props. Props object. The props are data (object),
+ * onChange (callback), dropdownLabel (string), and placeholderLabel (string)
+ * @returns {object} The component object for the Date Picker
+ * @memberof Components
+ */
 function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);

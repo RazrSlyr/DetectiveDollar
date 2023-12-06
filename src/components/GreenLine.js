@@ -3,6 +3,11 @@ import { View, StyleSheet } from 'react-native';
 
 import * as Colors from '../constants/Colors';
 
+/**
+ * Component for a green separator line
+ * @returns {object} The component object for the separator line
+ * @memberof Components
+ */
 const GreenLine = () => {
     return <View style={styles.line} />;
 };
