@@ -178,9 +178,6 @@ export default function HomePage({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-            <TouchableOpacity style={styles.debug} onPress={handleAddFakeData}>
-                <FontAwesome name="wrench" size={15} color="black" />
-            </TouchableOpacity>
             <View style={styles.totalExpensesContainer}>
                 <Text style={styles.subHeading}>Total Spendings</Text>
                 <Text style={styles.textInput}>{`${spending}`}</Text>
