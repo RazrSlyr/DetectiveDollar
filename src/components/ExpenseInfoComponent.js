@@ -5,26 +5,19 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View, Modal, Dimensions, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import EditExpenseComponent from './EditExpenseComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
-const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUpdateExpenses }) => {
-    const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
-    const [showEditExpense, setshowEditExpense] = useState(false);
-    //console.log(expense);
-    //console.log(`onUpdateExpenses: ${onUpdateExpenses}`);
 
-    const closeInfo = () => {
-        setshowEditExpense(false);
-    };
-    const openInfo = async () => {
-        setshowEditExpense(true);
-    };
-    const handleUpdateExpenses = () => {
-        // Call the callback function to signal that expenses need to be updated
-        onUpdateExpenses();
-    };
+/**
+ * Component for the inspecting expense info
+ * @param {object} props. Props object. The props are isVisible (bool), onClose (callback), 
+ * and expense (object)
+ * @returns {object} The component object for the Expense Info popup
+ * @memberof Components
+ */
+const ExpenseInfoComponent = ({ isVisable, onClose, expense = null }) => {
+    const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
 
     useEffect(() => {
         (async () => {
@@ -33,7 +26,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
         })();
     }, []);
     return (
-        <Modal animationType="slide" transparent visible={isVisible} onRequestClose={() => onClose}>
+        <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
             {expense ? (
                 <View style={styles.container}>
                     <View style={styles.content}>
@@ -41,24 +34,13 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                                 <Entypo
                                     name="chevron-thin-left"
-                                    size={45}
+                                    size={50}
                                     color={Colors.primaryColor}
                                 />
                             </TouchableOpacity>
                             <Text style={styles.title}>Expense Info</Text>
                         </View>
                         <View style={styles.allInfoContainer}>
-                            {onHome ? (
-                                <View style={styles.buttonContainer}>
-                                    <TouchableOpacity
-                                        style={styles.editButton}
-                                        onPress={async () => {
-                                            openInfo();
-                                        }}>
-                                        <Text style={styles.buttonText}>Edit</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            ) : null}
                             {expense.picture !== null && hasMediaLibraryPermission ? (
                                 <TouchableOpacity style={styles.circleContainer}>
                                     <Image
@@ -68,7 +50,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                     />
                                 </TouchableOpacity>
                             ) : (
-                                <TouchableOpacity style={styles.circleContainer} disabled={true}>
+                                <TouchableOpacity style={styles.circleContainer}>
                                     <AntDesign name="upload" size={40} color="white" />
                                 </TouchableOpacity>
                             )}
@@ -102,14 +84,6 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                     <Text>Expense is null</Text>
                 </View>
             )}
-            <EditExpenseComponent
-                isVisible={showEditExpense}
-                onClose={() => {
-                    closeInfo();
-                    handleUpdateExpenses();
-                }}
-                expense={expense}
-            />
         </Modal>
     );
 };
@@ -194,21 +168,5 @@ const styles = StyleSheet.create({
     },
     valueText: {
         fontSize: 20,
-    },
-    buttonContainer: {
-        justifyContent: 'right',
-        alignItems: 'flex-end',
-    },
-    editButton: {
-        //backgroundColor: Colors.secondaryColor,
-        borderRadius: 20,
-        height: 40,
-        width: 80,
-        paddingTop: 10,
-    },
-    buttonText: {
-        textAlign: 'center',
-        fontSize: 24,
-        color: Colors.secondaryColor,
     },
 });
