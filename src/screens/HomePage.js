@@ -1,6 +1,6 @@
 /**
  * @file Code for the user's Home screen.
- * User's home page. Shows today's expenses with a datepicker component 
+ * User's home page. Shows today's expenses with a datepicker component
  * to look through different days
  */
 
