@@ -1,3 +1,8 @@
+/**
+ * @file Code for the user's Category screen.
+ * Allows the user to add and edit expense categories
+ */
+
 import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -10,7 +15,6 @@ import {
     Dimensions,
     Modal,
     TextInput,
-    Platform,
     KeyboardAvoidingView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,6 +24,7 @@ import CategoryEditComponent from '../components/CategoryEditComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';
+
 export default function CategoryPage({ navigation }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -196,7 +201,7 @@ export default function CategoryPage({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        height: '91%',
+        height: '90%',
         width: '100%',
         alignSelf: 'center',
         alignItems: 'center',

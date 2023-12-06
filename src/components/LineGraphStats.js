@@ -3,6 +3,13 @@ import { View, Text, StyleSheet } from 'react-native';
 
 import { YEARLY } from '../constants/FrequencyConstants';
 
+/**
+ * Component for expense statistics relating to a Line Graph
+ * @param {object} props Props object. Props are totalSpending (float), averageExpense,
+ * and timeFrame (use FrequencyConstants)
+ * @returns {object} The component object for the Line Graph Statistics
+ * @memberof Components
+ */
 const LineGraphStats = ({ totalSpending, averageExpense, timeFrame }) => {
     return (
         <View style={styles.statsBox}>

@@ -1,3 +1,8 @@
+/**
+ * @file Code for the user's Add Expense screen.
+ * Allows the user to input expense information and have it be added as an expense
+ */
+
 import { AntDesign, Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
@@ -33,9 +38,9 @@ import {
     getExpensesFromDay,
     getCategoryTable,
 } from '../util/FileSystemUtils';
-import { pickImage, captureImage } from '../util/ImagePickerUtil';
+import { pickImage, captureImage } from '../util/ImagePickerUtils';
 
-export default function App({ navigation }) {
+export default function AddExpense({ navigation }) {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
     const [allCategories, setAllCategories] = useState([]);
@@ -98,6 +103,18 @@ export default function App({ navigation }) {
             return;
         }
         const currentDate = new Date();
+
+        const dateParts = targetDate.split('-');
+        const selectedDayOfMonth = parseInt(dateParts[2], 10);
+        const selectedYear = parseInt(dateParts[0], 10);
+        const selectedMonth = parseInt(dateParts[1] - 1, 10);
+
+        currentDate.setDate(selectedDayOfMonth);
+        currentDate.setFullYear(selectedYear);
+        currentDate.setMonth(selectedMonth);
+
+        console.log(currentDate);
+
         const timestamp = currentDate.getTime();
         // console.log(categoryId);
         let imageURI = null;
@@ -206,8 +223,8 @@ export default function App({ navigation }) {
                                         onChange={(item) => {
                                             setCategory(item.value);
                                         }}
-                                        dropdownLabel="Category"
-                                        placeholderLabel="Category"
+                                        dropdownLabel="Expense Frequency"
+                                        placeholderLabel="Expense Frequency"
                                     />
                                     {/* <DropdownSelector
                                     style={styles.input}

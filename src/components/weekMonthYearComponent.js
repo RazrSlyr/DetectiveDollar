@@ -5,6 +5,12 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-na
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 
+/**
+ * Component for displaying a the W M Y buttons for changing the graph timeframe
+ * @param {object} props Props object. Only prop is onSelect (callback)
+ * @returns {object} The component object for graph frequency buttons
+ * @memberof Components
+ */
 const WeekMonthYearButtons = ({ onSelect }) => {
     const [selection, setSelection] = useState(0);
 

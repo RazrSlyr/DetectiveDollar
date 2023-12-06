@@ -8,6 +8,15 @@ import EditExpenseComponent from './EditExpenseComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
+
+/**
+ * Component for the inspecting expense info
+ * @param {object} props. Props object. The props are isVisible (bool), onClose (callback),
+ * onHome (bool) expense (object) and onUpdateExpenses (callback)
+ * @returns {object} The component object for the Expense Info popup
+ * @memberof Components
+ */
+
 const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUpdateExpenses }) => {
     const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
     const [showEditExpense, setshowEditExpense] = useState(false);

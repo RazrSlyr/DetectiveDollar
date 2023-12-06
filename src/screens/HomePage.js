@@ -1,3 +1,9 @@
+/**
+ * @file Code for the user's Home screen.
+ * User's home page. Shows today's expenses with a datepicker component 
+ * to look through different days
+ */
+
 import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
@@ -8,7 +14,11 @@ import DatePickerComponent from '../components/DatePickerComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { getCurrentDateString } from '../util/DatetimeUtils';
+import {
+    getCurrentDateString,
+    getDateFromUTCDatetimeString,
+    getDatetimeString,
+} from '../util/DatetimeUtils';
 import {
     deleteRowFromExpenseTable,
     deleteRowFromReacurringTable,
@@ -36,7 +46,6 @@ export default function HomePage({ navigation }) {
                 const expenses = await getExpensesFromDay(targetDate);
                 // Change expense categoryId to name
                 for (let i = 0; i < expenses.length; i++) {
-                    expenses[i]['categoryId'] = expenses[i]['category'];
                     expenses[i]['categoryColor'] = await getCategoryColorById(
                         expenses[i]['category']
                     );
@@ -63,7 +72,6 @@ export default function HomePage({ navigation }) {
             const expenses = await getExpensesFromDay(newDate);
             // Change expense categoryId to name
             for (let i = 0; i < expenses.length; i++) {
-                expenses[i]['categoryId'] = expenses[i]['category'];
                 expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
                 expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
             }
@@ -102,7 +110,6 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
-            expenses[i]['categoryId'] = expenses[i]['category'];
             expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
             expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
@@ -118,7 +125,6 @@ export default function HomePage({ navigation }) {
         const expenses = await getExpensesFromDay(targetDate);
         // Change expense categoryId to name
         for (let i = 0; i < expenses.length; i++) {
-            expenses[i]['categoryId'] = expenses[i]['category'];
             expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
             expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
         }
@@ -187,6 +193,8 @@ export default function HomePage({ navigation }) {
                     <View style={styles.scrollableContent}>
                         {/* Place your scrollable content here */}
                         {todayExpenses.map((expense) => {
+                            const date = getDateFromUTCDatetimeString(expense['timestamp']);
+                            const datetime = getDatetimeString(date);
                             return (
                                 <TouchableOpacity
                                     key={expense.id}
@@ -203,6 +211,8 @@ export default function HomePage({ navigation }) {
                                                 }}
                                             />
                                             <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
                                                 style={{
                                                     ...styles.categoryName,
                                                     color: expense['categoryColor'],
@@ -211,22 +221,30 @@ export default function HomePage({ navigation }) {
                                             </Text>
                                         </View>
                                         <View style={styles.expenseNameBox}>
-                                            <Text style={styles.expenseName}>
+                                            <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                                style={styles.expenseName}>
                                                 {expense['name']}
                                             </Text>
                                             <Text style={styles.expenseData}>
-                                                {expense['timestamp'].replace(/ /g, '\n')}
+                                                {datetime.replace(' ', '\n')}
                                             </Text>
-                                            {expense['reacurring_id'] && (
-                                                <FontAwesome
-                                                    name="repeat"
-                                                    size={24}
-                                                    color={Colors.secondaryColor}
-                                                />
-                                            )}
                                         </View>
-                                        <View style={{ width: '30%' }}>
-                                            <Text style={styles.expenseValue}>
+                                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                                            {expense['reacurring_id'] && (
+                                                <View style={{ marginRight: 30 }}>
+                                                    <FontAwesome
+                                                        name="repeat"
+                                                        size={24}
+                                                        color={Colors.secondaryColor}
+                                                    />
+                                                </View>
+                                            )}
+                                            <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                                style={styles.expenseValue}>
                                                 {'$' + parseFloat(expense['amount']).toFixed(2)}
                                             </Text>
                                         </View>
@@ -256,15 +274,9 @@ export default function HomePage({ navigation }) {
                 </ScrollView>
             </View>
             <ExpenseInfoComponent
-                isVisible={showExpenseInfo}
-                onClose={() => {
-                    closeInfo();
-                }}
-                onHome
+                isVisable={showExpenseInfo}
+                onClose={closeInfo}
                 expense={selectedExpense}
-                onUpdateExpenses={() => {
-                    handleExpenseEdit();
-                }}
             />
         </SafeAreaView>
     );
@@ -378,7 +390,7 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
     },
     expenseNameBox: {
-        width: '40%',
+        width: '30%',
         height: 55,
         margin: 5,
     },
@@ -393,6 +405,8 @@ const styles = StyleSheet.create({
     expenseValue: {
         fontSize: 20,
         color: 'red',
+        overflow: 'hidden',
+        width: '60%',
     },
     colorAndCategoryBox: {
         width: 'auto',
@@ -408,6 +422,11 @@ const styles = StyleSheet.create({
     },
     categoryName: {
         fontSize: 10,
+        overflow: 'hidden',
+        width: 60,
+        justifyContent: 'center',
+        alignContent: 'center',
+        textAlign: 'center',
     },
     calendarContainer: {
         flex: 0,
