@@ -8,6 +8,13 @@ import IOSDatePicker from './IOSDatePicker';
 import { secondaryColor } from '../constants/Colors';
 import { getDateStringFromDate } from '../util/DatetimeUtils';
 
+/**
+ * Component for the selecting a date
+ * @param {object} props Props object. The only prop is onDateChange (callback)
+ * @returns {object} The component object for the Date Picker
+ * @memberof Components
+ */
+
 const DatePickerComponent = ({ onDateChange }) => {
     const isIOS = Platform.OS === 'ios';
     const [selectedDate, setSelectedDate] = useState(new Date());

@@ -1,3 +1,9 @@
+/**
+ * @file Code for the user's Home screen.
+ * User's home page. Shows today's expenses with a datepicker component 
+ * to look through different days
+ */
+
 import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';

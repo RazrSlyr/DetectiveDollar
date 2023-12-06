@@ -9,6 +9,12 @@ import * as Colors from '../../constants/Colors';
 import { HomePage, AddExpense, GraphPage, HistoryPage, CategoryPage } from '../../screens';
 
 const Tab = createBottomTabNavigator();
+
+/**
+ * Component for the navigation tabs at the bottom
+ * @returns {object} The component object for navigation tabs
+ * @memberof Components
+ */
 const Tabs = () => {
     return (
         <Tab.Navigator
