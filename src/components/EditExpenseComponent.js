@@ -1,8 +1,7 @@
 import { Feather, AntDesign } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import * as MediaLibrary from 'expo-media-library';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     TouchableOpacity,
     StyleSheet,
@@ -11,36 +10,19 @@ import {
     View,
     Dimensions,
     Alert,
-    Button,
     TouchableWithoutFeedback,
     Keyboard,
     KeyboardAvoidingView,
     ScrollView,
-    Platform,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import DatePickerComponent from '../components/DatePickerComponent';
 import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
-import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import * as Sizes from '../constants/Sizes';
-import {
-    getDateFromUTCDatetimeString,
-    getDatetimeString,
-    getCurrentDateString,
-    getDateStringFromDate,
-} from '../util/DatetimeUtils';
-import {
-    updateExpense,
-    addRowToCategoryTable,
-    addRowToExpenseTable,
-    saveImage,
-    getExpensesFromDay,
-    getCategoryTable,
-} from '../util/FileSystemUtils';
+import { updateExpense, saveImage, getCategoryTable } from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtil';
 
 const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
@@ -87,7 +69,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
         <Modal
             isVisible={isVisible}
             animationInTiming={500}
-            animationOutTiming={500}
+            animationOutTiming={600}
             backdropTransitionInTiming={300}
             backdropTransitionOutTiming={300}
             onBackdropPress={onClose}>

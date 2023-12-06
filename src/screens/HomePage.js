@@ -1,11 +1,10 @@
-import { FontAwesome, Entypo } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DatePickerComponent from '../components/DatePickerComponent';
-import EditExpenseComponent from '../components/EditExpenseComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
@@ -146,7 +145,6 @@ export default function HomePage({ navigation }) {
 
     const handleExpenseEdit = async () => {
         // Trigger a refresh of expenses when the expense is edited
-        //setRefreshExpenses(true);
         try {
             // Apply recurring expenses
             await applyRecurringExpenses();

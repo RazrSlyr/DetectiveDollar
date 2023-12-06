@@ -2,8 +2,7 @@ import { Entypo, AntDesign } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
 import React, { useState, useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View, Modal, Dimensions, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { TouchableOpacity, StyleSheet, Text, View, Modal, Dimensions } from 'react-native';
 
 import EditExpenseComponent from './EditExpenseComponent';
 import * as Colors from '../constants/Colors';
@@ -12,8 +11,6 @@ import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/Datetim
 const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUpdateExpenses }) => {
     const [hasMediaLibraryPermission, setMediaLibraryPermission] = useState();
     const [showEditExpense, setshowEditExpense] = useState(false);
-    //console.log(expense);
-    //console.log(`onUpdateExpenses: ${onUpdateExpenses}`);
 
     const closeInfo = () => {
         setshowEditExpense(false);
@@ -68,7 +65,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                     />
                                 </TouchableOpacity>
                             ) : (
-                                <TouchableOpacity style={styles.circleContainer}>
+                                <TouchableOpacity style={styles.circleContainer} disabled>
                                     <AntDesign name="upload" size={40} color="white" />
                                 </TouchableOpacity>
                             )}
@@ -200,7 +197,6 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     editButton: {
-        //backgroundColor: Colors.secondaryColor,
         borderRadius: 20,
         height: 40,
         width: 80,

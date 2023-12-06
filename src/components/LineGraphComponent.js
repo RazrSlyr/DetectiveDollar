@@ -6,12 +6,7 @@ import { LineChart } from 'react-native-gifted-charts';
 import LineGraphStats from './LineGraphStats';
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
-import {
-    getCurrentDateString,
-    getWeekStartEndDate,
-    getMonthStartEndDate,
-    getYearStartEndDate,
-} from '../util/DatetimeUtils';
+import { getCurrentDateString } from '../util/DatetimeUtils';
 import { getExpensesFromDayframe } from '../util/FileSystemUtils';
 
 const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
