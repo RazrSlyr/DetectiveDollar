@@ -11,7 +11,7 @@ import { getExpensesFromDayframe } from '../util/FileSystemUtils';
 
 /**
  * Component for displaying a Line Graph of expense data
- * @param {object} props Props object. Props are a startDate and endDate (YYYY-MM-DD string) 
+ * @param {object} props Props object. Props are a startDate and endDate (YYYY-MM-DD string)
  * and timeFrame (use FrequencyConstants)
  * @returns {object} The component object for the Line Graph
  * @memberof Components
@@ -82,7 +82,9 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
             if (timeFrame === WEEKLY) {
                 return (totalSpending / 7).toFixed(2);
             } else if (timeFrame === MONTHLY) {
-                return (totalSpending / getDaysInMonth(endDateString)).toFixed(2);
+                const totalDaysList = getDaysInMonth(endDateString);
+                const totalDays = totalDaysList[totalDaysList.length - 1];
+                return (totalSpending / totalDays).toFixed(2);
             } else if (timeFrame === YEARLY) {
                 return (totalSpending / 12).toFixed(2);
             }

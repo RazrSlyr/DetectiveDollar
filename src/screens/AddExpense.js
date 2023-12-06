@@ -30,9 +30,8 @@ import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import * as Sizes from '../constants/Sizes';
-import { getCurrentDateString, getDateStringFromDate } from '../util/DatetimeUtils';
+import { getCurrentDateString } from '../util/DatetimeUtils';
 import {
-    addRowToCategoryTable,
     addRowToExpenseTable,
     saveImage,
     getExpensesFromDay,
@@ -214,32 +213,12 @@ export default function AddExpense({ navigation }) {
                                                 value: category['id'],
                                             };
                                         })}
-                                        // data={[
-                                        //     { label: "Don't Repeat", value: NO_REPETION },
-                                        //     { label: 'Daily', value: DAILY },
-                                        //     { label: 'Weekly', value: WEEKLY },
-                                        //     { label: 'Monthly', value: MONTHLY },
-                                        // ]}
                                         onChange={(item) => {
                                             setCategory(item.value);
                                         }}
-                                        dropdownLabel="Expense Frequency"
-                                        placeholderLabel="Expense Frequency"
+                                        dropdownLabel="Category"
+                                        placeholderLabel="Category"
                                     />
-                                    {/* <DropdownSelector
-                                    style={styles.input}
-                                    data={[
-                                        { label: 'Food' },
-                                        { label: 'Entertainment' },
-                                        { label: 'Rent/Utility' },
-                                        { label: 'Create a new category...', value: MONTHLY },
-                                    ]}
-                                    onChange={(item) => {
-                                        setCategory(item.label);
-                                    }}
-                                    // dropdownLabel="e.g., Food, Entertainment"
-                                    placeholderLabel="Select or add"
-                                /> */}
                                     <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
                                 </View>
@@ -267,7 +246,6 @@ export default function AddExpense({ navigation }) {
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Notes about spending"
-                                        /* Need to add logic to connect to backend */
                                         onChangeText={(value) => setMemo(value)}
                                     />
                                     <GreenLine />

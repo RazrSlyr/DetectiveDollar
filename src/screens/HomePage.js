@@ -274,9 +274,15 @@ export default function HomePage({ navigation }) {
                 </ScrollView>
             </View>
             <ExpenseInfoComponent
-                isVisable={showExpenseInfo}
-                onClose={closeInfo}
+                isVisible={showExpenseInfo}
+                onClose={() => {
+                    closeInfo();
+                }}
+                onHome
                 expense={selectedExpense}
+                onUpdateExpenses={() => {
+                    handleExpenseEdit();
+                }}
             />
         </SafeAreaView>
     );

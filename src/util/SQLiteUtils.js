@@ -229,6 +229,27 @@ const createCategoryQueryById = (id) => {
     return `SELECT * FROM categories WHERE id = ${id} LIMIT 1;`;
 };
 
+/**
+ * Creates a UPDATE command that updates the expense with the inputted id
+ * @param {intger} id Id of expense to be update
+ * @param {string} newName new name to be uodated into the expense
+ * @param {integer} newCategory new category id to be uodated into the expense
+ * @param {integer} newAmount new amount to be uodated into the expense
+ * @param {string} newImageURI new image uri to be uodated into the expense
+ * @param {string} newMemo new memo to be uodated into the expense
+ * @return {string} The SQLite UPDATE command that performs the update
+ */
+const createEditExpenseQuery = (id, new_name, new_category, new_amount, new_picture, new_memo) => {
+    return `UPDATE expenses 
+            SET 
+                name = '${new_name}',
+                category = ${new_category},
+                amount = ${new_amount},
+                picture = '${new_picture}',
+                memo = '${new_memo}'
+            WHERE id = ${id};`;
+};
+
 export {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
@@ -254,4 +275,5 @@ export {
     createExpenseByDayFrameQuery,
     createCategoryQueryByName,
     createCategoryQueryById,
+    createEditExpenseQuery,
 };

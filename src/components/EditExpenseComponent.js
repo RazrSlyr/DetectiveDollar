@@ -23,7 +23,15 @@ import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { updateExpense, saveImage, getCategoryTable } from '../util/FileSystemUtils';
-import { pickImage, captureImage } from '../util/ImagePickerUtil';
+import { pickImage, captureImage } from '../util/ImagePickerUtils';
+
+/**
+ * Component for the inspecting expense info
+ * @param {object} props. Props object. The props are isVisible (bool), onClose (callback),
+ * and expense (object)
+ * @returns {object} The component object for the Edit Expense pop up
+ * @memberof Components
+ */
 
 const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
     const [allCategories, setAllCategories] = useState([]);
@@ -46,7 +54,6 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
             imageURI !== null && imageURI !== '' ? imageURI : expense?.picture,
             memo !== null && memo !== '' ? memo : expense?.memo
         );
-        console.log(name, amount, category, previewURI, memo);
         Alert.alert('Success', 'Entry changed', [{ text: 'OK', onPress: onClose }]);
         setImageURI('');
     };
