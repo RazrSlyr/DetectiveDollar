@@ -1,6 +1,6 @@
 /**
  * @file Code for the user's History screen.
- * Allows the user to look and search through all of their expenses 
+ * Allows the user to look and search through all of their expenses
  */
 
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
@@ -30,6 +30,7 @@ import {
     applyRecurringExpenses,
     getExpenseTable,
     getCategoryColorById,
+    getExpenseUpdatesInSession,
 } from '../util/FileSystemUtils';
 
 export default function HistoryPage({ navigation }) {
@@ -47,9 +48,19 @@ export default function HistoryPage({ navigation }) {
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
 
+    let expenseChangesOnLastCheck = null;
+
     useEffect(() => {
         const getExpenses = async () => {
             try {
+                if (
+                    expenseChangesOnLastCheck === null ||
+                    expenseChangesOnLastCheck !== getExpenseUpdatesInSession()
+                ) {
+                    expenseChangesOnLastCheck = getExpenseUpdatesInSession();
+                } else {
+                    return;
+                }
                 setLoading(true);
                 // Apply recurring expenses
                 await applyRecurringExpenses();

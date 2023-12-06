@@ -49,6 +49,12 @@ const databaseName = 'DetectiveDollar.db';
 
 let appliedReacurring = false;
 
+let expenseUpdatesInSession = 0;
+
+export function getExpenseUpdatesInSession() {
+    return expenseUpdatesInSession;
+}
+
 /**
  * Gets a reference to the SQLite database, creating it if it doesn't exist
  * @returns A reference to the SQLite database
@@ -162,6 +168,7 @@ export async function addRowToExpenseTable(
             )
         );
     });
+    expenseUpdatesInSession += 1;
 }
 
 /**
@@ -235,6 +242,7 @@ export async function updateRowFromCategoryTable(row_id, name = null, color = nu
     } catch (error) {
         console.error('fail', error);
     }
+    expenseUpdatesInSession += 1;
 }
 
 /**
@@ -636,8 +644,8 @@ export async function createExampleData() {
 
     // Start Looping and Generating Insert Commands
     const insertCommands = [];
-    const MINIMUM_EXPENSES = 3;
-    const MAXIMUM_EXPENSES = 10;
+    const MINIMUM_EXPENSES = 1;
+    const MAXIMUM_EXPENSES = 5;
     const TEN_MINUTES_IN_MILLISECONDS = 10 * 60 * 1000;
     while (timestampOfExpense <= currentTimestamp) {
         const numberOfExpenses =
@@ -650,7 +658,7 @@ export async function createExampleData() {
             const category =
                 exampleCategories[Math.floor(Math.random() * exampleCategories.length)];
             const name = generateRandomName();
-            const amount = Math.floor(Math.random() * 1001);
+            const amount = Math.floor(Math.random() * 101);
             insertCommands.push(
                 createExpenseInsert(
                     name,
