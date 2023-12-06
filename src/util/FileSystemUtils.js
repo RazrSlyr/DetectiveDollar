@@ -1,3 +1,11 @@
+/**
+ * @module FileSystemUtils
+ */
+
+/**
+ * @file Used for storing and reading from the file system. Primarily the SQLite Database and Image directory
+ */
+
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
@@ -31,6 +39,7 @@ import {
     createReacurringDeleteById,
     createCategoryQueryByName,
     createCategoryQueryById,
+    createEditExpenseQuery,
 } from './SQLiteUtils';
 import { DAY_LENGTH, NO_REPETION } from '../constants/FrequencyConstants';
 import { ALBUMNNAME } from '../constants/ImageConstants';
@@ -40,7 +49,16 @@ const databaseName = 'DetectiveDollar.db';
 
 let appliedReacurring = false;
 
-// Gets the database if it exists. If not, creates it
+let expenseUpdatesInSession = 0;
+
+export function getExpenseUpdatesInSession() {
+    return expenseUpdatesInSession;
+}
+
+/**
+ * Gets a reference to the SQLite database, creating it if it doesn't exist
+ * @returns A reference to the SQLite database
+ */
 async function getDatabase() {
     let firstTime = false;
     const dirInfo = await FileSystem.getInfoAsync(dataDir);
@@ -63,6 +81,10 @@ async function getDatabase() {
     return db;
 }
 
+/**
+ * Gets all entries in the category table
+ * @returns {list} List of all category objects
+ */
 export async function getCategoryTable() {
     const db = await getDatabase();
     let rows = [];
@@ -72,6 +94,10 @@ export async function getCategoryTable() {
     return rows;
 }
 
+/**
+ * Gets all entries in the expense table
+ * @returns {list} List of all expense objects
+ */
 export async function getExpenseTable() {
     const db = await getDatabase();
     let rows = [];
@@ -81,6 +107,18 @@ export async function getExpenseTable() {
     return rows;
 }
 
+/**
+ * Adds an expense to the database
+ * @param {string} name Name of the expense
+ * @param {integer} category ID of the category
+ * @param {float} amount Cost amount of the expense
+ * @param {integer} timestamp Timestamp of the expense as a number of milliseconds
+ * @param {string} day The local time day of the expense in YYYY-MM-DD format
+ * @param {string} subcategory (optional) The subcategory of the expense
+ * @param {string} picture (optional) The image uri for the picture associated with the expense
+ * @param {string} memo (optional) The memo for the expense
+ * @param {integer} expenseFrequency (optional) The expense frequency. Use FrequencyConstants.js
+ */
 export async function addRowToExpenseTable(
     name,
     category,
@@ -130,8 +168,16 @@ export async function addRowToExpenseTable(
             )
         );
     });
+    expenseUpdatesInSession += 1;
 }
 
+/**
+ * Adds a category to the database
+ * @param {string} categoryName Name of the category
+ * @param {string} color (optional) Color either as a hexcode or a builtin CSS Color
+ * @param {string} icon (optional) Icon Name
+ * @returns {integer} The ID of the category that is added
+ */
 export async function addRowToCategoryTable(categoryName, color = 'black', icon = null) {
     const db = await getDatabase();
     let categoryId = null;
@@ -144,6 +190,11 @@ export async function addRowToCategoryTable(categoryName, color = 'black', icon 
     return categoryId;
 }
 
+/**
+ * Gets an expense from the database
+ * @param {integer} row The id of the row in the expense table
+ * @returns {object} The expense object with that id
+ */
 export async function getRowFromExpenseTable(row) {
     const db = await getDatabase();
     let rowData = null;
@@ -153,13 +204,25 @@ export async function getRowFromExpenseTable(row) {
     return rowData.rows[0];
 }
 
+/**
+ * Deletes an expense from the database
+ * @param {integer} row The id of the row in the expense table to delete
+ */
 export async function deleteRowFromExpenseTable(row) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
         await tx.executeSqlAsync(deleteExpense(row));
     });
 }
-export async function updateRowFromCategoryTable(row_id, name, color) {
+
+/**
+ * Update a category to have a new name and/or color
+ * If both name and color are not provided, this does nothing
+ * @param {integer} row_id The ID of the row in the category table for this category
+ * @param {string} name (optional) The new category name
+ * @param {string} color (optional) The new category color as a hexcode or builtin CSS color
+ */
+export async function updateRowFromCategoryTable(row_id, name = null, color = null) {
     if (row_id === undefined || row_id === null) {
         return;
     }
@@ -179,7 +242,13 @@ export async function updateRowFromCategoryTable(row_id, name, color) {
     } catch (error) {
         console.error('fail', error);
     }
+    expenseUpdatesInSession += 1;
 }
+
+/**
+ * Removes a category
+ * @param {integer} row_id The id of the row in the table to delete
+ */
 export async function deleteRowFromCategoryTable(row_id) {
     if (row_id === undefined || row_id === null) {
         return;
@@ -204,6 +273,10 @@ export async function deleteRowFromCategoryTable(row_id) {
     }
 }
 
+/**
+ * Stops an expense from recurring
+ * @param {integer} row The id of the row in the recurring expense table
+ */
 export async function deleteRowFromReacurringTable(row) {
     const db = await getDatabase();
     await db.transactionAsync(async (tx) => {
@@ -211,6 +284,11 @@ export async function deleteRowFromReacurringTable(row) {
     });
 }
 
+/**
+ * Gets all expenses from a specific day
+ * @param {string} day Local time day in YYYY-MM-DD format
+ * @returns {list} List of all expense objects from this day
+ */
 export async function getExpensesFromDay(day) {
     const db = await getDatabase();
     let rows = [];
@@ -220,6 +298,12 @@ export async function getExpensesFromDay(day) {
     return rows;
 }
 
+/**
+ * Gets all expenses within two timestamps
+ * @param {string} startDateStr Local time start date in either YYYY-MM-DD format or YYYY-MM-DD hh:mm:ss format
+ * @param {string} endDateStr Local time end date in either YYYY-MM-DD format or YYYY-MM-DD hh:mm:ss format
+ * @returns {list} List of expense objects that are within that timeframe
+ */
 export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
     //params: ISO format strings: YYYY-MM-DD or YYYY-MM-DD hh:mm:ss
     const db = await getDatabase();
@@ -242,15 +326,15 @@ export async function getExpensesFromTimeframe(startDateStr, endDateStr) {
     return rows;
 }
 
+/**
+ * Gets all expenses within two days
+ * @param {string} startDay Local time start day in either YYYY-MM-DD format or YYYY-MM-DD hh:mm:ss format
+ * @param {string} endDay Local time end day in either YYYY-MM-DD format or YYYY-MM-DD hh:mm:ss format
+ * @returns {list} List of expense objects that are within that timeframe
+ */
 export async function getExpensesFromDayframe(startDay, endDay) {
     //params: ISO format strings: YYYY-MM-DD or YYYY-MM-DD hh:mm:ss
     const db = await getDatabase();
-    //const startTimestamp = Date.parse(startDay);
-    //const endTimestamp = Date.parse(endDay);
-    //if (isNaN(startTimestamp) || isNaN(endTimestamp)) {
-    //    console.warn(`malformed ISO strings to get timestamp ${startDay} ${endDay}`);
-    //    return [];
-    //}
     let rows = [];
     await db.transactionAsync(async (tx) => {
         try {
@@ -262,6 +346,11 @@ export async function getExpensesFromDayframe(startDay, endDay) {
     return rows;
 }
 
+/**
+ * Gets a category's name by its id
+ * @param {integer} categoryId The id of the category
+ * @returns {string} The name of that category
+ */
 export async function getCategoryNameFromId(categoryId) {
     let categoryName = null;
     const db = await getDatabase();
@@ -272,6 +361,12 @@ export async function getCategoryNameFromId(categoryId) {
     });
     return categoryName;
 }
+
+/**
+ * Gets the category object from the id
+ * @param {integer} categoryId The id of the category
+ * @returns {object} The category object with that id
+ */
 export async function getCategoryFromId(categoryId) {
     let category = null;
     const db = await getDatabase();
@@ -280,6 +375,13 @@ export async function getCategoryFromId(categoryId) {
     });
     return category;
 }
+
+/**
+ * Gets all expenses within a specific start and end date, separated by category
+ * @param {string} startDate Local time start day in either YYYY-MM-DD format or YYYY-MM-DD hh:mm:ss format
+ * @param {*} endDate Local time end day in either YYYY-MM-DD format or YYYY-MM-DD hh:mm:ss format
+ * @returns {object} Dictionary/Map object with the keys being the categories and the value being a list of expenses
+ */
 export async function getExpensesbyCategory(startDate, endDate) {
     const categoryDict = {};
     const rows = await getExpensesFromDayframe(startDate, endDate);
@@ -298,6 +400,28 @@ export async function getExpensesbyCategory(startDate, endDate) {
     return categoryDict;
 }
 
+/**
+ * Updates the expense with the input id with new data
+ * @param {intger} id Id of expense to be update
+ * @param {string} newName new name to be uodated into the expense
+ * @param {integer} newCategory new category id to be uodated into the expense
+ * @param {integer} newAmount new amount to be uodated into the expense
+ * @param {string} newImageURI new image uri to be uodated into the expense
+ * @param {string} newMemo new memo to be uodated into the expense
+ */
+export async function updateExpense(id, newName, newCategory, newAmount, newImageURI, newMemo) {
+    //console.log(id, newName, newCategory, newAmount, newDay, newImageURI, newMemo);
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(
+            createEditExpenseQuery(id, newName, newCategory, newAmount, newImageURI, newMemo)
+        );
+    });
+}
+
+/**
+ * Readds any expenses that need to recurr
+ */
 export async function applyRecurringExpenses() {
     if (appliedReacurring) {
         return;
@@ -367,6 +491,10 @@ export async function applyRecurringExpenses() {
     appliedReacurring = true;
 }
 
+/**
+ * Gets the path of the image directory, creating it if it doesn't exist
+ * @returns The image directory path
+ */
 async function getImageDirectory() {
     const specificDirectory = ALBUMNNAME;
     const directory = `${FileSystem.documentDirectory}${specificDirectory}/`;
@@ -379,6 +507,11 @@ async function getImageDirectory() {
     }
     return directory;
 }
+
+/**
+ * Saves an image to the image directory
+ * @param {string} imageURI The uri of the image to save
+ */
 export async function saveImage(imageURI) {
     if (!imageURI) {
         return null;
@@ -400,6 +533,10 @@ export async function saveImage(imageURI) {
     }
 }
 
+/**
+ * Deletes an image from the image directory
+ * @param {string} imageURI The uri of the image to delete
+ */
 export async function deleteImage(imageURI) {
     if (!imageURI) {
         return;
@@ -412,6 +549,11 @@ export async function deleteImage(imageURI) {
     }
 }
 
+/**
+ * Gets a category's color from its name
+ * @param {string} categoryName Name of the category
+ * @returns {string} The category's color
+ */
 export async function getCategoryColorByName(categoryName) {
     const db = await getDatabase();
     let color;
@@ -423,6 +565,11 @@ export async function getCategoryColorByName(categoryName) {
     return color;
 }
 
+/**
+ * Gets a category's color from its id
+ * @param {integer} categoryId The category's id
+ * @returns {string} The category's color
+ */
 export async function getCategoryColorById(categoryId) {
     const db = await getDatabase();
     let color;
@@ -432,6 +579,10 @@ export async function getCategoryColorById(categoryId) {
     return color;
 }
 
+/**
+ * Creates a years worth of example data using randomly generated expenses.
+ * Used for testing purposes
+ */
 export async function createExampleData() {
     const exampleCategories = [
         {
@@ -493,8 +644,8 @@ export async function createExampleData() {
 
     // Start Looping and Generating Insert Commands
     const insertCommands = [];
-    const MINIMUM_EXPENSES = 3;
-    const MAXIMUM_EXPENSES = 10;
+    const MINIMUM_EXPENSES = 1;
+    const MAXIMUM_EXPENSES = 5;
     const TEN_MINUTES_IN_MILLISECONDS = 10 * 60 * 1000;
     while (timestampOfExpense <= currentTimestamp) {
         const numberOfExpenses =
@@ -507,7 +658,7 @@ export async function createExampleData() {
             const category =
                 exampleCategories[Math.floor(Math.random() * exampleCategories.length)];
             const name = generateRandomName();
-            const amount = Math.floor(Math.random() * 1001);
+            const amount = Math.floor(Math.random() * 101);
             insertCommands.push(
                 createExpenseInsert(
                     name,

@@ -14,6 +14,13 @@ import ColorPicker from 'react-native-wheel-color-picker';
 import * as Colors from '../constants/Colors';
 import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
 
+/**
+ * Component for the Category editing pop up
+ * @param {object} props Props object. The props are isVisible (bool),
+ * onClose (callback), onUpdate (callback), and category (object)
+ * @returns {object} The component object for the Category Edit Pop Up
+ * @memberof Components
+ */
 const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }) => {
     const [enableSave, setEnableSave] = useState(false);
     const [categoryName, setCategoryName] = useState(category?.name);
