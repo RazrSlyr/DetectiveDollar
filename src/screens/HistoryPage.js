@@ -187,13 +187,9 @@ export default function HistoryPage({ navigation }) {
                 )}
             </View>
             <ExpenseInfoComponent
-                isVisible={showExpenseInfo}
-                onClose={() => {
-                    closeInfo();
-                }}
+                isVisable={showExpenseInfo}
+                onClose={closeInfo}
                 expense={selectedExpense}
-                onHome={false}
-                onUpdateExpenses={() => {}}
             />
         </SafeAreaView>
     );
@@ -208,7 +204,7 @@ const styles = StyleSheet.create({
     expensesContainer: {
         backgroundColor: Colors.primaryColor,
         width: '100%',
-        height: '80%',
+        height: '70%',
         padding: 10,
         margin: 10,
         borderRadius: 32,
