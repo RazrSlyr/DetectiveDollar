@@ -68,7 +68,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                     />
                                 </TouchableOpacity>
                             ) : (
-                                <TouchableOpacity style={styles.circleContainer}>
+                                <TouchableOpacity style={styles.circleContainer} disabled={true}>
                                     <AntDesign name="upload" size={40} color="white" />
                                 </TouchableOpacity>
                             )}
