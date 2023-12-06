@@ -295,6 +295,18 @@ const getDateFromUTCDatetimeString = (datetimeString) => {
     return date;
 };
 
+const getDateFromDatetimeString = (datetimeString) => {
+    const datetimeParts = TIMESTAMP_REGEX.exec(datetimeString);
+    const date = new Date();
+    date.setFullYear(parseInt(datetimeParts[1], 10));
+    date.setMonth(parseInt(datetimeParts[2], 10) - 1);
+    date.setDate(parseInt(datetimeParts[3], 10));
+    date.setHours(parseInt(datetimeParts[4], 10));
+    date.setMinutes(parseInt(datetimeParts[5], 10));
+    date.setSeconds(parseInt(datetimeParts[6], 10));
+    return date;
+};
+
 export {
     getCurrentDateString,
     getCurrentUTCTimestamp,
@@ -312,4 +324,5 @@ export {
     getDateFromUTCDatetimeString,
     getDateStringFromDate,
     getDatetimeString,
+    getDateFromDatetimeString,
 };
