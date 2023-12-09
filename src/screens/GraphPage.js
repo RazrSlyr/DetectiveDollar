@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 
 import LineGraphComponent from '../components/LineGraphComponent';
-import NewPieChartComponent from '../components/NewPieChartComponent';
+import PieChartComponent from '../components/PieChartComponent';
 import WeekMonthYearButtons from '../components/WeekMonthYearComponent';
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
@@ -150,7 +150,7 @@ const GraphPage = ({ navigation }) => {
                         }}>
                         <View style={styles.pieChartSlide}>
                             <View style={styles.chartContainer}>
-                                <NewPieChartComponent
+                                <PieChartComponent
                                     startDate={selectedTimeframeDates[0]}
                                     endDate={selectedTimeframeDates[1]}
                                     timeFrame={selectedTimeframe}

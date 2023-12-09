@@ -14,7 +14,7 @@ import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSyste
  * @returns {object} The component object for the Pie Graph
  * @memberof Components
  */
-const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
+const PieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [pieChartData, setPieChartData] = useState([]);
 
     // Call the function to fetch and update data
@@ -110,4 +110,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-export default NewPieChartComponent;
+export default PieChartComponent;
