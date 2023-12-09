@@ -383,15 +383,16 @@ export async function getCategoryFromId(categoryId) {
  * @returns {object} Dictionary/Map object with the keys being the categories and the value being a list of expenses
  */
 export async function getExpensesbyCategory(startDate, endDate) {
+    console.log(startDate, endDate);
     const categoryDict = {};
     const db = await getDatabase();
-    let rows = [];
+    let expenses = [];
     await db.transactionAsync(async (tx) => {
         try {
-            rows = (
+            expenses = (
                 await tx.executeSqlAsync(
                     `
-                    SELECT categories.name AS category_name, * 
+                    SELECT expenses.name AS expense_name, * 
                     FROM expenses 
                     INNER JOIN categories ON categories.id = expenses.category
                     WHERE timestamp BETWEEN "${startDate}" AND "${endDate}" 
@@ -403,7 +404,9 @@ export async function getExpensesbyCategory(startDate, endDate) {
             console.warn(`getExpensesFromTimeframe error ${error}`);
         }
     });
-    for (const row of rows) {
+    console.log('expenses: ', expenses);
+    for (const row of expenses) {
+        //console.log('expense', row);
         const categoryId = row['category'];
         const categoryName = row['name'];
 
