@@ -5,16 +5,15 @@
  */
 
 import { AntDesign } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
 import * as React from 'react';
-import { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 
 import LineGraphComponent from '../components/LineGraphComponent';
 import NewPieChartComponent from '../components/NewPieChartComponent';
-import WeekMonthYearButtons from '../components/weekMonthYearComponent';
+import WeekMonthYearButtons from '../components/WeekMonthYearComponent';
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
@@ -99,18 +98,19 @@ const GraphPage = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar style="auto" />
             <View style={styles.titleContainer}>
                 <Text style={styles.titleText}>Statistics</Text>
             </View>
-            <View style={{ backgroundColor: Colors.primaryColor }}>
+            <View style={{ backgroundColor: Colors.PRIMARYCOLOR }}>
                 <View style={styles.dateContainer}>
                     <View style={styles.dateRange}>
                         <TouchableOpacity onPress={handleDecrementTimeFrame}>
                             <View style={styles.arrow}>
                                 <AntDesign
                                     name="leftcircle"
-                                    color="#37c871"
-                                    backgroundColor="#f2f2f2"
+                                    color={Colors.SECONDARYCOLOR}
+                                    backgroundColor={Colors.PRIMARYCOLOR}
                                     size={30}
                                 />
                             </View>
@@ -126,8 +126,8 @@ const GraphPage = ({ navigation }) => {
                             <View style={styles.arrow}>
                                 <AntDesign
                                     name="rightcircle"
-                                    color="#37c871"
-                                    backgroundColor="#f2f2f2"
+                                    color={Colors.SECONDARYCOLOR}
+                                    backgroundColor={Colors.PRIMARYCOLOR}
                                     size={30}
                                 />
                             </View>
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
         //paddingTop: StatusBar.currentHeight,
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     scrollableContent: {
         flex: 1,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
-        color: Colors.primaryColor,
+        color: Colors.PRIMARYCOLOR,
         justifyContent: 'center',
     },
     dateContainer: {
@@ -221,8 +221,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         flex: 1,
         borderWidth: 1,
-        borderColor: Colors.secondaryColor,
-        backgroundColor: Colors.primaryColor,
+        borderColor: Colors.SECONDARYCOLOR,
+        backgroundColor: Colors.PRIMARYCOLOR,
         borderRadius: 15,
         marginTop: 20,
         marginHorizontal: 2,
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
         width: 10,
         height: 10,
         borderRadius: 5,
-        backgroundColor: Colors.secondaryColor, // Color for the active dot
+        backgroundColor: Colors.SECONDARYCOLOR, // Color for the active dot
     },
     scrollContentContainer: {
         paddingBottom: 60,

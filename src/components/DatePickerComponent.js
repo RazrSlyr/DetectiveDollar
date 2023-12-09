@@ -5,7 +5,7 @@ import { View, TouchableOpacity, Platform, Modal, StyleSheet, Text } from 'react
 
 import AndroidDatePicker from './AndroidDatePicker';
 import IOSDatePicker from './IOSDatePicker';
-import { secondaryColor } from '../constants/Colors';
+import { SECONDARYCOLOR } from '../constants/Colors';
 import { getDateStringFromDate } from '../util/DatetimeUtils';
 
 /**
@@ -40,7 +40,7 @@ const DatePickerComponent = ({ onDateChange }) => {
     return (
         <View>
             <TouchableOpacity onPress={showDatePicker} style={{ alignItems: 'center' }}>
-                <FontAwesome name="calendar" size={30} color={secondaryColor} />
+                <FontAwesome name="calendar" size={30} color={SECONDARYCOLOR} />
             </TouchableOpacity>
 
             <Modal

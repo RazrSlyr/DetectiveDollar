@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import ColorPicker from 'react-native-wheel-color-picker';
 
+import GreenLine from './GreenLine';
 import * as Colors from '../constants/Colors';
 import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
 
@@ -69,12 +70,12 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                     }}
                                 />
                             </View>
-                            <View style={styles.line} />
+                            <GreenLine style={{ alignSelf: 'center' }} />
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputHeading}>Color</Text>
                                 <View style={styles.colorPickerContainer}>
                                     <ColorPicker
-                                        color={!category?.color ? '#ffffff' : category.color}
+                                        color={!category?.color ? 'white' : category.color}
                                         onColorChangeComplete={(categoryColor) =>
                                             onColorChange(categoryColor)
                                         }
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     container: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: -20,
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
     },
     inputContainer: {
         height: 'auto',
@@ -167,14 +168,14 @@ const styles = StyleSheet.create({
     inputHeading: {
         fontSize: 15,
         fontFamily: 'Roboto-Bold',
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         width: '84%',
         marginTop: 15,
         marginBottom: 5,
     },
     input: {
         width: '84%',
-        color: Colors.textColor,
+        color: Colors.TEXTCOLOR,
         fontFamily: 'Roboto-Bold',
         fontSize: 20,
         textAlign: 'left',
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
     line: {
         height: 2,
         width: '85%',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         alignSelf: 'center',
     },
     closeButton: {
@@ -191,19 +192,19 @@ const styles = StyleSheet.create({
         right: 5,
     },
     button: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         fontFamily: 'Roboto-Bold',
         width: '35%',
         height: 'auto',
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         marginRight: 15,
     },
     buttonText: {
         fontFamily: 'Roboto-Bold',
-        color: '#ffffff',
+        color: 'white',
         textAlign: 'center',
         fontSize: 24,
     },

@@ -9,18 +9,8 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
  */
 const PieChartLegend = ({ chartData }) => {
     // create dot for legend
-    const renderDot = (color) => {
-        return (
-            <View
-                style={{
-                    height: 15,
-                    width: 15,
-                    borderRadius: 10,
-                    backgroundColor: color,
-                    marginRight: 5,
-                }}
-            />
-        );
+    const renderCategoryColor = (color) => {
+        return <View style={[styles.categoryColor, { backgroundColor: color }]} />;
     };
 
     return (
@@ -41,7 +31,7 @@ const PieChartLegend = ({ chartData }) => {
                                 </>
                             )}
                         </View>
-                        {renderDot(item.color)}
+                        {renderCategoryColor(item.color)}
                     </View>
                 ))}
             </View>
@@ -78,6 +68,12 @@ const styles = StyleSheet.create({
     },
     scrollContentContainer: {
         paddingBottom: 20,
+    },
+    categoryColor: {
+        height: 15,
+        width: 15,
+        borderRadius: 10,
+        marginRight: 5,
     },
 });
 

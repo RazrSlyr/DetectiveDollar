@@ -74,7 +74,7 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [totalSpending, setTotalSpending] = useState(0);
     const formattedTotal = `$${parseFloat(totalSpending).toFixed(2)}`;
 
-    const noExpenseData = [{ label: 'No Data Available', value: 1, color: Colors.secondaryColor }];
+    const noExpenseData = [{ label: 'No Data Available', value: 1, color: Colors.SECONDARYCOLOR }];
 
     // Check if there's data in the pieChartData object
     const hasData = Object.keys(pieChartData).length > 0;

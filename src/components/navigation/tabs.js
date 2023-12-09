@@ -45,7 +45,7 @@ const Tabs = () => {
                                 <AntDesign
                                     name="home"
                                     size={30}
-                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
+                                    color={focused ? Colors.SECONDARYCOLOR : Colors.SUBHEADINGCOLOR}
                                 />
                                 <Text style={styles.text}>Home</Text>
                             </View>
@@ -63,7 +63,7 @@ const Tabs = () => {
                                 <MaterialIcons
                                     name="category"
                                     size={30}
-                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
+                                    color={focused ? Colors.SECONDARYCOLOR : Colors.SUBHEADINGCOLOR}
                                 />
                                 <Text style={styles.text}>Categories</Text>
                             </View>
@@ -99,7 +99,7 @@ const Tabs = () => {
                                 <FontAwesome
                                     name="history"
                                     size={30}
-                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
+                                    color={focused ? Colors.SECONDARYCOLOR : Colors.SUBHEADINGCOLOR}
                                 />
                                 <Text style={styles.text}>History</Text>
                             </View>
@@ -117,7 +117,7 @@ const Tabs = () => {
                                 <FontAwesome
                                     name="bar-chart"
                                     size={30}
-                                    color={focused ? Colors.secondaryColor : Colors.subHeadingColor}
+                                    color={focused ? Colors.SECONDARYCOLOR : Colors.SUBHEADINGCOLOR}
                                 />
                                 <Text style={styles.text}>Statistics</Text>
                             </View>
@@ -140,14 +140,14 @@ const styles = StyleSheet.create({
     addBtn: {
         height: 55,
         width: 55,
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         borderRadius: 30,
         top: 5,
     },
     text: {
         fontSize: 11,
         margin: 2,
-        color: Colors.textColor,
+        color: Colors.TEXTCOLOR,
     },
 });
 

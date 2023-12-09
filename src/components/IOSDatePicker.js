@@ -3,7 +3,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Platform, Modal, StyleSheet, Text } from 'react-native';
 
-import { secondaryColor } from '../constants/Colors';
+import { SECONDARYCOLOR } from '../constants/Colors';
 import { getDateStringFromDate } from '../util/DatetimeUtils';
 
 const IOSDatePicker = ({ selectedDate, handleDateChange, hideDatePicker, styles }) => {
