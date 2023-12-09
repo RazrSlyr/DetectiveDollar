@@ -5,7 +5,7 @@ import { PieChart } from 'react-native-gifted-charts';
 
 import PieChartLegend from './PieChartLegend';
 import * as Colors from '../constants/Colors';
-import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSystemUtils';
+import { getExpensesbyCategory } from '../util/FileSystemUtils';
 
 /**
  * Component for displaying a pie graph of expenses separated by category
@@ -20,11 +20,10 @@ const PieChartComponent = ({ startDate, endDate, timeFrame }) => {
     // Call the function to fetch and update data
     const updatePieChartData = async () => {
         try {
-            const expensesByCategory = await getExpensesbyCategory(startDate, endDate);
+            const expensesByCategory = await getExpensesbyCategory(startDate, endDate); // {category_name: [{expense+category}]}
+            const categoryColors = {}; // {category_name: category_color}
             let totalSpending = 0;
-            const categoryColors = {};
-            //query category table instead
-            //and create dict {id: category}
+
             for (const key in expensesByCategory) {
                 if (expensesByCategory.hasOwnProperty(key)) {
                     const newColor = expensesByCategory[key][0]['color'];
