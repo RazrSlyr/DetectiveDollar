@@ -16,7 +16,7 @@ import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSyste
  */
 const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [pieChartData, setPieChartData] = useState([]);
-    const [, setCategoryColors] = useState({});
+    const [categoryColors, setCategoryColors] = useState({});
 
     // Call the function to fetch and update data
     const updatePieChartData = async () => {
