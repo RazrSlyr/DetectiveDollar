@@ -26,10 +26,7 @@ import {
     deleteRowFromReacurringTable,
     getRowFromExpenseTable,
     deleteImage,
-    getCategoryNameFromId,
     applyRecurringExpenses,
-    getExpenseTable,
-    getCategoryColorById,
     getExpenseUpdatesInSession,
     getExpensesTableCategoryJoin,
 } from '../util/FileSystemUtils';
@@ -67,14 +64,6 @@ export default function HistoryPage({ navigation }) {
                 await applyRecurringExpenses();
                 // Fetch expenses and set to state
                 const expenses = await getExpensesTableCategoryJoin();
-                // Change expense categoryId to name
-                //for (let i = 0; i < expenses.length; i++) {
-                //    expenses[i]['categoryColor'] = await getCategoryColorById(
-                //        expenses[i]['category']
-                //    );
-                //    expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
-                //}
-                // Change expense categoryId to name
                 setAllExpeneses(expenses);
                 setLoading(false);
                 console.log('expenses set!');
