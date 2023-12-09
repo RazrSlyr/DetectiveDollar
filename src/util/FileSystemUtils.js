@@ -107,6 +107,12 @@ export async function getExpenseTable() {
     return rows;
 }
 
+/**
+ * Gets all entries in the expense table
+ * @returns {list} List of all expense object
+ * object: {id, name, amount, day, timestamp, reacurring_id, category_id, category_name, category_color}
+ */
+// probably should use this everywhere we need expense info and category info
 export async function getExpensesTableCategoryJoin() {
     const db = await getDatabase();
     let expenses = [];
@@ -120,10 +126,12 @@ export async function getExpensesTableCategoryJoin() {
                 expenses.amount,
                 expenses.day,
                 expenses.timestamp,
+                expenses.picture,
+                expenses.memo,
+                expenses.picture,
                 expenses.reacurring_id,
-                categories.id AS category_id,
-                categories.name AS category_name,
-                categories.color AS category_color 
+                categories.name AS category,
+                categories.color AS color 
                 FROM expenses 
                 INNER JOIN categories ON categories.id = expenses.category        
                 ORDER BY timestamp;

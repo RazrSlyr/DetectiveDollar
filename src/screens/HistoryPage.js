@@ -134,15 +134,15 @@ export default function HistoryPage({ navigation }) {
                                             <View
                                                 style={{
                                                     ...styles.colorCircle,
-                                                    backgroundColor: expense['category_color'],
+                                                    backgroundColor: expense['color'],
                                                 }}
                                             />
                                             <Text
                                                 style={{
                                                     ...styles.categoryName,
-                                                    color: expense['category_color'],
+                                                    color: expense['color'],
                                                 }}>
-                                                {expense['name']}
+                                                {expense['category']}
                                             </Text>
                                         </View>
                                         <View style={styles.expenseNameBox}>
