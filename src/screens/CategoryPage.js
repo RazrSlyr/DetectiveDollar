@@ -31,10 +31,6 @@ export default function CategoryPage({ navigation }) {
     const [categoryName, setCategoryName] = useState('');
     const [categoryColor, setColor] = useState('');
 
-    const onColorChange = (color) => {
-        setColor(color);
-    };
-
     useEffect(() => {
         const getCategories = async () => {
             try {
@@ -76,7 +72,9 @@ export default function CategoryPage({ navigation }) {
         setSelectedCategory(null);
         setShowEditor(false);
     };
-
+    const onColorChange = (color) => {
+        setColor(color);
+    };
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
@@ -128,7 +126,7 @@ export default function CategoryPage({ navigation }) {
                                         style={[
                                             styles.addButton,
                                             {
-                                                backgroundColor: Colors.secondaryColor,
+                                                backgroundColor: Colors.SECONDARYCOLOR,
                                                 width: '40%',
                                                 alignSelf: 'right',
                                             },
@@ -170,7 +168,7 @@ export default function CategoryPage({ navigation }) {
                                 {
                                     backgroundColor: category['color']
                                         ? category['color']
-                                        : Colors.secondaryColor,
+                                        : Colors.SECONDARYCOLOR,
                                 },
                             ]}>
                             <Text style={styles.categoryText}>{category.name}</Text>
@@ -203,7 +201,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignSelf: 'center',
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     rowContainer: {
         width: '90%',
@@ -216,7 +214,7 @@ const styles = StyleSheet.create({
     scrollableContainer: {
         flex: 1,
         width: '100%',
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
     },
     scrollableContent: {
         width: '100%', // Adjust the width as needed
@@ -227,31 +225,31 @@ const styles = StyleSheet.create({
         width: 'auto',
     },
     addButton: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         width: '60%',
         height: 50,
         borderRadius: 20,
         textAlign: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         margin: 20,
     },
     addButtonText: {
-        color: Colors.primaryColor,
+        color: Colors.PRIMARYCOLOR,
         alignSelf: 'center',
-        fontSize: Sizes.textSize,
+        fontSize: Sizes.TEXTSIZE,
         fontWeight: 'bold',
     },
     dividerLine: {
         width: '70%',
         borderBottomWidth: 3,
-        borderColor: Colors.secondaryColor,
+        borderColor: Colors.SECONDARYCOLOR,
         alignSelf: 'center',
     },
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
-        color: Colors.primaryColor,
+        color: Colors.PRIMARYCOLOR,
         justifyContent: 'center',
     },
     catgeoryContainer: {
@@ -266,14 +264,14 @@ const styles = StyleSheet.create({
         borderWidth: 2,
     },
     categoryText: {
-        color: Colors.primaryColor,
+        color: Colors.PRIMARYCOLOR,
         fontSize: 30,
         fontWeight: 'bold',
         alignSelf: 'flex-start',
         margin: 10,
     },
     editButtonContainer: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         borderRadius: 30,
         width: '20%',
         height: 'auto',
@@ -282,7 +280,7 @@ const styles = StyleSheet.create({
         right: 20,
     },
     editText: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         fontSize: 20,
     },
     backButton: {
@@ -299,7 +297,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     modalView: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         borderRadius: 20,
         padding: 10,
         alignItems: 'center',
@@ -309,9 +307,9 @@ const styles = StyleSheet.create({
     },
     modalTitle: {
         textAlign: 'center',
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         fontWeight: 'bold',
-        fontSize: Sizes.titleSize,
+        fontSize: Sizes.TITLESIZE,
     },
     inputContainer: {
         height: '50%',
@@ -321,14 +319,14 @@ const styles = StyleSheet.create({
     inputHeading: {
         fontSize: 15,
         fontFamily: 'Roboto-Bold',
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         width: '84%',
         marginTop: 15,
         marginBottom: 5,
     },
     input: {
         width: '80%',
-        color: Colors.textColor,
+        color: Colors.TEXTCOLOR,
         fontFamily: 'Roboto-Bold',
         fontSize: 20,
         textAlign: 'left',
@@ -336,7 +334,7 @@ const styles = StyleSheet.create({
     line: {
         height: 2,
         width: '100%',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         alignSelf: 'center',
     },
     addCancelBox: {

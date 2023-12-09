@@ -93,7 +93,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                     <TextInput
                                         style={styles.input}
                                         placeholder={expense?.name}
-                                        placeholderTextColor={Colors.subHeadingColor}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                         onChangeText={(value) => setName(value)}
                                     />
                                     <GreenLine />
@@ -104,7 +104,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                         style={styles.input}
                                         keyboardType="numeric"
                                         placeholder={`$${expense?.amount}`}
-                                        placeholderTextColor={Colors.subHeadingColor}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                         maxLength={10}
                                         onChangeText={(value) =>
                                             setAmount(parseFloat(value).toFixed(2))
@@ -128,7 +128,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                         }}
                                         dropdownLabel="Category"
                                         placeholderLabel={expense?.category}
-                                        placeholderTextColor={Colors.subHeadingColor}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                     />
                                     <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
@@ -138,16 +138,16 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                     <TextInput
                                         style={styles.input}
                                         placeholder={expense?.memo}
-                                        placeholderTextColor={Colors.subHeadingColor}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                         onChangeText={(value) => setMemo(value)}
                                     />
                                     <GreenLine />
                                 </View>
                                 <View style={[styles.inputContainer, styles.cameraBtnsContainer]}>
                                     {previewURI ? (
-                                        <SafeAreaView style={styles.container}>
+                                        <SafeAreaView>
                                             <Image
-                                                style={styles.preview}
+                                                style={styles.imagePreview}
                                                 source={{ uri: previewURI }}
                                             />
                                             <TouchableOpacity
@@ -187,7 +187,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                                 <Feather
                                                     name="camera"
                                                     size={36}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             </TouchableOpacity>
                                             <TouchableOpacity
@@ -215,7 +215,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                                 <AntDesign
                                                     name="upload"
                                                     size={36}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             </TouchableOpacity>
                                         </View>
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     content: {
         height: Dimensions.get('window').height * 0.6,
         alignItems: 'center',
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         borderRadius: 40,
     },
     titleContainer: {
@@ -257,9 +257,9 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
     title: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         fontFamily: 'Roboto-Bold',
-        fontSize: Sizes.titleSize,
+        fontSize: Sizes.TITLESIZE,
         textAlign: 'center',
         fontWeight: 'bold',
     },
@@ -281,19 +281,19 @@ const styles = StyleSheet.create({
     inputHeading: {
         fontSize: 12,
         fontFamily: 'Roboto-Bold',
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         width: '84%',
         marginTop: 15,
         marginBottom: 5,
     },
     input: {
         width: '84%',
-        color: Colors.textColor,
+        color: Colors.TEXTCOLOR,
         fontFamily: 'Roboto-Bold',
-        fontSize: Sizes.textSize,
+        fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
-    preview: {
+    imagePreview: {
         height: '100%',
         aspectRatio: 1,
     },
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     saveButton: {
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         padding: 10,
         borderRadius: 20,
         height: 40,
@@ -341,6 +341,6 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         fontSize: 20,
-        color: '#ffffff',
+        color: 'white',
     },
 });

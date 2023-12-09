@@ -4,7 +4,6 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-na
 
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
-
 /**
  * Component for displaying a the W M Y buttons for changing the graph timeframe
  * @param {object} props Props object. Only prop is onSelect (callback)
@@ -32,7 +31,7 @@ const WeekMonthYearButtons = ({ onSelect }) => {
                 <TouchableOpacity
                     style={[
                         styles.btn,
-                        selection === 0 ? { backgroundColor: Colors.secondaryColor } : null,
+                        selection === 0 ? { backgroundColor: Colors.SECONDARYCOLOR } : null,
                     ]}
                     onPress={() => handlePress(0)}>
                     <Text style={[styles.btnText, selection === 0 ? { color: 'white' } : null]}>
@@ -42,7 +41,7 @@ const WeekMonthYearButtons = ({ onSelect }) => {
                 <TouchableOpacity
                     style={[
                         styles.btn,
-                        selection === 1 ? { backgroundColor: Colors.secondaryColor } : null,
+                        selection === 1 ? { backgroundColor: Colors.SECONDARYCOLOR } : null,
                     ]}
                     onPress={() => handlePress(1)}>
                     <Text style={[styles.btnText, selection === 1 ? { color: 'white' } : null]}>
@@ -52,7 +51,7 @@ const WeekMonthYearButtons = ({ onSelect }) => {
                 <TouchableOpacity
                     style={[
                         styles.btn,
-                        selection === 2 ? { backgroundColor: Colors.secondaryColor } : null,
+                        selection === 2 ? { backgroundColor: Colors.SECONDARYCOLOR } : null,
                     ]}
                     onPress={() => handlePress(2)}>
                     <Text style={[styles.btnText, selection === 2 ? { color: 'white' } : null]}>
@@ -80,8 +79,8 @@ const styles = StyleSheet.create({
     btn: {
         flex: 1,
         borderWidth: 1,
-        borderColor: '#37c871',
-        backgroundColor: '#f9f9f9',
+        borderColor: Colors.SECONDARYCOLOR,
+        backgroundColor: Colors.PRIMARYCOLOR,
         borderRadius: 10,
         marginTop: 20,
         marginHorizontal: 2,

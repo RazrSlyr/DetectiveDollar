@@ -38,7 +38,6 @@ import {
     getCategoryTable,
 } from '../util/FileSystemUtils';
 import { pickImage, captureImage } from '../util/ImagePickerUtils';
-
 export default function AddExpense({ navigation }) {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
@@ -47,9 +46,10 @@ export default function AddExpense({ navigation }) {
     const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
     const [todayExpenses, setTodayExpenses] = useState([]);
-    const todaysDate = getCurrentDateString();
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [memo, setMemo] = useState(null);
+
+    const todaysDate = getCurrentDateString();
 
     const spending = useMemo(() => {
         if (todayExpenses?.length === 0) {
@@ -95,7 +95,7 @@ export default function AddExpense({ navigation }) {
     // Format the date as "month/day/year"
     const formattedDate = `${month}/${day}/${year}`;
 
-    const handleButtonPress = async () => {
+    const handleAddButtonPress = async () => {
         // Add your button click logic here
         if (name === '' || amount === '' || category === '') {
             alert('Please Input a Name, Amount, and Category');
@@ -149,12 +149,7 @@ export default function AddExpense({ navigation }) {
                         <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subHeading}>
                             Today's Spending
                         </Text>
-                        <Text
-                            style={{
-                                fontSize: Sizes.largeText,
-                                margin: 'auto',
-                                textAlign: 'center',
-                            }}>{`${spending}`}</Text>
+                        <Text style={styles.totalExpenseText}>{`${spending}`}</Text>
                     </View>
                     <KeyboardAvoidingView
                         style={{ flex: 1 }}
@@ -188,7 +183,7 @@ export default function AddExpense({ navigation }) {
                                     <View style={styles.dateInputContainer}>
                                         <Text
                                             style={{
-                                                fontSize: Sizes.textSize,
+                                                fontSize: Sizes.TEXTSIZE,
                                                 textAlign: 'left',
                                                 flex: 1,
                                                 fontFamily: 'Roboto-Bold',
@@ -258,11 +253,7 @@ export default function AddExpense({ navigation }) {
                                                 source={{ uri: previewURI }}
                                             />
                                             <TouchableOpacity
-                                                style={{
-                                                    position: 'absolute',
-                                                    right: -30,
-                                                    alignSelf: 'center',
-                                                }}
+                                                style={styles.imageCancelButton}
                                                 onPress={async () => {
                                                     await clearImage();
                                                 }}>
@@ -294,7 +285,7 @@ export default function AddExpense({ navigation }) {
                                                 <Feather
                                                     name="camera"
                                                     size={36}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             </TouchableOpacity>
                                             <TouchableOpacity
@@ -322,23 +313,15 @@ export default function AddExpense({ navigation }) {
                                                 <AntDesign
                                                     name="upload"
                                                     size={36}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             </TouchableOpacity>
                                         </View>
                                     )}
                                     <TouchableOpacity
                                         style={styles.button}
-                                        onPress={handleButtonPress}>
-                                        <Text
-                                            style={{
-                                                fontFamily: 'Roboto-Bold',
-                                                color: '#ffffff',
-                                                textAlign: 'center',
-                                                fontSize: 24,
-                                            }}>
-                                            Add
-                                        </Text>
+                                        onPress={handleAddButtonPress}>
+                                        <Text style={styles.addButton}>Add</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -353,24 +336,24 @@ export default function AddExpense({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     content: {
         height: '100%',
         alignItems: 'center',
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         flexDirection: 'column',
     },
     titleContainer: {
         width: '100%',
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         paddingBottom: 10,
     },
     title: {
         color: 'white',
         fontFamily: 'Roboto-Bold',
-        fontSize: Sizes.titleSize,
+        fontSize: Sizes.TITLESIZE,
         textAlign: 'center',
         fontWeight: 'bold',
     },
@@ -384,9 +367,14 @@ const styles = StyleSheet.create({
         margin: 30,
         top: 10,
     },
+    totalExpenseText: {
+        fontSize: Sizes.LARGETEXT,
+        margin: 'auto',
+        textAlign: 'center',
+    },
     subHeading: {
-        color: Colors.subHeadingColor,
-        fontSize: Sizes.subText,
+        color: Colors.SUBHEADINGCOLOR,
+        fontSize: Sizes.SUBTEXT,
         margin: 'auto',
         paddingLeft: 10,
         paddingTop: 5,
@@ -415,27 +403,27 @@ const styles = StyleSheet.create({
     inputHeading: {
         fontSize: 12,
         fontFamily: 'Roboto-Bold',
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         width: '84%',
         marginTop: 15,
         marginBottom: 5,
     },
     input: {
         width: '84%',
-        color: Colors.textColor,
+        color: Colors.TEXTCOLOR,
         fontFamily: 'Roboto-Bold',
-        fontSize: Sizes.textSize,
+        fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
     button: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         fontFamily: 'Roboto-Bold',
         width: '60%',
         height: '40%',
         borderRadius: 20,
         textAlign: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     preview: {
         height: '100%',
@@ -460,5 +448,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         width: '84%',
+    },
+    addButton: {
+        fontFamily: 'Roboto-Bold',
+        color: 'white',
+        textAlign: 'center',
+        fontSize: 24,
+    },
+    imageCancelButton: {
+        position: 'absolute',
+        right: -30,
+        alignSelf: 'center',
     },
 });

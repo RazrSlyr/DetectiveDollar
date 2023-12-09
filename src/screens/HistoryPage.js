@@ -117,7 +117,7 @@ export default function HistoryPage({ navigation }) {
             <Text style={styles.titleText}>All Expenses</Text>
             {!loading && (
                 <View style={styles.searchBar}>
-                    <AntDesign name="search1" size={20} color={Colors.textColor} />
+                    <AntDesign name="search1" size={20} color={Colors.TEXTCOLOR} />
                     <TextInput
                         style={styles.input}
                         placeholder="Search Expenses..."
@@ -126,7 +126,7 @@ export default function HistoryPage({ navigation }) {
                 </View>
             )}
             <View style={styles.expensesContainer}>
-                {loading && <ActivityIndicator size={200} color={Colors.secondaryColor} />}
+                {loading && <ActivityIndicator size={200} color={Colors.SECONDARYCOLOR} />}
                 {!loading && (
                     <FlatList
                         contentContainerStyle={styles.scrollableContent}
@@ -166,7 +166,7 @@ export default function HistoryPage({ navigation }) {
                                                 <FontAwesome
                                                     name="repeat"
                                                     size={24}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             )}
                                         </View>
@@ -216,10 +216,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     expensesContainer: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         width: '100%',
         height: '80%',
         padding: 10,
@@ -249,12 +249,12 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     expenseName: {
-        fontSize: Sizes.textSize,
-        color: Colors.textColor,
+        fontSize: Sizes.TEXTSIZE,
+        color: Colors.TEXTCOLOR,
     },
     expenseData: {
-        fontSize: Sizes.subText,
-        color: Colors.subHeadingColor,
+        fontSize: Sizes.SUBTEXT,
+        color: Colors.SUBHEADINGCOLOR,
     },
     expenseValue: {
         fontSize: 20,
@@ -277,12 +277,12 @@ const styles = StyleSheet.create({
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
-        color: Colors.primaryColor,
+        color: Colors.PRIMARYCOLOR,
     },
     input: {
         width: '84%',
-        color: Colors.textColor,
-        fontSize: Sizes.textSize,
+        color: Colors.TEXTCOLOR,
+        fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
     searchBar: {

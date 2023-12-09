@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 
 import PieChartLegend from './PieChartLegend';
@@ -65,7 +65,7 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [totalSpending, setTotalSpending] = useState(0);
     const formattedTotal = `$${parseFloat(totalSpending).toFixed(2)}`;
 
-    const noExpenseData = [{ label: 'No Data Available', value: 1, color: Colors.secondaryColor }];
+    const noExpenseData = [{ label: 'No Data Available', value: 1, color: Colors.SECONDARYCOLOR }];
 
     // Check if there's data in the pieChartData object
     const hasData = Object.keys(pieChartData).length > 0;
@@ -88,15 +88,8 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
                         innerRadius={75}
                         centerLabelComponent={() => {
                             return (
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text
-                                        style={{
-                                            fontSize: 22,
-                                            color: 'black',
-                                            fontWeight: 'bold',
-                                        }}>
-                                        {formattedTotal}
-                                    </Text>
+                                <View style={styles.totalAmountContainer}>
+                                    <Text style={styles.totalAmountText}>{formattedTotal}</Text>
                                 </View>
                             );
                         }}
@@ -107,5 +100,15 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
         </View>
     );
 };
-
+const styles = StyleSheet.create({
+    totalAmountContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    totalAmountText: {
+        fontSize: 22,
+        color: 'black',
+        fontWeight: 'bold',
+    },
+});
 export default NewPieChartComponent;

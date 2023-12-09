@@ -241,7 +241,7 @@ export default function HomePage({ navigation }) {
                                                     <FontAwesome
                                                         name="repeat"
                                                         size={24}
-                                                        color={Colors.secondaryColor}
+                                                        color={Colors.SECONDARYCOLOR}
                                                     />
                                                 </View>
                                             )}
@@ -296,26 +296,26 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         // figure out fontStyles
     },
     secondaryContainer: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.textColor,
+        backgroundColor: Colors.TEXTCOLOR,
     },
     button: {
-        color: '#ffffff',
+        color: 'white',
         fontSize: 20,
         width: 250,
         height: 40,
-        outlineColor: '#37c871',
-        borderColor: '#37c871',
+        outlineColor: Colors.SECONDARYCOLOR,
+        borderColor: Colors.SECONDARYCOLOR,
         borderRadius: 10,
         textAlign: 'center',
     },
     buttonContainer: {
-        backgroundColor: '#37c871',
+        backgroundColor: Colors.SECONDARYCOLOR,
         padding: 10,
         borderRadius: 10,
         height: 60,
@@ -336,8 +336,8 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        fontSize: Sizes.titleSize,
-        color: Colors.secondaryColor,
+        fontSize: Sizes.TITLESIZE,
+        color: Colors.SECONDARYCOLOR,
         marginRight: 15,
     },
     totalExpensesContainer: {
@@ -351,27 +351,27 @@ const styles = StyleSheet.create({
         top: 10,
     },
     subHeading: {
-        color: Colors.subHeadingColor,
-        fontSize: Sizes.subText,
+        color: Colors.SUBHEADINGCOLOR,
+        fontSize: Sizes.SUBTEXT,
         margin: 'auto',
         paddingLeft: 10,
         paddingTop: 5,
     },
     subHeading2: {
-        color: Colors.textColor,
-        fontSize: Sizes.textSize,
+        color: Colors.TEXTCOLOR,
+        fontSize: Sizes.TEXTSIZE,
         margin: 'auto',
         paddingLeft: 10,
         padding: 5,
         textAlign: 'left',
     },
     textInput: {
-        fontSize: Sizes.largeText,
+        fontSize: Sizes.LARGETEXT,
         margin: 'auto',
         textAlign: 'center',
     },
     expensesContainer: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         width: '100%',
         height: '70%',
         padding: 10,
@@ -405,12 +405,12 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     expenseName: {
-        fontSize: Sizes.textSize,
-        color: Colors.textColor,
+        fontSize: Sizes.TEXTSIZE,
+        color: Colors.TEXTCOLOR,
     },
     expenseData: {
-        fontSize: Sizes.subText,
-        color: Colors.subHeadingColor,
+        fontSize: Sizes.SUBTEXT,
+        color: Colors.SUBHEADINGCOLOR,
     },
     expenseValue: {
         fontSize: 20,
@@ -448,8 +448,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     calendarDate: {
-        color: Colors.textColor,
-        fontSize: Sizes.textSize,
+        color: Colors.TEXTCOLOR,
+        fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
     arrowsAndTotalExpenseContainer: {
@@ -457,10 +457,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     arrows: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
     },
     debug: {
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         borderWidth: 2,
         borderColor: 'black',
         width: 20,
