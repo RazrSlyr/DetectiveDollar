@@ -107,6 +107,34 @@ export async function getExpenseTable() {
     return rows;
 }
 
+export async function getExpensesTableCategoryJoin() {
+    const db = await getDatabase();
+    let expenses = [];
+    await db.transactionAsync(async (tx) => {
+        expenses = (
+            await tx.executeSqlAsync(
+                `
+                SELECT 
+                expenses.id,
+                expenses.name,
+                expenses.amount,
+                expenses.day,
+                expenses.timestamp,
+                expenses.reacurring_id,
+                categories.id AS category_id,
+                categories.name AS category_name,
+                categories.color AS category_color 
+                FROM expenses 
+                INNER JOIN categories ON categories.id = expenses.category        
+                ORDER BY timestamp;
+                `
+            )
+        ).rows;
+    });
+    //console.log(expenses);
+    return expenses;
+}
+
 /**
  * Adds an expense to the database
  * @param {string} name Name of the expense

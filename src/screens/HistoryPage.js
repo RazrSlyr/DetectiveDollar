@@ -31,6 +31,7 @@ import {
     getExpenseTable,
     getCategoryColorById,
     getExpenseUpdatesInSession,
+    getExpensesTableCategoryJoin,
 } from '../util/FileSystemUtils';
 
 export default function HistoryPage({ navigation }) {
@@ -65,18 +66,18 @@ export default function HistoryPage({ navigation }) {
                 // Apply recurring expenses
                 await applyRecurringExpenses();
                 // Fetch expenses and set to state
-                const expenses = await getExpenseTable();
+                const expenses = await getExpensesTableCategoryJoin();
                 // Change expense categoryId to name
-                for (let i = 0; i < expenses.length; i++) {
-                    expenses[i]['categoryColor'] = await getCategoryColorById(
-                        expenses[i]['category']
-                    );
-                    expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
-                }
+                //for (let i = 0; i < expenses.length; i++) {
+                //    expenses[i]['categoryColor'] = await getCategoryColorById(
+                //        expenses[i]['category']
+                //    );
+                //    expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
+                //}
                 // Change expense categoryId to name
                 setAllExpeneses(expenses);
                 setLoading(false);
-                // console.log('expenses set!');
+                console.log('expenses set!');
             } catch (error) {
                 console.error('Error fetching expenses:', error);
             }
@@ -130,7 +131,7 @@ export default function HistoryPage({ navigation }) {
                 {!loading && (
                     <FlatList
                         contentContainerStyle={styles.scrollableContent}
-                        data={expensesToDisplay}
+                        data={[...expensesToDisplay].reverse()}
                         renderItem={(row) => {
                             const expense = row['item'];
                             return (
@@ -144,15 +145,15 @@ export default function HistoryPage({ navigation }) {
                                             <View
                                                 style={{
                                                     ...styles.colorCircle,
-                                                    backgroundColor: expense['categoryColor'],
+                                                    backgroundColor: expense['category_color'],
                                                 }}
                                             />
                                             <Text
                                                 style={{
                                                     ...styles.categoryName,
-                                                    color: expense['categoryColor'],
+                                                    color: expense['category_color'],
                                                 }}>
-                                                {expense['category']}
+                                                {expense['name']}
                                             </Text>
                                         </View>
                                         <View style={styles.expenseNameBox}>
