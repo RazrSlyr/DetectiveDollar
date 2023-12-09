@@ -29,7 +29,6 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const updatePieChartData = async () => {
         try {
             const expensesByCategory = await getExpensesbyCategory(startDate, endDate);
-            console.log(expensesByCategory);
             let totalSpending = 0;
             const categoryColors = {};
             //query category table instead
