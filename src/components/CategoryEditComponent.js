@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
 import {
     TouchableOpacity,

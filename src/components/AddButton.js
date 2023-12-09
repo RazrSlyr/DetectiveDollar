@@ -2,6 +2,7 @@
  * @namespace Components
  */
 
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { secondaryColor } from '../Colors';
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonText: {
-        color: 'white',
+        color: '#fff',
         fontSize: 30,
     },
 });

@@ -94,7 +94,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const updateLineGraphData = async () => {
         try {
             timeFrame = timeFrame || WEEKLY;
-            const [startYear, startMonth, startDay] = startDate.split('-');
+            const [startYear, startMonth] = startDate.split('-');
 
             if (timeFrame === WEEKLY) {
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
@@ -138,7 +138,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const totalDays = monthLabel.length;
                 const step = Math.floor(totalDays / 4);
                 const updatedData = transactions.reduce((accumulator, expense) => {
-                    const [expense_Year, expense_month, expense_day] = expense.day.split('-');
+                    const expense_day = expense.day.split('-')[2];
 
                     const dayOfMonth = parseInt(expense_day, 10);
 

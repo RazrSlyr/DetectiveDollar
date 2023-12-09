@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
-import { SECONDARYCOLOR, TEXTCOLOR } from '../constants/Colors';
+import { secondaryColor, textColor } from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 
 /**
@@ -16,21 +16,10 @@ function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
-    const renderLabel = () => {
-        if (value || isFocus) {
-            return (
-                <Text style={[styles.label, isFocus && { color: SECONDARYCOLOR }]}>
-                    {dropdownLabel}
-                </Text>
-            );
-        }
-        return null;
-    };
-
     return (
         <View style={styles.container}>
             <Dropdown
-                style={[styles.dropdown, isFocus && { borderColor: SECONDARYCOLOR }]}
+                style={[styles.dropdown, isFocus && { borderColor: secondaryColor }]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
@@ -77,17 +66,17 @@ const styles = StyleSheet.create({
         zIndex: 999,
         paddingHorizontal: 8,
         fontSize: 14,
-        color: TEXTCOLOR,
+        color: textColor,
     },
     placeholderStyle: {
-        fontSize: Sizes.TEXTSIZE,
+        fontSize: Sizes.textSize,
         fontWeight: 'bold',
         color: '#ccc',
     },
     selectedTextStyle: {
-        fontSize: Sizes.TEXTSIZE,
+        fontSize: Sizes.textSize,
         fontWeight: 'bold',
-        color: TEXTCOLOR,
+        color: textColor,
     },
     iconStyle: {
         width: 20,
@@ -95,8 +84,8 @@ const styles = StyleSheet.create({
     },
     inputSearchStyle: {
         height: 40,
-        fontSize: Sizes.TEXTSIZE,
+        fontSize: Sizes.textSize,
         fontWeight: 'bold',
-        color: TEXTCOLOR,
+        color: textColor,
     },
 });
