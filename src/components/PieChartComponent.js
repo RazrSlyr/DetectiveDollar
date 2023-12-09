@@ -14,27 +14,26 @@ import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSyste
  * @returns {object} The component object for the Pie Graph
  * @memberof Components
  */
-const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
+const PieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [pieChartData, setPieChartData] = useState([]);
 
     // Call the function to fetch and update data
     const updatePieChartData = async () => {
         try {
-            const categoryDict = await getExpensesbyCategory(startDate, endDate);
+            const expensesByCategory = await getExpensesbyCategory(startDate, endDate);
             let totalSpending = 0;
-
             const categoryColors = {};
-
-            for (const key in categoryDict) {
-                if (categoryDict.hasOwnProperty(key)) {
-                    const newColor = await getCategoryColorByName(key);
+            //query category table instead
+            //and create dict {id: category}
+            for (const key in expensesByCategory) {
+                if (expensesByCategory.hasOwnProperty(key)) {
+                    const newColor = expensesByCategory[key][0]['color'];
                     categoryColors[key] = newColor;
                 }
             }
-
             // Process the data
-            const pieChartData = Object.keys(categoryDict).map((category) => {
-                const total = categoryDict[category].reduce(
+            const pieChartData = Object.keys(expensesByCategory).map((category) => {
+                const total = expensesByCategory[category].reduce(
                     (sum, expense) => sum + expense.amount,
                     0
                 );
@@ -111,4 +110,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-export default NewPieChartComponent;
+export default PieChartComponent;
