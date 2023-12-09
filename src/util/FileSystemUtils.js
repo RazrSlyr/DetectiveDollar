@@ -384,11 +384,28 @@ export async function getCategoryFromId(categoryId) {
  */
 export async function getExpensesbyCategory(startDate, endDate) {
     const categoryDict = {};
-    const rows = await getExpensesFromDayframe(startDate, endDate);
-
+    const db = await getDatabase();
+    let rows = [];
+    await db.transactionAsync(async (tx) => {
+        try {
+            rows = (
+                await tx.executeSqlAsync(
+                    `
+                    SELECT categories.name AS category_name, * 
+                    FROM expenses 
+                    INNER JOIN categories ON categories.id = expenses.category
+                    WHERE timestamp BETWEEN "${startDate}" AND "${endDate}" 
+                    ORDER BY timestamp;
+                    `
+                )
+            ).rows;
+        } catch (error) {
+            console.warn(`getExpensesFromTimeframe error ${error}`);
+        }
+    });
     for (const row of rows) {
         const categoryId = row['category'];
-        const categoryName = await getCategoryNameFromId(categoryId);
+        const categoryName = row['name'];
 
         if (categoryName in categoryDict) {
             categoryDict[categoryName].push(row);
@@ -396,7 +413,6 @@ export async function getExpensesbyCategory(startDate, endDate) {
             categoryDict[categoryName] = [row];
         }
     }
-
     return categoryDict;
 }
 

@@ -28,21 +28,20 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     // Call the function to fetch and update data
     const updatePieChartData = async () => {
         try {
-            const categoryDict = await getExpensesbyCategory(startDate, endDate);
+            const allExpenses = await getExpensesbyCategory(startDate, endDate);
             let totalSpending = 0;
-
             const categoryColors = {};
-
-            for (const key in categoryDict) {
-                if (categoryDict.hasOwnProperty(key)) {
-                    const newColor = await getCategoryColorByName(key);
+            //query category table instead
+            //and create dict {id: category}
+            for (const key in allExpenses) {
+                if (allExpenses.hasOwnProperty(key)) {
+                    const newColor = allExpenses[key][0]['color'];
                     categoryColors[key] = newColor;
                 }
             }
-
             // Process the data
-            const pieChartData = Object.keys(categoryDict).map((category) => {
-                const total = categoryDict[category].reduce(
+            const pieChartData = Object.keys(allExpenses).map((category) => {
+                const total = allExpenses[category].reduce(
                     (sum, expense) => sum + expense.amount,
                     0
                 );
