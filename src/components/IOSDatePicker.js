@@ -1,10 +1,6 @@
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Platform, Modal, StyleSheet, Text } from 'react-native';
-
-import { secondaryColor } from '../constants/Colors';
-import { getDateStringFromDate } from '../util/DatetimeUtils';
+import React from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
 
 const IOSDatePicker = ({ selectedDate, handleDateChange, hideDatePicker, styles }) => {
     return (

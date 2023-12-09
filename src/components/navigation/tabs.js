@@ -3,7 +3,7 @@
 
 import { FontAwesome, AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Platform, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 
 import * as Colors from '../../constants/Colors';
 import { HomePage, AddExpense, GraphPage, HistoryPage, CategoryPage } from '../../screens';

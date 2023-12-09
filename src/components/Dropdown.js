@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
 import { secondaryColor, textColor } from '../constants/Colors';
@@ -15,17 +15,6 @@ import * as Sizes from '../constants/Sizes';
 function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
-
-    const renderLabel = () => {
-        if (value || isFocus) {
-            return (
-                <Text style={[styles.label, isFocus && { color: secondaryColor }]}>
-                    {dropdownLabel}
-                </Text>
-            );
-        }
-        return null;
-    };
 
     return (
         <View style={styles.container}>

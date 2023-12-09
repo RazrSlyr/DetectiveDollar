@@ -5,25 +5,17 @@ import { PieChart } from 'react-native-gifted-charts';
 
 import PieChartLegend from './PieChartLegend';
 import * as Colors from '../constants/Colors';
-import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
-import {
-    getCurrentDateString,
-    getWeekStartEndDate,
-    getMonthStartEndDate,
-    getYearStartEndDate,
-} from '../util/DatetimeUtils';
 import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSystemUtils';
 
 /**
  * Component for displaying a pie graph of expenses separated by category
- * @param {object} props Props object. Props are startDate (string), endDate (string), 
+ * @param {object} props Props object. Props are startDate (string), endDate (string),
  * and timeFrame (use FrequencyConstants)
  * @returns {object} The component object for the Pie Graph
  * @memberof Components
  */
 const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const [pieChartData, setPieChartData] = useState([]);
-    const [categoryColors, setCategoryColors] = useState({});
 
     // Call the function to fetch and update data
     const updatePieChartData = async () => {
@@ -57,7 +49,6 @@ const NewPieChartComponent = ({ startDate, endDate, timeFrame }) => {
                     label: category,
                 };
             });
-            setCategoryColors(categoryColors);
             setPieChartData(pieChartData);
             setTotalSpending(totalSpending);
         } catch (error) {

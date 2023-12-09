@@ -1,7 +1,6 @@
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { FontAwesome } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Platform, Modal, StyleSheet, Text } from 'react-native';
+import { View, TouchableOpacity, Platform, Modal, StyleSheet } from 'react-native';
 
 import AndroidDatePicker from './AndroidDatePicker';
 import IOSDatePicker from './IOSDatePicker';

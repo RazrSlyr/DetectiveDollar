@@ -88,7 +88,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                         )}
                                 </Text>
                                 <Text style={styles.infoText}>
-                                    {'Amount: ' + '$' + parseFloat(expense['amount']).toFixed(2)}
+                                    {'Amount: $' + parseFloat(expense['amount']).toFixed(2)}
                                 </Text>
                                 <Text style={styles.infoText}>
                                     {'Category: ' + expense.category}

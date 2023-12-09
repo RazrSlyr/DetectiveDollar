@@ -3,7 +3,6 @@
  * Allows the user to add and edit expense categories
  */
 
-import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import {
@@ -12,7 +11,6 @@ import {
     View,
     Text,
     ScrollView,
-    Dimensions,
     Modal,
     TextInput,
     KeyboardAvoidingView,
