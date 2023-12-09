@@ -4,7 +4,6 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-na
 
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
-
 /**
  * Component for displaying a the W M Y buttons for changing the graph timeframe
  * @param {object} props Props object. Only prop is onSelect (callback)
@@ -80,8 +79,8 @@ const styles = StyleSheet.create({
     btn: {
         flex: 1,
         borderWidth: 1,
-        borderColor: '#37c871',
-        backgroundColor: '#f9f9f9',
+        borderColor: Colors.SECONDARYCOLOR,
+        backgroundColor: Colors.PRIMARYCOLOR,
         borderRadius: 10,
         marginTop: 20,
         marginHorizontal: 2,

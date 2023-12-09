@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
+import * as Colors from '../constants/Colors';
+
 /**
  * Component for displaying a legend for a pie chart
  * @param {object} props Props object. Only prop is chartData (object)
@@ -54,7 +56,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         borderWidth: 1.5,
-        borderColor: '#b7c8be',
+        borderColor: Colors.SUBHEADINGCOLOR,
         marginTop: 2,
     },
     categoryInfo: {

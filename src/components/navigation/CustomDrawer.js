@@ -23,8 +23,8 @@ const HomeStack = () => {
     return (
         <Drawer.Navigator
             screenOptions={{
-                drawerActiveTintColor: Colors.secondaryColor,
-                drawerInactiveTintColor: Colors.secondaryColor,
+                drawerActiveTintColor: Colors.SECONDARYCOLOR,
+                drawerInactiveTintColor: Colors.SECONDARYCOLOR,
                 drawerStyle: {
                     backgroundColor: 'white',
                     width: Dimensions.get('screen').width / 2,
@@ -33,9 +33,9 @@ const HomeStack = () => {
                     fontSize: 20, // Set the font size for each item
                 },
                 headerTitleAlign: 'center',
-                headerTintColor: '#fff', // Set the text color of the header
+                headerTintColor: 'white', // Set the text color of the header
                 headerStyle: {
-                    backgroundColor: Colors.secondaryColor, // Set the background color of the header
+                    backgroundColor: Colors.SECONDARYCOLOR, // Set the background color of the header
                 },
                 headerTitleStyle: {
                     fontWeight: 'bold', // Set the font weight of the header title

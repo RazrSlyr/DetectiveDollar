@@ -340,6 +340,6 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         fontSize: 20,
-        color: '#ffffff',
+        color: 'white',
     },
 });
