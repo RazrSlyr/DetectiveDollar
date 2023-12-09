@@ -195,8 +195,9 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                                 onPress={async () => {
                                                     const mediaLibaryPermission =
                                                         await ImagePicker.requestMediaLibraryPermissionsAsync();
-                                                    if (mediaLibaryPermission.status === 'granted') 
-                                                    {
+                                                    if (
+                                                        mediaLibaryPermission.status === 'granted'
+                                                    ) {
                                                         const imageURI = await pickImage();
                                                         console.log(
                                                             'uri from imagepicker: ',
@@ -335,7 +336,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         height: 40,
         width: 80,
-        margin:10,
+        margin: 10,
     },
     buttonText: {
         textAlign: 'center',
