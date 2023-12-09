@@ -94,7 +94,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const updateLineGraphData = async () => {
         try {
             timeFrame = timeFrame || WEEKLY;
-            const [startYear, startMonth, startDay] = startDate.split('-');
+            const [startYear, startMonth] = startDate.split('-');
 
             if (timeFrame === WEEKLY) {
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
@@ -138,7 +138,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const totalDays = monthLabel.length;
                 const step = Math.floor(totalDays / 4);
                 const updatedData = transactions.reduce((accumulator, expense) => {
-                    const [expense_Year, expense_month, expense_day] = expense.day.split('-');
+                    const expense_day = expense.day.split('-')[2];
 
                     const dayOfMonth = parseInt(expense_day, 10);
 
@@ -257,11 +257,11 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                         hideDataPoints
                         areaChart
                         data={lineGraphData}
-                        startFillColor={Colors.secondaryColor}
+                        startFillColor={Colors.SECONDARYCOLOR}
                         startOpacity={0.8}
                         endFillColor="#D5FADD"
                         endOpacity={0.3}
-                        color={Colors.secondaryColor}
+                        color={Colors.SECONDARYCOLOR}
                         thickness={4}
                         width={300}
                         height={220}
@@ -271,13 +271,13 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                         endSpacing={0}
                         label={['0', '30']}
                         xAxisLabelTextStyle={{
-                            color: Colors.textColor,
+                            color: Colors.TEXTCOLOR,
                             fontSize,
                             textAlign: 'left',
                             marginRight: -9,
                         }}
                         yAxisTextStyle={{
-                            color: Colors.textColor,
+                            color: Colors.TEXTCOLOR,
                             fontSize: 12,
                             textAlign: 'left',
                         }}
@@ -296,9 +296,9 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                         }}
                         pointerConfig={{
                             pointerStripHeight: 160,
-                            pointerStripColor: Colors.subHeadingColor,
+                            pointerStripColor: Colors.SUBHEADINGCOLOR,
                             pointerStripWidth: 2,
-                            pointerColor: Colors.subHeadingColor,
+                            pointerColor: Colors.SUBHEADINGCOLOR,
                             radius: 6,
                             pointerLabelWidth: 100,
                             pointerLabelHeight: 90,
@@ -318,7 +318,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                                         }}>
                                         <Text
                                             style={{
-                                                color: Colors.textColor,
+                                                color: Colors.TEXTCOLOR,
                                                 fontSize: 14,
                                                 marginBottom: 6,
                                                 textAlign: 'center',
@@ -331,7 +331,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                                                 paddingVertical: 6,
                                                 borderRadius: 16,
                                                 backgroundColor: 'white',
-                                                borderColor: Colors.secondaryColor,
+                                                borderColor: Colors.SECONDARYCOLOR,
                                                 borderWidth: 2,
                                             }}>
                                             <Text

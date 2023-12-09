@@ -48,7 +48,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                 <Entypo
                                     name="chevron-thin-left"
                                     size={45}
-                                    color={Colors.primaryColor}
+                                    color={Colors.PRIMARYCOLOR}
                                 />
                             </TouchableOpacity>
                             <Text style={styles.title}>Expense Info</Text>
@@ -88,7 +88,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                         )}
                                 </Text>
                                 <Text style={styles.infoText}>
-                                    {'Amount: ' + '$' + parseFloat(expense['amount']).toFixed(2)}
+                                    {'Amount: $' + parseFloat(expense['amount']).toFixed(2)}
                                 </Text>
                                 <Text style={styles.infoText}>
                                     {'Category: ' + expense.category}
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         borderColor: 'black',
     },
     content: {
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         padding: 20,
         borderRadius: 8,
         width: '94%', // take 70% of the screen width
@@ -144,14 +144,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 5,
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         borderTopLeftRadius: 27, // Radius for the top-left corner
         borderTopRightRadius: 27, // Radius for the top-right corner
     },
     title: {
         fontWeight: 'bold',
-        fontSize: Sizes.titleSize,
-        color: Colors.primaryColor,
+        fontSize: Sizes.TITLESIZE,
+        color: Colors.PRIMARYCOLOR,
     },
     closeButton: {
         position: 'absolute',
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     dividerLine: {
         width: '50%',
         borderBottomWidth: 3,
-        borderColor: Colors.secondaryColor,
+        borderColor: Colors.SECONDARYCOLOR,
         marginVertical: 0,
         alignSelf: 'center',
     },
@@ -195,8 +195,8 @@ const styles = StyleSheet.create({
         height: '50%',
     },
     infoText: {
-        fontSize: Sizes.textSize,
-        color: Colors.textColor,
+        fontSize: Sizes.TEXTSIZE,
+        color: Colors.TEXTCOLOR,
     },
     valueText: {
         fontSize: 20,
@@ -214,6 +214,6 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         fontSize: 24,
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
     },
 });

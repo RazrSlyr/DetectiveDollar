@@ -1,4 +1,6 @@
-export const primaryColor = '#f9f9f9'; // whiteish
-export const secondaryColor = '#37c871'; // greenish
-export const textColor = '#333333'; // grayish
-export const subHeadingColor = '#b7c8be';
+const PRIMARYCOLOR = '#f9f9f9'; // whiteish
+const SECONDARYCOLOR = '#37c871'; // greenish
+const TEXTCOLOR = '#333333'; // grayish
+const SUBHEADINGCOLOR = '#b7c8be';
+
+export { PRIMARYCOLOR, SECONDARYCOLOR, TEXTCOLOR, SUBHEADINGCOLOR };

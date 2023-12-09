@@ -1,5 +1,6 @@
-export const titleSize = 35;
-export const textSize = 18;
-export const upperPartHeight = 50;
-export const largeText = 50;
-export const subText = 13;
+const TITLESIZE = 35;
+const TEXTSIZE = 18;
+const LARGETEXT = 50;
+const SUBTEXT = 13;
+
+export { TITLESIZE, TEXTSIZE, LARGETEXT, SUBTEXT };

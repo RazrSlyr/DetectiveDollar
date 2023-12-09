@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import DateTimePicker from 'react-native-ui-datepicker';
 
-import { secondaryColor } from '../constants/Colors';
+import { SECONDARYCOLOR } from '../constants/Colors';
 import { getDateFromDatetimeString } from '../util/DatetimeUtils';
 
 const AndroidDatePicker = ({ selectedDate, handleDateChange, hideDatePicker, styles }) => {
@@ -17,7 +17,7 @@ const AndroidDatePicker = ({ selectedDate, handleDateChange, hideDatePicker, sty
                     displayFullDays
                     locale="en"
                     mode="datetime"
-                    selectedItemColor={secondaryColor}
+                    selectedItemColor={SECONDARYCOLOR}
                 />
                 <TouchableOpacity style={styles.cancelButtonContainer} onPress={hideDatePicker}>
                     <Text style={styles.cancelButtonText}>Cancel</Text>

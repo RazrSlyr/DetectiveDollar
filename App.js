@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import * as React from 'react';
 
-import Tabs from './src/components/navigation/tabs';
+import Tabs from './src/components/navigation/Tabs';
 
 export default function App() {
     const [fontsLoaded] = useFonts({

@@ -15,7 +15,7 @@ import {
     getDateStringFromDate,
     incrementDateByFrequency,
 } from './DatetimeUtils';
-import { generateRandomName, printAdjectives } from './NameUtils';
+import { generateRandomName } from './NameUtils';
 import {
     CREATE_EXPENSES_TABLE,
     CREATE_REACCURING_TABLE,
