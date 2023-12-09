@@ -405,7 +405,6 @@ export async function getExpensesbyCategory(startDate, endDate) {
     });
     for (const row of expenses) {
         //console.log('expense', row);
-        const categoryId = row['category'];
         const categoryName = row['name'];
 
         if (categoryName in categoryDict) {
