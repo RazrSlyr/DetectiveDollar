@@ -249,6 +249,7 @@ export async function deleteRowFromExpenseTable(row) {
     await db.transactionAsync(async (tx) => {
         await tx.executeSqlAsync(deleteExpense(row));
     });
+    expenseUpdatesInSession += 1;
 }
 
 /**
