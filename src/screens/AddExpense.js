@@ -27,6 +27,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import DatePickerComponent from '../components/DatePickerComponent';
 import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
+import TodaySpendingComponent from '../components/TodaysExpenseComponent';
 import * as Colors from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import * as Sizes from '../constants/Sizes';
@@ -50,22 +51,6 @@ export default function AddExpense({ navigation }) {
     const [memo, setMemo] = useState(null);
 
     const todaysDate = getCurrentDateString();
-
-    const spending = useMemo(() => {
-        if (todayExpenses?.length === 0) {
-            return '$0.00';
-        }
-        let newSpending = 0;
-        todayExpenses.forEach((expense) => {
-            newSpending += parseFloat(expense['amount']);
-        });
-        const todaySpending = newSpending.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-        });
-        return todaySpending;
-    }, [todayExpenses]);
 
     useEffect(() => {
         const getExpensesAndCategories = async () => {
@@ -145,12 +130,11 @@ export default function AddExpense({ navigation }) {
                         <Text style={styles.title}>Add Expense</Text>
                     </View>
                     <StatusBar style="auto" />
-                    <View style={styles.totalExpenseContainer}>
-                        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subHeading}>
-                            Today's Spending
-                        </Text>
-                        <Text style={styles.totalExpenseText}>{`${spending}`}</Text>
-                    </View>
+                    <TodaySpendingComponent
+                        todayExpenses={todayExpenses}
+                        subHeadingText="Today's Spending"
+                        containerWidth="80%"
+                    />
                     <KeyboardAvoidingView
                         style={{ flex: 1 }}
                         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -356,28 +340,6 @@ const styles = StyleSheet.create({
         fontSize: Sizes.TITLESIZE,
         textAlign: 'center',
         fontWeight: 'bold',
-    },
-    totalExpenseContainer: {
-        backgroundColor: 'white',
-        borderRadius: 15,
-        marginTop: 0,
-        marginBottom: 20,
-        height: 'auto',
-        width: '80%',
-        margin: 30,
-        top: 10,
-    },
-    totalExpenseText: {
-        fontSize: Sizes.LARGETEXT,
-        margin: 'auto',
-        textAlign: 'center',
-    },
-    subHeading: {
-        color: Colors.SUBHEADINGCOLOR,
-        fontSize: Sizes.SUBTEXT,
-        margin: 'auto',
-        paddingLeft: 10,
-        paddingTop: 5,
     },
     box2: {
         width: Dimensions.get('window').width * 0.8,
