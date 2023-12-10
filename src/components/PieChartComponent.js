@@ -5,7 +5,7 @@ import { PieChart } from 'react-native-gifted-charts';
 
 import PieChartLegend from './PieChartLegend';
 import * as Colors from '../constants/Colors';
-import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSystemUtils';
+import { getExpensesbyCategory } from '../util/FileSystemUtils';
 
 /**
  * Component for displaying a pie graph of expenses separated by category
@@ -20,11 +20,10 @@ const PieChartComponent = ({ startDate, endDate, timeFrame }) => {
     // Call the function to fetch and update data
     const updatePieChartData = async () => {
         try {
-            const expensesByCategory = await getExpensesbyCategory(startDate, endDate);
+            const expensesByCategory = await getExpensesbyCategory(startDate, endDate); // {category_name: [{expense+category}]}
+            const categoryColors = {}; // {category_name: category_color}
             let totalSpending = 0;
-            const categoryColors = {};
-            //query category table instead
-            //and create dict {id: category}
+
             for (const key in expensesByCategory) {
                 if (expensesByCategory.hasOwnProperty(key)) {
                     const newColor = expensesByCategory[key][0]['color'];
@@ -70,36 +69,38 @@ const PieChartComponent = ({ startDate, endDate, timeFrame }) => {
     const hasData = Object.keys(pieChartData).length > 0;
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    paddingTop: 20,
-                    paddingBottom: 10,
-                }}>
-                <View style={{ paddingBottom: 20 }}>
-                    <PieChart
-                        style={{ height: 200, width: 200 }}
-                        data={hasData ? pieChartData : noExpenseData}
-                        donut
-                        radius={110}
-                        innerRadius={75}
-                        centerLabelComponent={() => {
-                            return (
-                                <View style={styles.totalAmountContainer}>
-                                    <Text style={styles.totalAmountText}>{formattedTotal}</Text>
-                                </View>
-                            );
-                        }}
-                    />
-                </View>
+        <View style={styles.container}>
+            <View style={styles.content}>
+                <PieChart
+                    data={hasData ? pieChartData : noExpenseData}
+                    donut
+                    radius={110}
+                    innerRadius={75}
+                    centerLabelComponent={() => {
+                        return (
+                            <View style={styles.totalAmountContainer}>
+                                <Text style={styles.totalAmountText}>{formattedTotal}</Text>
+                            </View>
+                        );
+                    }}
+                />
                 <PieChartLegend chartData={hasData ? pieChartData : noExpenseData} />
             </View>
         </View>
     );
 };
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    content: {
+        flex: 1,
+        alignItems: 'center',
+        paddingTop: 20,
+        paddingBottom: 10,
+    },
     totalAmountContainer: {
         justifyContent: 'center',
         alignItems: 'center',

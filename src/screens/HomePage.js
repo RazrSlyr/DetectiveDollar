@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DatePickerComponent from '../components/DatePickerComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
+import TodaySpendingComponent from '../components/TodaysExpenseComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import {
@@ -181,10 +182,11 @@ export default function HomePage({ navigation }) {
             <TouchableOpacity style={styles.debug} onPress={handleAddFakeData}>
                 <FontAwesome name="wrench" size={15} color="black" />
             </TouchableOpacity>
-            <View style={styles.totalExpensesContainer}>
-                <Text style={styles.subHeading}>Total Spendings</Text>
-                <Text style={styles.textInput}>{`${spending}`}</Text>
-            </View>
+            <TodaySpendingComponent
+                todayExpenses={todayExpenses}
+                subHeadingText="Total Spendings"
+                containerWidth="70%"
+            />
             <View style={styles.calendarContainer} activeOpacity={0.7}>
                 <Text style={styles.calendarDate}>{formattedDate}</Text>
                 <View style={{ position: 'absolute', right: 10 }}>
@@ -340,23 +342,6 @@ const styles = StyleSheet.create({
         color: Colors.SECONDARYCOLOR,
         marginRight: 15,
     },
-    totalExpensesContainer: {
-        backgroundColor: 'white',
-        borderRadius: 15,
-        marginTop: 0,
-        marginBottom: 20,
-        height: 'auto',
-        width: '70%',
-        margin: 30,
-        top: 10,
-    },
-    subHeading: {
-        color: Colors.SUBHEADINGCOLOR,
-        fontSize: Sizes.SUBTEXT,
-        margin: 'auto',
-        paddingLeft: 10,
-        paddingTop: 5,
-    },
     subHeading2: {
         color: Colors.TEXTCOLOR,
         fontSize: Sizes.TEXTSIZE,
@@ -365,11 +350,6 @@ const styles = StyleSheet.create({
         padding: 5,
         textAlign: 'left',
     },
-    textInput: {
-        fontSize: Sizes.LARGETEXT,
-        margin: 'auto',
-        textAlign: 'center',
-    },
     expensesContainer: {
         backgroundColor: Colors.PRIMARYCOLOR,
         width: '100%',
@@ -377,8 +357,6 @@ const styles = StyleSheet.create({
         padding: 10,
         margin: 10,
         borderRadius: 32,
-        //borderTopLeftRadius: 32, // Radius for the top-left corner
-        //borderTopRightRadius: 32, // Radius for the top-right corner
     },
     scrollableContent: {
         flex: 1,
