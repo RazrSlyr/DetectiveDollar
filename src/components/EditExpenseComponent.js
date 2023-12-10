@@ -226,15 +226,13 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                             onPress={handleButtonPress}
                                             name="Save"
                                             buttonColor={Colors.SECONDARYCOLOR}
-                                            buttonStyle={{ width: 80, margin: 10 }}
-                                            buttonTextStyle={{}}
+                                            buttonStyle={styles.button}
                                         />
                                         <ButtonComponent
                                             onPress={onClose}
                                             name="Cancel"
                                             buttonColor={Colors.CONTRASTCOLOR}
-                                            buttonStyle={{ width: 80, margin: 10 }}
-                                            buttonTextStyle={{}}
+                                            buttonStyle={styles.button}
                                         />
                                     </View>
                                 </View>
@@ -249,6 +247,10 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
 export default EditExpenseComponent;
 
 const styles = StyleSheet.create({
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
     content: {
         height: Dimensions.get('window').height * 0.6,
         alignItems: 'center',
@@ -326,5 +328,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-end',
         flexDirection: 'row',
+    },
+    button: {
+        width: 100,
+        margin: 10,
     },
 });

@@ -234,7 +234,7 @@ export default function AddExpense({ navigation }) {
                                     {previewURI ? (
                                         <SafeAreaView style={styles.container}>
                                             <Image
-                                                style={styles.preview}
+                                                style={styles.previewImg}
                                                 source={{ uri: previewURI }}
                                             />
                                             <TouchableOpacity
@@ -307,8 +307,7 @@ export default function AddExpense({ navigation }) {
                                         onPress={handleAddButtonPress}
                                         name="Add"
                                         buttonColor={Colors.SECONDARYCOLOR}
-                                        buttonStyle={{ width: 180, height: 40, padding: 5}}
-                                        buttonTextStyle={{ fontSize: 24 }}
+                                        buttonStyle={styles.button}
                                     />
                                 </View>
                             </View>
@@ -380,7 +379,7 @@ const styles = StyleSheet.create({
         fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
-    preview: {
+    previewImg: {
         height: '100%',
         aspectRatio: 1,
     },
@@ -409,4 +408,5 @@ const styles = StyleSheet.create({
         right: -30,
         alignSelf: 'center',
     },
+    button: { width: 180 },
 });

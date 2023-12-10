@@ -20,6 +20,7 @@ import ColorPicker from 'react-native-wheel-color-picker';
 
 import ButtonComponent from '../components/ButtonComponent';
 import CategoryEditComponent from '../components/CategoryEditComponent';
+import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';
@@ -87,12 +88,11 @@ export default function CategoryPage({ navigation }) {
                 contentContainerStyle={styles.scrollableContent}>
                 <ButtonComponent
                     onPress={() => setModalVisible(true)}
-                    name="Add Category"
+                    name="Add"
                     buttonColor={Colors.SECONDARYCOLOR}
-                    buttonStyle={{ width: 220, height: 50, margin: 20 }}
-                    buttonTextStyle={{ color: Colors.PRIMARYCOLOR }}
+                    buttonStyle={styles.button}
                 />
-                <View style={styles.dividerLine} />
+                <GreenLine />
                 <Modal
                     animationType="slide"
                     transparent
@@ -175,7 +175,7 @@ export default function CategoryPage({ navigation }) {
                                 }}>
                                 <Text style={styles.editText}>Edit</Text>
                             </TouchableOpacity>
-{/*                             <ButtonComponent
+                            {/*                             <ButtonComponent
                                 onPress={async () => {
                                     setSelectedCategory(category);
                                     openCategoryEditor();
@@ -347,5 +347,9 @@ const styles = StyleSheet.create({
     colorPickerBox: {
         width: '100%',
         height: 300,
+    },
+    button: {
+        width: 180,
+        marginBottom: 10,
     },
 });

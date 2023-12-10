@@ -59,7 +59,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputHeading}>Name</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={styles.inputField}
                                     value={
                                         categoryName === undefined ? category.name : categoryName
                                     }
@@ -106,8 +106,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                             }}
                             name="Save"
                             buttonColor={Colors.SECONDARYCOLOR}
-                            buttonStyle={{ width: 90, marginRight: 20 }}
-                            buttonTextStyle={{ fontSize: 24 }}
+                            buttonStyle={styles.button}
                         />
                         <ButtonComponent
                             onPress={async () => {
@@ -118,8 +117,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                             }}
                             name="Cancel"
                             buttonColor={Colors.CONTRASTCOLOR}
-                            buttonStyle={{ width: 95, marginLeft: 20 }}
-                            buttonTextStyle={{ fontSize: 24 }}
+                            buttonStyle={styles.button}
                         />
                     </View>
                 </SafeAreaView>
@@ -172,27 +170,25 @@ const styles = StyleSheet.create({
         marginTop: 15,
         marginBottom: 5,
     },
-    input: {
+    inputField: {
         width: '84%',
         color: Colors.TEXTCOLOR,
         fontFamily: 'Roboto-Bold',
         fontSize: 20,
         textAlign: 'left',
     },
-    line: {
-        height: 2,
-        width: '85%',
-        backgroundColor: Colors.SECONDARYCOLOR,
-        alignSelf: 'center',
-    },
     rowContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10,
+        marginTop: 10,
     },
     colorPickerContainer: {
         height: 300,
         width: 300,
+    },
+    button: {
+        width: 100,
+        marginLeft: 20,
     },
 });
