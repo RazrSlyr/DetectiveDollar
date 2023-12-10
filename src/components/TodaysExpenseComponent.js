@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     expense: {
         fontSize: Sizes.LARGETEXT,
         textAlign: 'center',
-        width: '90%',
+        width: '100%',
         alignSelf: 'center',
     },
 });
