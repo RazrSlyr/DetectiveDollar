@@ -18,6 +18,7 @@ import {
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import ButtonComponent from '../components/ButtonComponent';
 import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
@@ -221,16 +222,18 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                         </View>
                                     )}
                                     <View style={styles.buttonContainer}>
-                                        <TouchableOpacity
-                                            style={styles.saveButton}
-                                            onPress={handleButtonPress}>
-                                            <Text style={styles.buttonText}>Save</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={styles.cancelButton}
-                                            onPress={onClose}>
-                                            <Text style={styles.buttonText}>Cancel</Text>
-                                        </TouchableOpacity>
+                                        <ButtonComponent
+                                            onPress={handleButtonPress}
+                                            name="Save"
+                                            buttonColor={Colors.SECONDARYCOLOR}
+                                            buttonStyle={styles.button}
+                                        />
+                                        <ButtonComponent
+                                            onPress={onClose}
+                                            name="Cancel"
+                                            buttonColor={Colors.CONTRASTCOLOR}
+                                            buttonStyle={styles.button}
+                                        />
                                     </View>
                                 </View>
                             </View>
@@ -244,6 +247,10 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
 export default EditExpenseComponent;
 
 const styles = StyleSheet.create({
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
     content: {
         height: Dimensions.get('window').height * 0.6,
         alignItems: 'center',
@@ -322,25 +329,8 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         flexDirection: 'row',
     },
-    cancelButton: {
-        backgroundColor: '#FF3F48',
-        padding: 10,
-        borderRadius: 20,
-        height: 40,
-        width: 80,
+    button: {
+        width: 100,
         margin: 10,
-    },
-    saveButton: {
-        backgroundColor: Colors.SECONDARYCOLOR,
-        padding: 10,
-        borderRadius: 20,
-        height: 40,
-        width: 80,
-        margin: 10,
-    },
-    buttonText: {
-        textAlign: 'center',
-        fontSize: 20,
-        color: 'white',
     },
 });

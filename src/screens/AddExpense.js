@@ -24,6 +24,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import ButtonComponent from '../components/ButtonComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
 import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
@@ -233,7 +234,7 @@ export default function AddExpense({ navigation }) {
                                     {previewURI ? (
                                         <SafeAreaView style={styles.container}>
                                             <Image
-                                                style={styles.preview}
+                                                style={styles.previewImg}
                                                 source={{ uri: previewURI }}
                                             />
                                             <TouchableOpacity
@@ -302,11 +303,12 @@ export default function AddExpense({ navigation }) {
                                             </TouchableOpacity>
                                         </View>
                                     )}
-                                    <TouchableOpacity
-                                        style={styles.button}
-                                        onPress={handleAddButtonPress}>
-                                        <Text style={styles.addButton}>Add</Text>
-                                    </TouchableOpacity>
+                                    <ButtonComponent
+                                        onPress={handleAddButtonPress}
+                                        name="Add"
+                                        buttonColor={Colors.SECONDARYCOLOR}
+                                        buttonStyle={styles.button}
+                                    />
                                 </View>
                             </View>
                         </ScrollView>
@@ -377,17 +379,7 @@ const styles = StyleSheet.create({
         fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
-    button: {
-        color: Colors.SECONDARYCOLOR,
-        fontFamily: 'Roboto-Bold',
-        width: '60%',
-        height: '40%',
-        borderRadius: 20,
-        textAlign: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.SECONDARYCOLOR,
-    },
-    preview: {
+    previewImg: {
         height: '100%',
         aspectRatio: 1,
     },
@@ -411,15 +403,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '84%',
     },
-    addButton: {
-        fontFamily: 'Roboto-Bold',
-        color: 'white',
-        textAlign: 'center',
-        fontSize: 24,
-    },
     imageCancelButton: {
         position: 'absolute',
         right: -30,
         alignSelf: 'center',
     },
+    button: { width: 180 },
 });

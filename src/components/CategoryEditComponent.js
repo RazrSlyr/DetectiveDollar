@@ -11,6 +11,7 @@ import {
 import ColorPicker from 'react-native-wheel-color-picker';
 
 import GreenLine from './GreenLine';
+import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
 import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
 
@@ -58,7 +59,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputHeading}>Name</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={styles.inputField}
                                     value={
                                         categoryName === undefined ? category.name : categoryName
                                     }
@@ -92,12 +93,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                         </View>
                     )}
                     <View style={styles.rowContainer}>
-                        <TouchableOpacity
-                            style={[
-                                styles.button,
-                                { backgroundColor: !enableSave ? 'grey' : styles.button.color },
-                            ]}
-                            disabled={!enableSave}
+                        <ButtonComponent
                             onPress={async () => {
                                 //console.log('attempt to update');
                                 await updateRowFromCategoryTable(
@@ -107,20 +103,22 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                 );
                                 await onUpdate();
                                 onClose();
-                            }}>
-                            <Text style={styles.buttonText}>Save</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.button, { backgroundColor: 'red' }]}
+                            }}
+                            name="Save"
+                            buttonColor={Colors.SECONDARYCOLOR}
+                            buttonStyle={styles.button}
+                        />
+                        <ButtonComponent
                             onPress={async () => {
-                                //await deleteRowFromCategoryTable(category.name);
                                 await onUpdate();
                                 setCategoryName(undefined);
                                 setColor(undefined);
                                 onClose();
-                            }}>
-                            <Text style={styles.buttonText}>Cancel</Text>
-                        </TouchableOpacity>
+                            }}
+                            name="Cancel"
+                            buttonColor={Colors.CONTRASTCOLOR}
+                            buttonStyle={styles.button}
+                        />
                     </View>
                 </SafeAreaView>
             </View>
@@ -172,48 +170,25 @@ const styles = StyleSheet.create({
         marginTop: 15,
         marginBottom: 5,
     },
-    input: {
+    inputField: {
         width: '84%',
         color: Colors.TEXTCOLOR,
         fontFamily: 'Roboto-Bold',
         fontSize: 20,
         textAlign: 'left',
     },
-    line: {
-        height: 2,
-        width: '85%',
-        backgroundColor: Colors.SECONDARYCOLOR,
-        alignSelf: 'center',
-    },
-    closeButton: {
-        position: 'absolute',
-        top: 5,
-        right: 5,
-    },
-    button: {
-        color: Colors.SECONDARYCOLOR,
-        fontFamily: 'Roboto-Bold',
-        width: '35%',
-        height: 'auto',
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.SECONDARYCOLOR,
-        marginRight: 15,
-    },
-    buttonText: {
-        fontFamily: 'Roboto-Bold',
-        color: 'white',
-        textAlign: 'center',
-        fontSize: 24,
-    },
     rowContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 10,
     },
     colorPickerContainer: {
         height: 300,
         width: 300,
+    },
+    button: {
+        width: 100,
+        marginLeft: 20,
     },
 });

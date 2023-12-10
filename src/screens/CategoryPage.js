@@ -18,7 +18,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ColorPicker from 'react-native-wheel-color-picker';
 
+import ButtonComponent from '../components/ButtonComponent';
 import CategoryEditComponent from '../components/CategoryEditComponent';
+import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';
@@ -84,10 +86,13 @@ export default function CategoryPage({ navigation }) {
             <ScrollView
                 style={styles.scrollableContainer}
                 contentContainerStyle={styles.scrollableContent}>
-                <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-                    <Text style={styles.addButtonText}>Add Category</Text>
-                </TouchableOpacity>
-                <View style={styles.dividerLine} />
+                <ButtonComponent
+                    onPress={() => setModalVisible(true)}
+                    name="Add"
+                    buttonColor={Colors.SECONDARYCOLOR}
+                    buttonStyle={styles.button}
+                />
+                <GreenLine />
                 <Modal
                     animationType="slide"
                     transparent
@@ -122,38 +127,28 @@ export default function CategoryPage({ navigation }) {
                                     </View>
                                 </View>
                                 <View style={styles.addCancelBox}>
-                                    <TouchableOpacity
-                                        style={[
-                                            styles.addButton,
-                                            {
-                                                backgroundColor: Colors.SECONDARYCOLOR,
-                                                width: '40%',
-                                                alignSelf: 'right',
-                                            },
-                                        ]}
+                                    <ButtonComponent
                                         onPress={async () => {
                                             addRowToCategoryTable(categoryName, categoryColor);
                                             setModalVisible(!modalVisible);
                                             updateCategories();
                                             setCategoryName(undefined);
-                                        }}>
-                                        <Text style={styles.addButtonText}>Add</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[
-                                            styles.addButton,
-                                            {
-                                                backgroundColor: 'red',
-                                                width: '40%',
-                                                alignSelf: 'right',
-                                            },
-                                        ]}
+                                        }}
+                                        name="Add"
+                                        buttonColor={Colors.SECONDARYCOLOR}
+                                        buttonStyle={{ width: 95, marginRight: 15 }}
+                                        buttonTextStyle={{ fontSize: 24 }}
+                                    />
+                                    <ButtonComponent
                                         onPress={async () => {
                                             setModalVisible(!modalVisible);
                                             setCategoryName(undefined);
-                                        }}>
-                                        <Text style={styles.addButtonText}>Cancel</Text>
-                                    </TouchableOpacity>
+                                        }}
+                                        name="Cancel"
+                                        buttonColor={Colors.CONTRASTCOLOR}
+                                        buttonStyle={{ width: 95, marginLeft: 15 }}
+                                        buttonTextStyle={{ fontSize: 24 }}
+                                    />
                                 </View>
                             </View>
                         </KeyboardAvoidingView>
@@ -180,6 +175,26 @@ export default function CategoryPage({ navigation }) {
                                 }}>
                                 <Text style={styles.editText}>Edit</Text>
                             </TouchableOpacity>
+                            {/*                             <ButtonComponent
+                                onPress={async () => {
+                                    setSelectedCategory(category);
+                                    openCategoryEditor();
+                                }}
+                                name="Edit"
+                                buttonColor={Colors.PRIMARYCOLOR}
+                                buttonStyle={{
+                                    width: 60,
+                                    borderRadius: 30,
+                                    position: 'absolute',
+                                    right: 20,
+                                    justifyContent: 'flex-end',
+                                    padding: 3,
+                                }}
+                                buttonTextStyle={{
+                                    color: Colors.SECONDARYCOLOR,
+                                    fontSize: 20,
+                                }}
+                            /> */}
                         </View>
                     );
                 })}
@@ -223,22 +238,6 @@ const styles = StyleSheet.create({
     },
     titleContainer: {
         width: 'auto',
-    },
-    addButton: {
-        color: Colors.SECONDARYCOLOR,
-        width: '60%',
-        height: 50,
-        borderRadius: 20,
-        textAlign: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.SECONDARYCOLOR,
-        margin: 20,
-    },
-    addButtonText: {
-        color: Colors.PRIMARYCOLOR,
-        alignSelf: 'center',
-        fontSize: Sizes.TEXTSIZE,
-        fontWeight: 'bold',
     },
     dividerLine: {
         width: '70%',
@@ -348,5 +347,9 @@ const styles = StyleSheet.create({
     colorPickerBox: {
         width: '100%',
         height: 300,
+    },
+    button: {
+        width: 180,
+        marginBottom: 10,
     },
 });
