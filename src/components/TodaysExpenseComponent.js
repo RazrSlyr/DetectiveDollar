@@ -28,9 +28,11 @@ const TodaySpendingComponent = ({ todayExpenses, subHeadingText, containerWidth 
 
     return (
         <View style={[styles.container, { width: containerWidth }]}>
-            <Text style={styles.subHeading}>{subHeadingText}</Text>
             <View style={styles.expenseContainer}>
-                <Text style={styles.expense}>{spending}</Text>
+                <Text style={[styles.subHeading]}>{subHeadingText}</Text>
+                <Text style={[styles.expense]} numberOfLines={1} adjustsFontSizeToFit>
+                    {spending}
+                </Text>
             </View>
         </View>
     );
@@ -40,27 +42,29 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
         borderRadius: 15,
-        margin: 15,
-        height: '11%',
+        margin: 10,
+        height: '12%',
+        padding: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     subHeading: {
         color: Colors.SUBHEADINGCOLOR,
         fontSize: Sizes.SUBTEXT,
         margin: 'auto',
-        paddingLeft: 10,
-        paddingTop: 5,
+        marginTop: 5,
+        marginLeft: 5,
+        alignSelf: 'stretch',
     },
     expenseContainer: {
         alignItems: 'center',
-        justifyContent: 'center',
-
+        justifyContent: 'flex-start',
+        height: '100%',
     },
     expense: {
         fontSize: Sizes.LARGETEXT,
-        margin: 'auto',
         textAlign: 'center',
-        height: 'auto',
-        width: '70%',
+        width: '90%',
     },
 });
 
