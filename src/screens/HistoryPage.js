@@ -26,17 +26,18 @@ import {
     deleteRowFromReacurringTable,
     getRowFromExpenseTable,
     deleteImage,
-    getCategoryNameFromId,
     applyRecurringExpenses,
-    getExpenseTable,
-    getCategoryColorById,
     getExpenseUpdatesInSession,
+    getExpensesTableCategoryJoin,
 } from '../util/FileSystemUtils';
 
 export default function HistoryPage({ navigation }) {
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [allExpenses, setAllExpeneses] = useState([]);
+    const [showExpenseInfo, setShowExpenseInfo] = useState(false);
+    const [selectedExpense, setSelectedExpense] = useState();
+
     const expensesToDisplay = useMemo(() => {
         return searchQuery.length === 0
             ? allExpenses
@@ -44,9 +45,6 @@ export default function HistoryPage({ navigation }) {
                   expense['name'].toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
               );
     }, [allExpenses, searchQuery]);
-
-    const [showExpenseInfo, setShowExpenseInfo] = useState(false);
-    const [selectedExpense, setSelectedExpense] = useState();
 
     let expenseChangesOnLastCheck = null;
 
@@ -65,18 +63,10 @@ export default function HistoryPage({ navigation }) {
                 // Apply recurring expenses
                 await applyRecurringExpenses();
                 // Fetch expenses and set to state
-                const expenses = await getExpenseTable();
-                // Change expense categoryId to name
-                for (let i = 0; i < expenses.length; i++) {
-                    expenses[i]['categoryColor'] = await getCategoryColorById(
-                        expenses[i]['category']
-                    );
-                    expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
-                }
-                // Change expense categoryId to name
+                const expenses = await getExpensesTableCategoryJoin();
                 setAllExpeneses(expenses);
                 setLoading(false);
-                // console.log('expenses set!');
+                console.log('expenses set!');
             } catch (error) {
                 console.error('Error fetching expenses:', error);
             }
@@ -130,7 +120,7 @@ export default function HistoryPage({ navigation }) {
                 {!loading && (
                     <FlatList
                         contentContainerStyle={styles.scrollableContent}
-                        data={expensesToDisplay}
+                        data={[...expensesToDisplay].reverse()}
                         renderItem={(row) => {
                             const expense = row['item'];
                             return (
@@ -144,13 +134,13 @@ export default function HistoryPage({ navigation }) {
                                             <View
                                                 style={{
                                                     ...styles.colorCircle,
-                                                    backgroundColor: expense['categoryColor'],
+                                                    backgroundColor: expense['color'],
                                                 }}
                                             />
                                             <Text
                                                 style={{
                                                     ...styles.categoryName,
-                                                    color: expense['categoryColor'],
+                                                    color: expense['color'],
                                                 }}>
                                                 {expense['category']}
                                             </Text>

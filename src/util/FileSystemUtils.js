@@ -108,6 +108,42 @@ export async function getExpenseTable() {
 }
 
 /**
+ * Gets all entries in the expense table
+ * @returns {list} List of all expense object
+ * object: {id, name, amount, day, timestamp, reacurring_id, category_id, category_name, category_color}
+ */
+// probably should use this everywhere we need expense info and category info
+export async function getExpensesTableCategoryJoin() {
+    const db = await getDatabase();
+    let expenses = [];
+    await db.transactionAsync(async (tx) => {
+        expenses = (
+            await tx.executeSqlAsync(
+                `
+                SELECT 
+                expenses.id,
+                expenses.name,
+                expenses.amount,
+                expenses.day,
+                expenses.timestamp,
+                expenses.picture,
+                expenses.memo,
+                expenses.picture,
+                expenses.reacurring_id,
+                categories.name AS category,
+                categories.color AS color 
+                FROM expenses 
+                INNER JOIN categories ON categories.id = expenses.category        
+                ORDER BY timestamp;
+                `
+            )
+        ).rows;
+    });
+    //console.log(expenses);
+    return expenses;
+}
+
+/**
  * Adds an expense to the database
  * @param {string} name Name of the expense
  * @param {integer} category ID of the category
@@ -213,6 +249,7 @@ export async function deleteRowFromExpenseTable(row) {
     await db.transactionAsync(async (tx) => {
         await tx.executeSqlAsync(deleteExpense(row));
     });
+    expenseUpdatesInSession += 1;
 }
 
 /**
