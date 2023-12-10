@@ -18,6 +18,7 @@ import {
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import ButtonComponent from '../components/ButtonComponent';
 import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
@@ -221,16 +222,20 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                         </View>
                                     )}
                                     <View style={styles.buttonContainer}>
-                                        <TouchableOpacity
-                                            style={styles.saveButton}
-                                            onPress={handleButtonPress}>
-                                            <Text style={styles.buttonText}>Save</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={styles.cancelButton}
-                                            onPress={onClose}>
-                                            <Text style={styles.buttonText}>Cancel</Text>
-                                        </TouchableOpacity>
+                                        <ButtonComponent
+                                            onPress={handleButtonPress}
+                                            name="Save"
+                                            buttonColor={Colors.SECONDARYCOLOR}
+                                            buttonStyle={{ width: 80, margin: 10 }}
+                                            buttonTextStyle={{}}
+                                        />
+                                        <ButtonComponent
+                                            onPress={onClose}
+                                            name="Cancel"
+                                            buttonColor={Colors.CONTRASTCOLOR}
+                                            buttonStyle={{ width: 80, margin: 10 }}
+                                            buttonTextStyle={{}}
+                                        />
                                     </View>
                                 </View>
                             </View>
@@ -321,26 +326,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-end',
         flexDirection: 'row',
-    },
-    cancelButton: {
-        backgroundColor: '#FF3F48',
-        padding: 10,
-        borderRadius: 20,
-        height: 40,
-        width: 80,
-        margin: 10,
-    },
-    saveButton: {
-        backgroundColor: Colors.SECONDARYCOLOR,
-        padding: 10,
-        borderRadius: 20,
-        height: 40,
-        width: 80,
-        margin: 10,
-    },
-    buttonText: {
-        textAlign: 'center',
-        fontSize: 20,
-        color: 'white',
     },
 });

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View, Modal, Dimensions } from 'react-native';
 
 import EditExpenseComponent from './EditExpenseComponent';
+import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
@@ -56,13 +57,18 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                         <View style={styles.allInfoContainer}>
                             {onHome ? (
                                 <View style={styles.buttonContainer}>
-                                    <TouchableOpacity
-                                        style={styles.editButton}
+                                    <ButtonComponent
                                         onPress={async () => {
                                             openInfo();
-                                        }}>
-                                        <Text style={styles.buttonText}>Edit</Text>
-                                    </TouchableOpacity>
+                                        }}
+                                        name="Edit"
+                                        buttonColor="rgba(0, 0, 0, 0)"
+                                        buttonStyle={{ height: 50, width: 80, paddingTop: 10 }}
+                                        buttonTextStyle={{
+                                            fontSize: 25,
+                                            color: Colors.SECONDARYCOLOR,
+                                        }}
+                                    />
                                 </View>
                             ) : null}
                             {expense.picture !== null && hasMediaLibraryPermission ? (
@@ -190,7 +196,6 @@ const styles = StyleSheet.create({
     },
     textContainer: {
         padding: 5,
-        backgroundColor: 'white',
         margin: 20,
         height: '50%',
     },

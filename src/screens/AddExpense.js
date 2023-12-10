@@ -24,6 +24,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import ButtonComponent from '../components/ButtonComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
 import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
@@ -302,11 +303,13 @@ export default function AddExpense({ navigation }) {
                                             </TouchableOpacity>
                                         </View>
                                     )}
-                                    <TouchableOpacity
-                                        style={styles.button}
-                                        onPress={handleAddButtonPress}>
-                                        <Text style={styles.addButton}>Add</Text>
-                                    </TouchableOpacity>
+                                    <ButtonComponent
+                                        onPress={handleAddButtonPress}
+                                        name="Add"
+                                        buttonColor={Colors.SECONDARYCOLOR}
+                                        buttonStyle={{ width: 180, height: 40, padding: 5}}
+                                        buttonTextStyle={{ fontSize: 24 }}
+                                    />
                                 </View>
                             </View>
                         </ScrollView>
@@ -377,16 +380,6 @@ const styles = StyleSheet.create({
         fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
-    button: {
-        color: Colors.SECONDARYCOLOR,
-        fontFamily: 'Roboto-Bold',
-        width: '60%',
-        height: '40%',
-        borderRadius: 20,
-        textAlign: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.SECONDARYCOLOR,
-    },
     preview: {
         height: '100%',
         aspectRatio: 1,
@@ -410,12 +403,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         width: '84%',
-    },
-    addButton: {
-        fontFamily: 'Roboto-Bold',
-        color: 'white',
-        textAlign: 'center',
-        fontSize: 24,
     },
     imageCancelButton: {
         position: 'absolute',
