@@ -35,6 +35,9 @@ export default function HistoryPage({ navigation }) {
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [allExpenses, setAllExpeneses] = useState([]);
+    const [showExpenseInfo, setShowExpenseInfo] = useState(false);
+    const [selectedExpense, setSelectedExpense] = useState();
+
     const expensesToDisplay = useMemo(() => {
         return searchQuery.length === 0
             ? allExpenses
@@ -42,9 +45,6 @@ export default function HistoryPage({ navigation }) {
                   expense['name'].toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
               );
     }, [allExpenses, searchQuery]);
-
-    const [showExpenseInfo, setShowExpenseInfo] = useState(false);
-    const [selectedExpense, setSelectedExpense] = useState();
 
     let expenseChangesOnLastCheck = null;
 
