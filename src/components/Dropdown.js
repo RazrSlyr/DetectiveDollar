@@ -24,6 +24,7 @@ function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
+                selectedTextProps={{ numberOfLines: 1, ellipsizeMode: 'tail' }}
                 data={data}
                 //search
                 maxHeight={300}
