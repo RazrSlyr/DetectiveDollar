@@ -4,8 +4,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 
 import PieChartLegend from './PieChartLegend';
-import * as Colors from '../constants/Colors';
-import { getExpensesbyCategory } from '../util/FileSystemUtils';
+import * as Colors from '../../constants/Colors';
+import { getExpensesbyCategory } from '../../util/FileSystemUtils';
 
 /**
  * Component for displaying a pie graph of expenses separated by category

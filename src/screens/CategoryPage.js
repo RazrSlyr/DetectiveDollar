@@ -18,9 +18,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ColorPicker from 'react-native-wheel-color-picker';
 
-import ButtonComponent from '../components/ButtonComponent';
 import CategoryEditComponent from '../components/CategoryEditComponent';
-import GreenLine from '../components/GreenLine';
+import ButtonComponent from '../components/ui/ButtonComponent';
+import GreenLine from '../components/ui/GreenLineComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';

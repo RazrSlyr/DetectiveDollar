@@ -1,7 +1,7 @@
-import AddExpense from './AddExpense';
+import AddExpensePage from './AddExpensePage';
 import CategoryPage from './CategoryPage';
 import GraphPage from './GraphPage';
 import HistoryPage from './HistoryPage';
 import HomePage from './HomePage';
 
-export { HomePage, AddExpense, GraphPage, HistoryPage, CategoryPage };
+export { HomePage, AddExpensePage, GraphPage, HistoryPage, CategoryPage };

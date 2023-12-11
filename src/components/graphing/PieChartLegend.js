@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
-import * as Colors from '../constants/Colors';
+import * as Colors from '../../constants/Colors';
 
 /**
  * Component for displaying a legend for a pie chart

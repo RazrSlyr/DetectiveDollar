@@ -1,13 +1,7 @@
-/**
- * @file Code for the user's Add Expense screen.
- * Allows the user to input expense information and have it be added as an expense
- */
-
-import { AntDesign, Feather } from '@expo/vector-icons';
+import { Feather, AntDesign } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { StatusBar } from 'expo-status-bar';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     TouchableOpacity,
     StyleSheet,
@@ -16,136 +10,91 @@ import {
     View,
     Dimensions,
     Alert,
-    Platform,
     TouchableWithoutFeedback,
     Keyboard,
     KeyboardAvoidingView,
     ScrollView,
 } from 'react-native';
+import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ButtonComponent from '../components/ButtonComponent';
-import DatePickerComponent from '../components/DatePickerComponent';
-import DropdownSelector from '../components/Dropdown';
-import GreenLine from '../components/GreenLine';
-import TodaySpendingComponent from '../components/TodaysExpenseComponent';
-import * as Colors from '../constants/Colors';
-import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
-import * as Sizes from '../constants/Sizes';
-import { getCurrentDateString } from '../util/DatetimeUtils';
-import {
-    addRowToExpenseTable,
-    saveImage,
-    getExpensesFromDay,
-    getCategoryTable,
-} from '../util/FileSystemUtils';
-import { pickImage, captureImage } from '../util/ImagePickerUtils';
-export default function AddExpense({ navigation }) {
+import * as Colors from '../../constants/Colors';
+import * as Sizes from '../../constants/Sizes';
+import { updateExpense, saveImage, getCategoryTable } from '../../util/FileSystemUtils';
+import { pickImage, captureImage } from '../../util/ImagePickerUtils';
+import ButtonComponent from '../ui/ButtonComponent';
+import DropdownSelector from '../ui/DropdownComponent';
+import GreenLine from '../ui/GreenLineComponent';
+
+/**
+ * Component for the inspecting expense info
+ * @param {object} props. Props object. The props are isVisible (bool), onClose (callback),
+ * and expense (object)
+ * @returns {object} The component object for the Edit Expense pop up
+ * @memberof Components
+ */
+
+const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
+    const [allCategories, setAllCategories] = useState([]);
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
-    const [allCategories, setAllCategories] = useState([]);
     const [category, setCategory] = useState('');
-    const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
-    const [todayExpenses, setTodayExpenses] = useState([]);
-    const [targetDate, setTargetDate] = useState(getCurrentDateString());
-    const [memo, setMemo] = useState(null);
+    const [memo, setMemo] = useState('');
 
-    const todaysDate = getCurrentDateString();
-
-    useEffect(() => {
-        const getExpensesAndCategories = async () => {
-            setTodayExpenses(await getExpensesFromDay(todaysDate));
-            setAllCategories(await getCategoryTable());
-        };
-        navigation.addListener('focus', () => {
-            getExpensesAndCategories();
-        });
-    }, []);
-
-    const handleDateChange = async (newDate) => {
-        try {
-            // Set the new date
-            setTargetDate(newDate);
-        } catch (error) {
-            console.error('Error fetching expenses for new date:', error);
-        }
-    };
-
-    // make date more readable
-    const parts = targetDate.split('-');
-    const year = parts[0];
-    const month = parts[1];
-    const day = parts[2];
-
-    // Format the date as "month/day/year"
-    const formattedDate = `${month}/${day}/${year}`;
-
-    const handleAddButtonPress = async () => {
-        // Add your button click logic here
-        if (name === '' || amount === '' || category === '') {
-            alert('Please Input a Name, Amount, and Category');
-            return;
-        }
-        const currentDate = new Date();
-
-        const dateParts = targetDate.split('-');
-        const selectedDayOfMonth = parseInt(dateParts[2], 10);
-        const selectedYear = parseInt(dateParts[0], 10);
-        const selectedMonth = parseInt(dateParts[1] - 1, 10);
-
-        currentDate.setDate(selectedDayOfMonth);
-        currentDate.setFullYear(selectedYear);
-        currentDate.setMonth(selectedMonth);
-
-        console.log(currentDate);
-
-        const timestamp = currentDate.getTime();
-        // console.log(categoryId);
+    const handleButtonPress = async () => {
         let imageURI = null;
         if (previewURI) {
             imageURI = await saveImage(previewURI);
         }
-        await addRowToExpenseTable(
-            name,
-            category,
-            parseFloat(amount).toFixed(2),
-            timestamp,
-            targetDate,
-            null,
-            imageURI,
-            memo,
-            frequency
+        await updateExpense(
+            expense?.id,
+            name !== '' && name !== null ? name : expense?.name,
+            category !== '' && category !== null ? category : expense?.categoryId,
+            amount !== null && amount !== '' ? amount : expense?.amount,
+            imageURI !== null && imageURI !== '' ? imageURI : expense?.picture,
+            memo !== null && memo !== '' ? memo : expense?.memo
         );
-        alert('Entry added');
+        Alert.alert('Success', 'Entry changed', [{ text: 'OK', onPress: onClose }]);
+        setImageURI('');
     };
+
     const clearImage = async () => {
         console.log('removed photo');
         setImageURI(null);
     };
+
+    useEffect(() => {
+        const getCategories = async () => {
+            setAllCategories(await getCategoryTable());
+        };
+        if (isVisible) {
+            getCategories();
+        }
+    }, [isVisible]);
+
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <SafeAreaView style={styles.container}>
+        <Modal
+            isVisible={isVisible}
+            animationInTiming={500}
+            animationOutTiming={500}
+            backdropTransitionInTiming={300}
+            backdropTransitionOutTiming={300}
+            onBackdropPress={onClose}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View style={styles.content}>
                     <View style={styles.titleContainer}>
-                        <Text style={styles.title}>Add Expense</Text>
+                        <Text style={styles.title}>Edit</Text>
                     </View>
-                    <StatusBar style="auto" />
-                    <TodaySpendingComponent
-                        todayExpenses={todayExpenses}
-                        subHeadingText="Today's Spending"
-                        containerWidth="80%"
-                    />
-                    <KeyboardAvoidingView
-                        style={{ flex: 1 }}
-                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                    <KeyboardAvoidingView style={{ flex: 1, paddingTop: 20 }}>
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={styles.box2}>
                                 <View style={[styles.inputContainer, styles.firstInput]}>
                                     <Text style={styles.inputHeading}>NAME</Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="Name of expense"
+                                        placeholder={expense?.name}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                         onChangeText={(value) => setName(value)}
                                     />
                                     <GreenLine />
@@ -154,33 +103,14 @@ export default function AddExpense({ navigation }) {
                                     <Text style={styles.inputHeading}>AMOUNT</Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="$0.00"
                                         keyboardType="numeric"
+                                        placeholder={`$${expense?.amount}`}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                         maxLength={10}
                                         onChangeText={(value) =>
                                             setAmount(parseFloat(value).toFixed(2))
                                         }
                                     />
-                                    <GreenLine />
-                                </View>
-                                <View style={styles.inputContainer}>
-                                    <Text style={styles.inputHeading}>DATE</Text>
-                                    <View style={styles.dateInputContainer}>
-                                        <Text
-                                            style={{
-                                                fontSize: Sizes.TEXTSIZE,
-                                                textAlign: 'left',
-                                                flex: 1,
-                                                fontFamily: 'Roboto-Bold',
-                                            }}>
-                                            {formattedDate}
-                                        </Text>
-                                        <DatePickerComponent
-                                            onDateChange={handleDateChange}
-                                            iconName="calendar"
-                                            iconSize={22}
-                                        />
-                                    </View>
                                     <GreenLine />
                                 </View>
                                 <View style={styles.inputContainer}>
@@ -193,30 +123,13 @@ export default function AddExpense({ navigation }) {
                                                 value: category['id'],
                                             };
                                         })}
+                                        value={category}
                                         onChange={(item) => {
                                             setCategory(item.value);
                                         }}
                                         dropdownLabel="Category"
-                                        placeholderLabel="Category"
-                                    />
-                                    <View style={{ height: 15, width: 15, marginBottom: 1 }} />
-                                    <GreenLine />
-                                </View>
-                                <View style={styles.inputContainer}>
-                                    <Text style={styles.inputHeading}>RECURRING</Text>
-                                    <DropdownSelector
-                                        style={styles.input}
-                                        data={[
-                                            { label: "Don't Repeat", value: NO_REPETION },
-                                            { label: 'Daily', value: DAILY },
-                                            { label: 'Weekly', value: WEEKLY },
-                                            { label: 'Monthly', value: MONTHLY },
-                                        ]}
-                                        onChange={(item) => {
-                                            setFrequency(item.value);
-                                        }}
-                                        dropdownLabel="Expense Frequency"
-                                        placeholderLabel="Expense Frequency"
+                                        placeholderLabel={expense?.category}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                     />
                                     <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
@@ -225,20 +138,25 @@ export default function AddExpense({ navigation }) {
                                     <Text style={styles.inputHeading}>MEMO</Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="Notes about spending"
+                                        placeholder={expense?.memo}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                         onChangeText={(value) => setMemo(value)}
                                     />
                                     <GreenLine />
                                 </View>
                                 <View style={[styles.inputContainer, styles.cameraBtnsContainer]}>
                                     {previewURI ? (
-                                        <SafeAreaView style={styles.container}>
+                                        <SafeAreaView>
                                             <Image
-                                                style={styles.previewImg}
+                                                style={styles.imagePreview}
                                                 source={{ uri: previewURI }}
                                             />
                                             <TouchableOpacity
-                                                style={styles.imageCancelButton}
+                                                style={{
+                                                    position: 'absolute',
+                                                    right: -30,
+                                                    alignSelf: 'center',
+                                                }}
                                                 onPress={async () => {
                                                     await clearImage();
                                                 }}>
@@ -303,41 +221,50 @@ export default function AddExpense({ navigation }) {
                                             </TouchableOpacity>
                                         </View>
                                     )}
-                                    <ButtonComponent
-                                        onPress={handleAddButtonPress}
-                                        name="Add"
-                                        buttonColor={Colors.SECONDARYCOLOR}
-                                        buttonStyle={styles.button}
-                                    />
+                                    <View style={styles.buttonContainer}>
+                                        <ButtonComponent
+                                            onPress={handleButtonPress}
+                                            name="Save"
+                                            buttonColor={Colors.SECONDARYCOLOR}
+                                            buttonStyle={styles.button}
+                                        />
+                                        <ButtonComponent
+                                            onPress={onClose}
+                                            name="Cancel"
+                                            buttonColor={Colors.CONTRASTCOLOR}
+                                            buttonStyle={styles.button}
+                                        />
+                                    </View>
                                 </View>
                             </View>
                         </ScrollView>
                     </KeyboardAvoidingView>
                 </View>
-            </SafeAreaView>
-        </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback>
+        </Modal>
     );
-}
+};
+export default EditExpenseComponent;
 
 const styles = StyleSheet.create({
-    container: {
+    modalContainer: {
         flex: 1,
-        backgroundColor: Colors.SECONDARYCOLOR,
+        justifyContent: 'center',
     },
     content: {
-        height: '100%',
+        height: Dimensions.get('window').height * 0.6,
         alignItems: 'center',
         backgroundColor: Colors.PRIMARYCOLOR,
-        flexDirection: 'column',
+        borderRadius: 40,
     },
     titleContainer: {
         width: '100%',
         alignItems: 'center',
-        backgroundColor: Colors.SECONDARYCOLOR,
-        paddingBottom: 10,
+        //backgroundColor: Colors.secondaryColor,
+        paddingTop: 10,
     },
     title: {
-        color: 'white',
+        color: Colors.SECONDARYCOLOR,
         fontFamily: 'Roboto-Bold',
         fontSize: Sizes.TITLESIZE,
         textAlign: 'center',
@@ -345,18 +272,12 @@ const styles = StyleSheet.create({
     },
     box2: {
         width: Dimensions.get('window').width * 0.8,
-        height: Dimensions.get('window').height * 0.6,
+        height: Dimensions.get('window').height * 0.5,
         backgroundColor: 'white',
         borderRadius: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-    },
-    scrollableContainer: {
-        width: '100%',
-        backgroundColor: 'white',
-        borderRadius: 10,
-        flexDirection: 'column',
     },
     inputContainer: {
         height: Dimensions.get('window').height * 0.072,
@@ -379,7 +300,7 @@ const styles = StyleSheet.create({
         fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
-    previewImg: {
+    imagePreview: {
         height: '100%',
         aspectRatio: 1,
     },
@@ -403,10 +324,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '84%',
     },
-    imageCancelButton: {
-        position: 'absolute',
-        right: -30,
-        alignSelf: 'center',
+    buttonContainer: {
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        flexDirection: 'row',
     },
-    button: { width: 180 },
+    button: {
+        width: 100,
+        margin: 10,
+    },
 });

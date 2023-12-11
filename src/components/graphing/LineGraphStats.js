@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import * as Colors from '../constants/Colors';
-import { YEARLY } from '../constants/FrequencyConstants';
+import * as Colors from '../../constants/Colors';
+import { YEARLY } from '../../constants/FrequencyConstants';
 
 /**
  * Component for expense statistics relating to a Line Graph

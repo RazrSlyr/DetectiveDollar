@@ -5,10 +5,10 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View, Modal, Dimensions } from 'react-native';
 
 import EditExpenseComponent from './EditExpenseComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import * as Colors from '../constants/Colors';
-import * as Sizes from '../constants/Sizes';
-import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
+import * as Colors from '../../constants/Colors';
+import * as Sizes from '../../constants/Sizes';
+import { getDateFromUTCDatetimeString, getDatetimeString } from '../../util/DatetimeUtils';
+import ButtonComponent from '../ui/ButtonComponent';
 
 /**
  * Component for the inspecting expense info

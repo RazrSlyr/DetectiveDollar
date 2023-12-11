@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, StyleSheet, Text } from 'react-native';
 
 import * as Colors from '../../constants/Colors';
-import { HomePage, AddExpense, GraphPage, HistoryPage, CategoryPage } from '../../screens';
+import { HomePage, AddExpensePage, GraphPage, HistoryPage, CategoryPage } from '../../screens';
 
 const Tab = createBottomTabNavigator();
 
@@ -73,7 +73,7 @@ const Tabs = () => {
             />
             <Tab.Screen
                 name="Add"
-                component={AddExpense}
+                component={AddExpensePage}
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (

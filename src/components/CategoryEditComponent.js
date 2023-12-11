@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import ColorPicker from 'react-native-wheel-color-picker';
 
-import GreenLine from './GreenLine';
-import ButtonComponent from '../components/ButtonComponent';
+import ButtonComponent from './ui/ButtonComponent';
+import GreenLine from './ui/GreenLineComponent';
 import * as Colors from '../constants/Colors';
 import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
 

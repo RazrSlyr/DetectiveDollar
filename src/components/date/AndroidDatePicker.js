@@ -2,8 +2,8 @@ import React from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import DateTimePicker from 'react-native-ui-datepicker';
 
-import { SECONDARYCOLOR } from '../constants/Colors';
-import { getDateFromDatetimeString } from '../util/DatetimeUtils';
+import { SECONDARYCOLOR } from '../../constants/Colors';
+import { getDateFromDatetimeString } from '../../util/DatetimeUtils';
 
 const AndroidDatePicker = ({ selectedDate, handleDateChange, hideDatePicker, styles }) => {
     return (
