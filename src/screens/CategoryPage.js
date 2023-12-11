@@ -175,26 +175,6 @@ export default function CategoryPage({ navigation }) {
                                 }}>
                                 <Text style={styles.editText}>Edit</Text>
                             </TouchableOpacity>
-                            {/*                             <ButtonComponent
-                                onPress={async () => {
-                                    setSelectedCategory(category);
-                                    openCategoryEditor();
-                                }}
-                                name="Edit"
-                                buttonColor={Colors.PRIMARYCOLOR}
-                                buttonStyle={{
-                                    width: 60,
-                                    borderRadius: 30,
-                                    position: 'absolute',
-                                    right: 20,
-                                    justifyContent: 'flex-end',
-                                    padding: 3,
-                                }}
-                                buttonTextStyle={{
-                                    color: Colors.SECONDARYCOLOR,
-                                    fontSize: 20,
-                                }}
-                            /> */}
                         </View>
                     );
                 })}
