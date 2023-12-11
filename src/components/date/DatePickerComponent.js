@@ -4,8 +4,8 @@ import { View, TouchableOpacity, Platform, Modal, StyleSheet } from 'react-nativ
 
 import AndroidDatePicker from './AndroidDatePicker';
 import IOSDatePicker from './IOSDatePicker';
-import { SECONDARYCOLOR } from '../constants/Colors';
-import { getDateStringFromDate } from '../util/DatetimeUtils';
+import { SECONDARYCOLOR } from '../../constants/Colors';
+import { getDateStringFromDate } from '../../util/DatetimeUtils';
 
 /**
  * Component for the selecting a date

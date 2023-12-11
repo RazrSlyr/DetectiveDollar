@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import * as Colors from '../constants/Colors';
+import * as Colors from '../../constants/Colors';
 
 /**
  * Component for a green separator line

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
-import * as Colors from '../constants/Colors';
-import * as Sizes from '../constants/Sizes';
+import * as Colors from '../../constants/Colors';
+import * as Sizes from '../../constants/Sizes';
 
 /**
  * Component for the selecting an element from a dropdown

@@ -3,10 +3,10 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
-import * as Colors from '../constants/Colors';
-import * as Sizes from '../constants/Sizes';
+import * as Colors from '../../constants/Colors';
+import * as Sizes from '../../constants/Sizes';
 /**
  * Component for a Button
  * @param {object} props Props object. Props are onPress,

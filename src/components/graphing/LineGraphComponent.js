@@ -4,10 +4,10 @@ import { View, Text } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 
 import LineGraphStats from './LineGraphStats';
-import * as Colors from '../constants/Colors';
-import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
-import { getCurrentDateString } from '../util/DatetimeUtils';
-import { getExpensesFromDayframe } from '../util/FileSystemUtils';
+import * as Colors from '../../constants/Colors';
+import { YEARLY, MONTHLY, WEEKLY } from '../../constants/FrequencyConstants';
+import { getCurrentDateString } from '../../util/DatetimeUtils';
+import { getExpensesFromDayframe } from '../../util/FileSystemUtils';
 
 /**
  * Component for displaying a Line Graph of expense data

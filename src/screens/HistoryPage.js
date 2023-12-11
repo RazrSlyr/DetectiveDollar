@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
+import ExpenseInfoComponent from '../components/expense/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import {

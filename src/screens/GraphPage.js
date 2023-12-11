@@ -11,9 +11,9 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 
-import LineGraphComponent from '../components/LineGraphComponent';
-import PieChartComponent from '../components/PieChartComponent';
 import WeekMonthYearButtons from '../components/WeekMonthYearComponent';
+import LineGraphComponent from '../components/graphing/LineGraphComponent';
+import PieChartComponent from '../components/graphing/PieChartComponent';
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {

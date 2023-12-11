@@ -10,9 +10,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import DatePickerComponent from '../components/DatePickerComponent';
-import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import TodaySpendingComponent from '../components/TodaysExpenseComponent';
+import DatePickerComponent from '../components/date/DatePickerComponent';
+import ExpenseInfoComponent from '../components/expense/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import {
