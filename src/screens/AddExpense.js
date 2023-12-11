@@ -118,6 +118,8 @@ export default function AddExpense({ navigation }) {
             frequency
         );
         alert('Entry added');
+        // Clear input fields
+        setImageURI(null);
     };
     const clearImage = async () => {
         console.log('removed photo');
