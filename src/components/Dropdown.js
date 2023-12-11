@@ -16,14 +16,6 @@ function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
-    const truncateText = (text, maxLength) => {
-        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-    };
-    const truncatedData = data.map((item) => ({
-        value: item.value,
-        label: item.label.length > 20 ? truncateText(item.label, 23) : item.label,
-    }));
-
     return (
         <View style={styles.container}>
             <Dropdown
@@ -32,7 +24,8 @@ function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
-                data={truncatedData}
+                selectedTextProps={{ numberOfLines: 1, ellipsizeMode: 'tail' }}
+                data={data}
                 //search
                 maxHeight={300}
                 labelField="label"
