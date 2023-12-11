@@ -5,18 +5,8 @@
 
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    View,
-    Text,
-    ScrollView,
-    Modal,
-    TextInput,
-    KeyboardAvoidingView,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ColorPicker from 'react-native-wheel-color-picker';
 
 import ButtonComponent from '../components/ButtonComponent';
 import CategoryAddComponent from '../components/CategoryAddComponent';
@@ -24,8 +14,7 @@ import CategoryEditComponent from '../components/CategoryEditComponent';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';
-
+import { getCategoryTable } from '../util/FileSystemUtils';
 export default function CategoryPage({ navigation }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -45,14 +34,14 @@ export default function CategoryPage({ navigation }) {
         };
 
         // Call getExpenses when the component mounts
-        getCategories();
+        updateCategories();
 
         // Add an event listener for focus to re-fetch expenses when the component comes into focus
         const unsubscribe = navigation.addListener('focus', getCategories);
 
         // Clean up the event listener when the component unmounts
         return () => unsubscribe();
-    }, [navigation]);
+    }, [navigation, updateCategories]);
 
     const openCategoryEditor = () => {
         setShowEditorComponent(true);

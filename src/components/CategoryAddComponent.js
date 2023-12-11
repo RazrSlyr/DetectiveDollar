@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Modal, TextInput } from 'react-native';
+import {
+    Alert,
+    StyleSheet,
+    Text,
+    Platform,
+    View,
+    SafeAreaView,
+    Modal,
+    TextInput,
+} from 'react-native';
 import ColorPicker from 'react-native-wheel-color-picker';
 
 import GreenLine from './GreenLine';
@@ -9,13 +18,16 @@ import * as Sizes from '../constants/Sizes';
 import { addRowToCategoryTable } from '../util/FileSystemUtils';
 const DEFAULTCOLOR = 'white';
 const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
-    const [enableSave, setEnableSave] = useState(false);
     const [categoryName, setCategoryName] = useState();
     const [categoryColor, setColor] = useState(DEFAULTCOLOR); //use to update color
-
+    const onColorChange = (color) => {
+        setColor(color);
+    };
     return (
         <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
-            <View style={styles.modalContainer}>
+            <View
+                style={styles.modalContainer}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                 <SafeAreaView style={styles.container}>
                     <View style={styles.titleContainer}>
                         <Text style={styles.titleText}>Add Category</Text>
@@ -29,13 +41,15 @@ const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
                             onChangeText={(value) => setCategoryName(value)}
                         />
                     </View>
-                    <GreenLine style={{ alignSelf: 'center' }} />
+                    <GreenLine />
                     <View style={styles.inputContainer}>
                         <Text style={styles.inputHeading}>Color</Text>
                         <View style={styles.colorPickerContainer}>
                             <ColorPicker
-                                color={categoryColor}
-                                onColorChangeComplete={(categoryColor) => setColor(categoryColor)}
+                                color={DEFAULTCOLOR}
+                                onColorChangeComplete={(categoryColor) =>
+                                    onColorChange(categoryColor)
+                                }
                                 thumbSize={30}
                                 sliderSize={30}
                                 noSnap
@@ -46,10 +60,22 @@ const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
                     <View style={styles.rowContainer}>
                         <ButtonComponent
                             onPress={async () => {
-                                await addRowToCategoryTable(categoryName, categoryColor);
-                                setCategoryName(undefined);
-                                setColor('white');
-                                await onAdd();
+                                if (
+                                    categoryName === undefined ||
+                                    categoryName === null ||
+                                    categoryName.trim().length === 0
+                                ) {
+                                    Alert.alert('Please Input a Category Name');
+                                    return;
+                                }
+                                try {
+                                    await addRowToCategoryTable(categoryName.trim(), categoryColor);
+                                    setCategoryName(undefined);
+                                    setColor('white');
+                                    await onAdd();
+                                } catch (error) {
+                                    console.log('Failed to add Category', error);
+                                }
                             }}
                             name="Add"
                             buttonColor={Colors.SECONDARYCOLOR}
