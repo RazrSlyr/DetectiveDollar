@@ -63,11 +63,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                     value={
                                         categoryName === undefined ? category.name : categoryName
                                     }
-                                    onChangeText={(value) => {
-                                        //console.log('change value', value);
-                                        setCategoryName(value);
-                                        //setColor(color)
-                                    }}
+                                    onChangeText={(value) => setCategoryName(value)}
                                 />
                             </View>
                             <GreenLine style={{ alignSelf: 'center' }} />
