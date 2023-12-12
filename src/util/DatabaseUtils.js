@@ -21,6 +21,7 @@ import {
 const dataDir = FileSystem.documentDirectory + 'SQLite';
 const databaseName = 'DetectiveDollar.db';
 let expenseUpdatesInSession = 0;
+let firstCheck = true;
 
 /**
  * Gets a reference to the SQLite database, creating it if it doesn't exist
@@ -68,4 +69,14 @@ export function incrementExpenseUpdatesInSession() {
  */
 export function resetExpenseUpdatesInSession() {
     expenseUpdatesInSession = 0;
+}
+
+/**
+ * Checks if this is the first time the app is checking for updates
+ * @returns {boolean} If this is the first time the app is checking for updates
+ */
+export function isFirstCheck() {
+    const wasFirstCheck = firstCheck;
+    firstCheck = false;
+    return wasFirstCheck;
 }

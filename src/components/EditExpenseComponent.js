@@ -333,18 +333,5 @@ const styles = StyleSheet.create({
     button: {
         width: 100,
         margin: 10,
-    },
-    saveButton: {
-        backgroundColor: Colors.SECONDARYCOLOR,
-        padding: 10,
-        borderRadius: 20,
-        height: 40,
-        width: 80,
-        margin: 10,
-    },
-    buttonText: {
-        textAlign: 'center',
-        fontSize: 20,
-        color: '#ffffff',
-    },
+    }
 });

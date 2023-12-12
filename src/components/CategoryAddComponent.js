@@ -15,7 +15,7 @@ import GreenLine from './GreenLine';
 import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { addRowToCategoryTable } from '../util/FileSystemUtils';
+import { addRowToCategoryTable } from '../util/CategoryTableUtils';
 const DEFAULTCOLOR = 'white';
 const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
     const [categoryName, setCategoryName] = useState();
