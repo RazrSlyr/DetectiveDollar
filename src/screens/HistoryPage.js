@@ -161,7 +161,12 @@ export default function HistoryPage({ navigation }) {
                                                 {'$' + parseFloat(expense['amount']).toFixed(2)}
                                             </Text>
                                         </View>
-                                        <View style={{ width: '15%', alignItems: 'center', right: 5 }}>
+                                        <View
+                                            style={{
+                                                width: '15%',
+                                                alignItems: 'center',
+                                                right: 5,
+                                            }}>
                                             {expense['reacurring_id'] && (
                                                 <FontAwesome
                                                     name="repeat"
