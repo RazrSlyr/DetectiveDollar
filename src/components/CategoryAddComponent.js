@@ -19,10 +19,8 @@ import { addRowToCategoryTable } from '../util/FileSystemUtils';
 const DEFAULTCOLOR = 'white';
 const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
     const [categoryName, setCategoryName] = useState();
-    const [categoryColor, setColor] = useState(DEFAULTCOLOR); //use to update color
-    const onColorChange = (color) => {
-        setColor(color);
-    };
+    const [categoryColor, setCategoryColor] = useState(DEFAULTCOLOR); //use to update color
+
     return (
         <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
             <View
@@ -48,7 +46,7 @@ const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
                             <ColorPicker
                                 color={DEFAULTCOLOR}
                                 onColorChangeComplete={(categoryColor) =>
-                                    onColorChange(categoryColor)
+                                    setCategoryColor(categoryColor)
                                 }
                                 thumbSize={30}
                                 sliderSize={30}
@@ -71,8 +69,9 @@ const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
                                 try {
                                     await addRowToCategoryTable(categoryName.trim(), categoryColor);
                                     setCategoryName(undefined);
-                                    setColor('white');
+                                    setCategoryColor(DEFAULTCOLOR);
                                     await onAdd();
+                                    onClose();
                                 } catch (error) {
                                     console.log('Failed to add Category', error);
                                 }
@@ -84,7 +83,7 @@ const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
                         <ButtonComponent
                             onPress={async () => {
                                 setCategoryName(undefined);
-                                setColor('white');
+                                setCategoryColor(DEFAULTCOLOR);
                                 onClose();
                             }}
                             name="Cancel"
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 10,
+        //marginTop: 10,
     },
     colorPickerContainer: {
         height: 300,

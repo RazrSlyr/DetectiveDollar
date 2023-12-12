@@ -26,6 +26,17 @@ export default function CategoryPage({ navigation }) {
             try {
                 // Fetch expenses for today and set to state
                 const categories = await getCategoryTable();
+                categories.sort(function (a, b) {
+                    const x = a.name;
+                    const y = b.name;
+                    if (x > y) {
+                        return 1;
+                    }
+                    if (x < y) {
+                        return -1;
+                    }
+                    return 0;
+                });
                 setCategories(categories);
                 //console.log('Categories set!');
             } catch (error) {
@@ -47,7 +58,6 @@ export default function CategoryPage({ navigation }) {
         setShowEditorComponent(true);
     };
     const openCategoryAdd = () => {
-        console.log('open add comp');
         setShowAddComponent(true);
     };
     const updateCategories = async () => {
