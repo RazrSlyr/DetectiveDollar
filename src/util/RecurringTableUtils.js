@@ -1,3 +1,11 @@
+/**
+ * @module RecurringTableUtils
+ */
+
+/**
+ * @file Used for storing and reading from the SQLite Recurring Table
+ */
+
 import { getDatabase } from './DatabaseUtils';
 import {
     getCurrentUTCDatetimeString,
@@ -12,14 +20,6 @@ import {
     createLastReacurrenceQuery,
     createReacurringDeleteById,
 } from './SQLiteUtils';
-
-/**
- * @module ExpenseTableUtils
- */
-
-/**
- * @file Used for storing and reading from the SQLite Expense Table
- */
 
 /**
  * Stops an expense from recurring

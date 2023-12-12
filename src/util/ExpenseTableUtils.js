@@ -1,3 +1,11 @@
+/**
+ * @module ExpenseTableUtils
+ */
+
+/**
+ * @file Used for storing and reading from the SQLite Expense Table
+ */
+
 import { getCategoryNameFromId } from './CategoryTableUtils';
 import { getDatabase, incrementExpenseUpdatesInSession } from './DatabaseUtils';
 import {
@@ -13,14 +21,6 @@ import {
     createEditExpenseQuery,
 } from './SQLiteUtils';
 import { NO_REPETION } from '../constants/FrequencyConstants';
-
-/**
- * @module ExpenseTableUtils
- */
-
-/**
- * @file Used for storing and reading from the SQLite Expense Table
- */
 
 /**
  * Gets all entries in the expense table

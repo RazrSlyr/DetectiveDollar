@@ -1,3 +1,11 @@
+/**
+ * @module ExpenseTableUtils
+ */
+
+/**
+ * @file Used for storing and reading from the SQLite Category Table
+ */
+
 import { getDatabase, incrementExpenseUpdatesInSession } from './DatabaseUtils';
 import {
     createCategoryInsert,

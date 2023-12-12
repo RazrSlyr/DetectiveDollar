@@ -1,3 +1,12 @@
+/**
+ * @module DatabaseUtils
+ */
+
+/**
+ * @file Contains methods used by various different parts of the Database or are not specific to
+ * one Database table
+ */
+
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
@@ -12,15 +21,6 @@ import {
 const dataDir = FileSystem.documentDirectory + 'SQLite';
 const databaseName = 'DetectiveDollar.db';
 let expenseUpdatesInSession = 0;
-
-/**
- * @module DatabaseUtils
- */
-
-/**
- * @file Contains methods used by various different parts of the Database or are not specific to
- * one Database table
- */
 
 /**
  * Gets a reference to the SQLite database, creating it if it doesn't exist
