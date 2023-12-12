@@ -1,3 +1,11 @@
+/**
+ * @module TestUtils
+ */
+
+/**
+ * @file Contains methods used for testing
+ */
+
 import { addRowToCategoryTable } from './CategoryTableUtils';
 import { getDatabase, incrementExpenseUpdatesInSession } from './DatabaseUtils';
 import { getDateStringFromDate } from './DatetimeUtils';

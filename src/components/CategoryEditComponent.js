@@ -7,6 +7,8 @@ import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
 import { updateRowFromCategoryTable } from '../util/CategoryTableUtils';
 
+const DEFAULTCOLOR = 'white';
+
 /**
  * Component for the Category editing pop up
  * @param {object} props Props object. The props are isVisible (bool),
@@ -14,7 +16,6 @@ import { updateRowFromCategoryTable } from '../util/CategoryTableUtils';
  * @returns {object} The component object for the Category Edit Pop Up
  * @memberof Components
  */
-const DEFAULTCOLOR = 'white';
 const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }) => {
     const [categoryName, setCategoryName] = useState();
     const [categoryColor, setCategoryColor] = useState(DEFAULTCOLOR); //use to update color
