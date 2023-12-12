@@ -4,6 +4,12 @@ import { Text, StyleSheet, View } from 'react-native';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 
+/**
+ * Component for displaying today's total expenses
+ * @param {object} props. Props object. Contains the following props:
+ * todaysExpenses (list of expense objects), subHeadingText (string), containerWidth (number)
+ * @returns The new category pop up component
+ */
 const TodaySpendingComponent = ({ todayExpenses, subHeadingText, containerWidth }) => {
     const spending = useMemo(() => {
         if (!todayExpenses || todayExpenses.length === 0) {

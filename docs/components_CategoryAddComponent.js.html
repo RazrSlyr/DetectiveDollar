@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: components/CategoryEditComponent.js</title>
+    <title>JSDoc: Source: components/CategoryAddComponent.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: components/CategoryEditComponent.js</h1>
+    <h1 class="page-title">Source: components/CategoryAddComponent.js</h1>
 
     
 
@@ -26,73 +26,70 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
-import { Alert, Modal, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+import {
+    Alert,
+    StyleSheet,
+    Text,
+    Platform,
+    View,
+    SafeAreaView,
+    Modal,
+    TextInput,
+} from 'react-native';
 import ColorPicker from 'react-native-wheel-color-picker';
 
 import GreenLine from './GreenLine';
 import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
-import { updateRowFromCategoryTable } from '../util/CategoryTableUtils';
+import { addRowToCategoryTable } from '../util/CategoryTableUtils';
+const DEFAULTCOLOR = 'white';
 
 /**
- * Component for the Category editing pop up
- * @param {object} props Props object. The props are isVisible (bool),
- * onClose (callback), onUpdate (callback), and category (object)
- * @returns {object} The component object for the Category Edit Pop Up
+ * Component for the pop up that lets you add a new category
+ * @param {object} props. Props object. Contains the following props:
+ * isVisible (boolean), onClose (callback), onAdd (callback)
+ * @returns The new category pop up component
  * @memberof Components
  */
-const DEFAULTCOLOR = 'white';
-const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }) => {
+const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
     const [categoryName, setCategoryName] = useState();
     const [categoryColor, setCategoryColor] = useState(DEFAULTCOLOR); //use to update color
-    useEffect(() => {
-        setCategoryName(category?.name);
-        setCategoryColor(category?.color);
-    }, [category]);
 
     return (
         &lt;Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
-            &lt;View style={styles.modalContainer}>
+            &lt;View
+                style={styles.modalContainer}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                 &lt;SafeAreaView style={styles.container}>
-                    {category ? (
-                        &lt;View style={{ width: '100%' }}>
-                            &lt;View style={styles.titleContainer}>
-                                &lt;Text style={styles.titleText}>Edit Category&lt;/Text>
-                            &lt;/View>
-                            &lt;View style={styles.inputContainer}>
-                                &lt;Text style={styles.inputHeading}>Name&lt;/Text>
-                                &lt;TextInput
-                                    style={styles.inputField}
-                                    value={categoryName !== undefined ? categoryName : ''}
-                                    placeholder={category?.name}
-                                    onChangeText={(value) => {
-                                        setCategoryName(value);
-                                    }}
-                                />
-                            &lt;/View>
-                            &lt;GreenLine style={{ alignSelf: 'center' }} />
-                            &lt;View style={styles.inputContainer}>
-                                &lt;Text style={styles.inputHeading}>Color&lt;/Text>
-                                &lt;View style={styles.colorPickerContainer}>
-                                    &lt;ColorPicker
-                                        color={categoryColor}
-                                        onColorChangeComplete={(categoryColor) =>
-                                            setCategoryColor(categoryColor)
-                                        }
-                                        thumbSize={30}
-                                        sliderSize={30}
-                                        noSnap
-                                        row={false}
-                                    />
-                                &lt;/View>
-                            &lt;/View>
+                    &lt;View style={styles.titleContainer}>
+                        &lt;Text style={styles.titleText}>Add Category&lt;/Text>
+                    &lt;/View>
+                    &lt;View style={styles.inputContainer}>
+                        &lt;Text style={styles.inputHeading}>Name&lt;/Text>
+                        &lt;TextInput
+                            style={styles.inputField}
+                            value={categoryName}
+                            placeholder="Category Name"
+                            onChangeText={(value) => setCategoryName(value)}
+                        />
+                    &lt;/View>
+                    &lt;GreenLine />
+                    &lt;View style={styles.inputContainer}>
+                        &lt;Text style={styles.inputHeading}>Color&lt;/Text>
+                        &lt;View style={styles.colorPickerContainer}>
+                            &lt;ColorPicker
+                                color={DEFAULTCOLOR}
+                                onColorChangeComplete={(categoryColor) =>
+                                    setCategoryColor(categoryColor)
+                                }
+                                thumbSize={30}
+                                sliderSize={30}
+                                noSnap
+                                row={false}
+                            />
                         &lt;/View>
-                    ) : (
-                        &lt;View>
-                            &lt;Text>No Category Selected&lt;/Text>
-                        &lt;/View>
-                    )}
+                    &lt;/View>
                     &lt;View style={styles.rowContainer}>
                         &lt;ButtonComponent
                             onPress={async () => {
@@ -104,34 +101,24 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                     Alert.alert('Please Input a Category Name');
                                     return;
                                 }
-                                if (
-                                    categoryName !== category?.name ||
-                                    categoryColor !== category?.color
-                                ) {
-                                    try {
-                                        await updateRowFromCategoryTable(
-                                            category.id,
-                                            categoryName.trim(),
-                                            categoryColor
-                                        );
-                                        await onUpdate();
-                                    } catch (error) {
-                                        console.log(
-                                            'Failed to update Category ' + category['id'],
-                                            error
-                                        );
-                                    }
+                                try {
+                                    await addRowToCategoryTable(categoryName.trim(), categoryColor);
+                                    setCategoryName(undefined);
+                                    setCategoryColor(DEFAULTCOLOR);
+                                    await onAdd();
+                                    onClose();
+                                } catch (error) {
+                                    console.log('Failed to add Category', error);
                                 }
-                                onClose();
                             }}
-                            name="Save"
+                            name="Add"
                             buttonColor={Colors.SECONDARYCOLOR}
                             buttonStyle={styles.button}
                         />
                         &lt;ButtonComponent
                             onPress={async () => {
                                 setCategoryName(undefined);
-                                setCategoryColor(undefined);
+                                setCategoryColor(DEFAULTCOLOR);
                                 onClose();
                             }}
                             name="Cancel"
@@ -145,8 +132,7 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
     );
 };
 
-export default CategoryEditComponent;
-
+export default CategoryAddComponent;
 const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
@@ -177,6 +163,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         height: 'auto',
+        width: '100%',
         alignItems: 'center',
         marginBottom: 10,
         paddingHorizontal: 10,
