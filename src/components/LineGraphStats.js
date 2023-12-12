@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+import * as Colors from '../constants/Colors';
 import { YEARLY } from '../constants/FrequencyConstants';
 
 /**
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         borderWidth: 1.5,
-        borderColor: '#b7c8be',
+        borderColor: Colors.SUBHEADINGCOLOR,
         marginTop: 2,
     },
     statsInfo: {

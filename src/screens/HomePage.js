@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DatePickerComponent from '../components/DatePickerComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
+import TodaySpendingComponent from '../components/TodaysExpenseComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { getCategoryColorById, getCategoryNameFromId } from '../util/CategoryTableUtils';
@@ -179,10 +180,11 @@ export default function HomePage({ navigation }) {
             <TouchableOpacity style={styles.debug} onPress={handleAddFakeData}>
                 <FontAwesome name="wrench" size={15} color="black" />
             </TouchableOpacity>
-            <View style={styles.totalExpensesContainer}>
-                <Text style={styles.subHeading}>Total Spendings</Text>
-                <Text style={styles.textInput}>{`${spending}`}</Text>
-            </View>
+            <TodaySpendingComponent
+                todayExpenses={todayExpenses}
+                subHeadingText="Total Spendings"
+                containerWidth="70%"
+            />
             <View style={styles.calendarContainer} activeOpacity={0.7}>
                 <Text style={styles.calendarDate}>{formattedDate}</Text>
                 <View style={{ position: 'absolute', right: 10 }}>
@@ -233,22 +235,27 @@ export default function HomePage({ navigation }) {
                                                 {datetime.replace(' ', '\n')}
                                             </Text>
                                         </View>
-                                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                                            {expense['reacurring_id'] && (
-                                                <View style={{ marginRight: 30 }}>
-                                                    <FontAwesome
-                                                        name="repeat"
-                                                        size={24}
-                                                        color={Colors.secondaryColor}
-                                                    />
-                                                </View>
-                                            )}
+                                        <View style={{ alignItems: 'center', width: '30%' }}>
                                             <Text
                                                 numberOfLines={1}
                                                 ellipsizeMode="tail"
                                                 style={styles.expenseValue}>
                                                 {'$' + parseFloat(expense['amount']).toFixed(2)}
                                             </Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                width: '15%',
+                                                alignItems: 'center',
+                                                right: 5,
+                                            }}>
+                                            {expense['reacurring_id'] && (
+                                                <FontAwesome
+                                                    name="repeat"
+                                                    size={24}
+                                                    color={Colors.SECONDARYCOLOR}
+                                                />
+                                            )}
                                         </View>
                                         <TouchableOpacity
                                             onPress={async () => {
@@ -294,26 +301,26 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         // figure out fontStyles
     },
     secondaryContainer: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.textColor,
+        backgroundColor: Colors.TEXTCOLOR,
     },
     button: {
-        color: '#ffffff',
+        color: 'white',
         fontSize: 20,
         width: 250,
         height: 40,
-        outlineColor: '#37c871',
-        borderColor: '#37c871',
+        outlineColor: Colors.SECONDARYCOLOR,
+        borderColor: Colors.SECONDARYCOLOR,
         borderRadius: 10,
         textAlign: 'center',
     },
     buttonContainer: {
-        backgroundColor: '#37c871',
+        backgroundColor: Colors.SECONDARYCOLOR,
         padding: 10,
         borderRadius: 10,
         height: 60,
@@ -334,49 +341,25 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        fontSize: Sizes.titleSize,
-        color: Colors.secondaryColor,
+        fontSize: Sizes.TITLESIZE,
+        color: Colors.SECONDARYCOLOR,
         marginRight: 15,
     },
-    totalExpensesContainer: {
-        backgroundColor: 'white',
-        borderRadius: 15,
-        marginTop: 0,
-        marginBottom: 20,
-        height: 'auto',
-        width: '70%',
-        margin: 30,
-        top: 10,
-    },
-    subHeading: {
-        color: Colors.subHeadingColor,
-        fontSize: Sizes.subText,
-        margin: 'auto',
-        paddingLeft: 10,
-        paddingTop: 5,
-    },
     subHeading2: {
-        color: Colors.textColor,
-        fontSize: Sizes.textSize,
+        color: Colors.TEXTCOLOR,
+        fontSize: Sizes.TEXTSIZE,
         margin: 'auto',
         paddingLeft: 10,
         padding: 5,
         textAlign: 'left',
     },
-    textInput: {
-        fontSize: Sizes.largeText,
-        margin: 'auto',
-        textAlign: 'center',
-    },
     expensesContainer: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         width: '100%',
         height: '70%',
         padding: 10,
         margin: 10,
         borderRadius: 32,
-        //borderTopLeftRadius: 32, // Radius for the top-left corner
-        //borderTopRightRadius: 32, // Radius for the top-right corner
     },
     scrollableContent: {
         flex: 1,
@@ -403,18 +386,16 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     expenseName: {
-        fontSize: Sizes.textSize,
-        color: Colors.textColor,
+        fontSize: Sizes.TEXTSIZE,
+        color: Colors.TEXTCOLOR,
     },
     expenseData: {
-        fontSize: Sizes.subText,
-        color: Colors.subHeadingColor,
+        fontSize: Sizes.SUBTEXT,
+        color: Colors.SUBHEADINGCOLOR,
     },
     expenseValue: {
         fontSize: 20,
         color: 'red',
-        overflow: 'hidden',
-        width: '60%',
     },
     colorAndCategoryBox: {
         width: 'auto',
@@ -446,8 +427,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     calendarDate: {
-        color: Colors.textColor,
-        fontSize: Sizes.textSize,
+        color: Colors.TEXTCOLOR,
+        fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
     arrowsAndTotalExpenseContainer: {
@@ -455,10 +436,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     arrows: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
     },
     debug: {
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         borderWidth: 2,
         borderColor: 'black',
         width: 20,
