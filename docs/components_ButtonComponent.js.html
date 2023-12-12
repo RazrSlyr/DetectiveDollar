@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: components/AddButton.js</title>
+    <title>JSDoc: Source: components/ButtonComponent.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: components/AddButton.js</h1>
+    <h1 class="page-title">Source: components/ButtonComponent.js</h1>
 
     
 
@@ -31,43 +31,60 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
 import * as Colors from '../constants/Colors';
-
+import * as Sizes from '../constants/Sizes';
 /**
- * Component for an Add Button
- * @param {object} props Props object. Only prop is onPress,
- * a function that is called when the button is pressed
- * @returns {object} The component object for the Add Button
+ * Component for a Button
+ * @param {object} props Props object. Props are onPress,
+ * a function that is called when the button is pressed,
+ * the name of the button (string) i.e what will be displayed and the button,
+ * the background color of the button (color string),
+ * the style for the button (object),
+ * and the style for the button text (object)
+ * @returns {object} The component object for the Button component
  * @memberof Components
  */
-const AddButton = ({ onPress }) => {
+
+//Add, Edit, Cancel, Save buttons- Take in onPress, name, bg color
+const ButtonComponent = ({
+    onPress,
+    name,
+    buttonColor,
+    buttonStyle = {},
+    buttonTextStyle = {},
+}) => {
     return (
-        &lt;TouchableOpacity onPress={onPress}>
-            &lt;View style={styles.button}>
-                &lt;Text style={styles.buttonText}>Add&lt;/Text>
-            &lt;/View>
+        &lt;TouchableOpacity
+            onPress={onPress}
+            style={[styles.button, { backgroundColor: buttonColor }, buttonStyle]}>
+            &lt;Text style={[styles.buttonText, buttonTextStyle]} numberOfLines={1}>
+                {name}
+            &lt;/Text>
         &lt;/TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: Colors.SECONDARYCOLOR,
-        padding: 10,
-        borderRadius: 10,
-        marginTop: 20,
-        width: 180,
+        height: 'auto',
+        borderRadius: Dimensions.get('window').height / 2,
+        paddingVertical: 5,
         alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     buttonText: {
         color: 'white',
-        fontSize: 30,
+        fontFamily: 'Roboto-Bold',
+        fontSize: Sizes.BUTTONTEXT,
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 });
 
-export default AddButton;
+export default ButtonComponent;
 </code></pre>
         </article>
     </section>

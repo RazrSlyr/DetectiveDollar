@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: util/RecurringTableUtils.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: util/RecurringTableUtils.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module RecurringTableUtils
+ */
+
+/**
+ * @file Used for storing and reading from the SQLite Recurring Table
+ */
+
+import { getDatabase } from './DatabaseUtils';
+import {
+    getCurrentUTCDatetimeString,
+    getDateFromUTCDatetimeString,
+    getDateStringFromDate,
+    incrementDateByFrequency,
+} from './DatetimeUtils';
+import {
+    createExpenseInsert,
+    GET_ALL_REACURRING_EXPENSES,
+    createReacurringExpenseNextTriggerUpdate,
+    createLastReacurrenceQuery,
+    createReacurringDeleteById,
+} from './SQLiteUtils';
+
+/**
+ * Stops an expense from recurring
+ * @param {integer} row The id of the row in the recurring expense table
+ */
+
+let appliedReacurring = false;
+
+/**
+ * Removes an entry from recurring expenses table
+ * @param {integer} row Row ID for the table entry
+ */
+export async function deleteRowFromReacurringTable(row) {
+    const db = await getDatabase();
+    await db.transactionAsync(async (tx) => {
+        await tx.executeSqlAsync(createReacurringDeleteById(row));
+    });
+}
+
+/**
+ * Readds any expenses that need to recurr
+ */
+export async function applyRecurringExpenses() {
+    if (appliedReacurring) {
+        return;
+    }
+    const db = await getDatabase();
+    let recurringExpenses = null;
+    await db.transactionAsync(async (tx) => {
+        try {
+            recurringExpenses = (await tx.executeSqlAsync(GET_ALL_REACURRING_EXPENSES)).rows;
+        } catch (error) {
+            console.warn(`applyRecurringExpenses error ${error}`);
+        }
+    });
+    const currentDate = new Date();
+    for (let i = 0; i &lt; recurringExpenses?.length; i++) {
+        const element = recurringExpenses[i];
+        let recurrenceDate = getDateFromUTCDatetimeString(element['next_trigger']);
+        // Get last expense to get data
+        let lastRecurrance = null;
+        await db.transactionAsync(async (tx) => {
+            try {
+                // Get last expense to get data
+                const lastRecurranceData = await tx.executeSqlAsync(
+                    createLastReacurrenceQuery(element['id'])
+                );
+                if (lastRecurranceData?.rows?.length === 0) {
+                    return;
+                }
+                lastRecurrance = lastRecurranceData.rows[0];
+            } catch (error) {
+                console.warn(`applyRecurringExpenses error ${error}`);
+            }
+        });
+
+        while (lastRecurrance != null &amp;&amp; recurrenceDate &lt;= currentDate) {
+            await db.transactionAsync(async (tx) => {
+                try {
+                    const newRecurranceDay = getDateStringFromDate(recurrenceDate);
+                    // Add expense using obtained data
+                    await tx.executeSqlAsync(
+                        createExpenseInsert(
+                            lastRecurrance['name'],
+                            lastRecurrance['category'],
+                            lastRecurrance['amount'],
+                            `'${getCurrentUTCDatetimeString(recurrenceDate)}'`,
+                            newRecurranceDay,
+                            lastRecurrance['subcategory'],
+                            lastRecurrance['picture'],
+                            lastRecurrance['memo'],
+                            lastRecurrance['reacurring_id']
+                        )
+                    );
+                    // Advance recurrence to next date
+                    recurrenceDate = new Date(
+                        incrementDateByFrequency(recurrenceDate, element['frequency'])
+                    );
+                    // Update the next trigger time
+                    await tx.executeSqlAsync(
+                        createReacurringExpenseNextTriggerUpdate(element['id'], recurrenceDate)
+                    );
+                } catch (error) {
+                    console.warn(`applyRecurringExpenses error ${error}`);
+                }
+            });
+        }
+    }
+    appliedReacurring = true;
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatabaseUtils.html">DatabaseUtils</a></li><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-ExpenseTableUtils.html">ExpenseTableUtils</a></li><li><a href="module-ImageUtils.html">ImageUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-RecurringTableUtils.html">RecurringTableUtils</a></li><li><a href="module-SQLiteUtils.html">SQLiteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createExampleData">createExampleData</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 12 2023 00:40:49 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

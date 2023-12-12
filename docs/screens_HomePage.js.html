@@ -28,7 +28,7 @@
         <article>
             <pre class="prettyprint source linenums"><code>/**
  * @file Code for the user's Home screen.
- * User's home page. Shows today's expenses with a datepicker component 
+ * User's home page. Shows today's expenses with a datepicker component
  * to look through different days
  */
 
@@ -40,8 +40,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DatePickerComponent from '../components/DatePickerComponent';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
+import TodaySpendingComponent from '../components/TodaysExpenseComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
+import { getCategoryColorById, getCategoryNameFromId } from '../util/CategoryTableUtils';
 import {
     getCurrentDateString,
     getDateFromUTCDatetimeString,
@@ -49,15 +51,12 @@ import {
 } from '../util/DatetimeUtils';
 import {
     deleteRowFromExpenseTable,
-    deleteRowFromReacurringTable,
     getExpensesFromDay,
     getRowFromExpenseTable,
-    deleteImage,
-    getCategoryNameFromId,
-    applyRecurringExpenses,
-    createExampleData,
-    getCategoryColorById,
-} from '../util/FileSystemUtils';
+} from '../util/ExpenseTableUtils';
+import { deleteImage } from '../util/ImageUtils';
+import { applyRecurringExpenses, deleteRowFromReacurringTable } from '../util/RecurringTableUtils';
+import { createExampleData } from '../util/TestUtils';
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
@@ -209,10 +208,11 @@ export default function HomePage({ navigation }) {
             &lt;TouchableOpacity style={styles.debug} onPress={handleAddFakeData}>
                 &lt;FontAwesome name="wrench" size={15} color="black" />
             &lt;/TouchableOpacity>
-            &lt;View style={styles.totalExpensesContainer}>
-                &lt;Text style={styles.subHeading}>Total Spendings&lt;/Text>
-                &lt;Text style={styles.textInput}>{`${spending}`}&lt;/Text>
-            &lt;/View>
+            &lt;TodaySpendingComponent
+                todayExpenses={todayExpenses}
+                subHeadingText="Total Spendings"
+                containerWidth="70%"
+            />
             &lt;View style={styles.calendarContainer} activeOpacity={0.7}>
                 &lt;Text style={styles.calendarDate}>{formattedDate}&lt;/Text>
                 &lt;View style={{ position: 'absolute', right: 10 }}>
@@ -263,22 +263,27 @@ export default function HomePage({ navigation }) {
                                                 {datetime.replace(' ', '\n')}
                                             &lt;/Text>
                                         &lt;/View>
-                                        &lt;View style={{ flex: 1, flexDirection: 'row' }}>
-                                            {expense['reacurring_id'] &amp;&amp; (
-                                                &lt;View style={{ marginRight: 30 }}>
-                                                    &lt;FontAwesome
-                                                        name="repeat"
-                                                        size={24}
-                                                        color={Colors.secondaryColor}
-                                                    />
-                                                &lt;/View>
-                                            )}
+                                        &lt;View style={{ alignItems: 'center', width: '30%' }}>
                                             &lt;Text
                                                 numberOfLines={1}
                                                 ellipsizeMode="tail"
                                                 style={styles.expenseValue}>
                                                 {'$' + parseFloat(expense['amount']).toFixed(2)}
                                             &lt;/Text>
+                                        &lt;/View>
+                                        &lt;View
+                                            style={{
+                                                width: '15%',
+                                                alignItems: 'center',
+                                                right: 5,
+                                            }}>
+                                            {expense['reacurring_id'] &amp;&amp; (
+                                                &lt;FontAwesome
+                                                    name="repeat"
+                                                    size={24}
+                                                    color={Colors.SECONDARYCOLOR}
+                                                />
+                                            )}
                                         &lt;/View>
                                         &lt;TouchableOpacity
                                             onPress={async () => {
@@ -324,26 +329,26 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         // figure out fontStyles
     },
     secondaryContainer: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.textColor,
+        backgroundColor: Colors.TEXTCOLOR,
     },
     button: {
-        color: '#ffffff',
+        color: 'white',
         fontSize: 20,
         width: 250,
         height: 40,
-        outlineColor: '#37c871',
-        borderColor: '#37c871',
+        outlineColor: Colors.SECONDARYCOLOR,
+        borderColor: Colors.SECONDARYCOLOR,
         borderRadius: 10,
         textAlign: 'center',
     },
     buttonContainer: {
-        backgroundColor: '#37c871',
+        backgroundColor: Colors.SECONDARYCOLOR,
         padding: 10,
         borderRadius: 10,
         height: 60,
@@ -364,49 +369,25 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        fontSize: Sizes.titleSize,
-        color: Colors.secondaryColor,
+        fontSize: Sizes.TITLESIZE,
+        color: Colors.SECONDARYCOLOR,
         marginRight: 15,
     },
-    totalExpensesContainer: {
-        backgroundColor: 'white',
-        borderRadius: 15,
-        marginTop: 0,
-        marginBottom: 20,
-        height: 'auto',
-        width: '70%',
-        margin: 30,
-        top: 10,
-    },
-    subHeading: {
-        color: Colors.subHeadingColor,
-        fontSize: Sizes.subText,
-        margin: 'auto',
-        paddingLeft: 10,
-        paddingTop: 5,
-    },
     subHeading2: {
-        color: Colors.textColor,
-        fontSize: Sizes.textSize,
+        color: Colors.TEXTCOLOR,
+        fontSize: Sizes.TEXTSIZE,
         margin: 'auto',
         paddingLeft: 10,
         padding: 5,
         textAlign: 'left',
     },
-    textInput: {
-        fontSize: Sizes.largeText,
-        margin: 'auto',
-        textAlign: 'center',
-    },
     expensesContainer: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         width: '100%',
         height: '70%',
         padding: 10,
         margin: 10,
         borderRadius: 32,
-        //borderTopLeftRadius: 32, // Radius for the top-left corner
-        //borderTopRightRadius: 32, // Radius for the top-right corner
     },
     scrollableContent: {
         flex: 1,
@@ -433,18 +414,16 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     expenseName: {
-        fontSize: Sizes.textSize,
-        color: Colors.textColor,
+        fontSize: Sizes.TEXTSIZE,
+        color: Colors.TEXTCOLOR,
     },
     expenseData: {
-        fontSize: Sizes.subText,
-        color: Colors.subHeadingColor,
+        fontSize: Sizes.SUBTEXT,
+        color: Colors.SUBHEADINGCOLOR,
     },
     expenseValue: {
         fontSize: 20,
         color: 'red',
-        overflow: 'hidden',
-        width: '60%',
     },
     colorAndCategoryBox: {
         width: 'auto',
@@ -476,8 +455,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     calendarDate: {
-        color: Colors.textColor,
-        fontSize: Sizes.textSize,
+        color: Colors.TEXTCOLOR,
+        fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
     arrowsAndTotalExpenseContainer: {
@@ -485,10 +464,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     arrows: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
     },
     debug: {
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         borderWidth: 2,
         borderColor: 'black',
         width: 20,
@@ -507,13 +486,13 @@ const styles = StyleSheet.create({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-FileSystemUtils.html">FileSystemUtils</a></li><li><a href="module-ImagePickerUtils.html">ImagePickerUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-SqliteUtils.html">SqliteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatabaseUtils.html">DatabaseUtils</a></li><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-ExpenseTableUtils.html">ExpenseTableUtils</a></li><li><a href="module-ImageUtils.html">ImageUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-RecurringTableUtils.html">RecurringTableUtils</a></li><li><a href="module-SQLiteUtils.html">SQLiteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createExampleData">createExampleData</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 05 2023 20:54:18 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 12 2023 00:40:49 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

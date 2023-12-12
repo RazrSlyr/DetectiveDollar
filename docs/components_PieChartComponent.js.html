@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/PieChartComponent.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/PieChartComponent.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useFocusEffect } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { PieChart } from 'react-native-gifted-charts';
+
+import PieChartLegend from './PieChartLegend';
+import * as Colors from '../constants/Colors';
+import { getExpensesbyCategory } from '../util/ExpenseTableUtils';
+
+/**
+ * Component for displaying a pie graph of expenses separated by category
+ * @param {object} props Props object. Props are startDate (string), endDate (string),
+ * and timeFrame (use FrequencyConstants)
+ * @returns {object} The component object for the Pie Graph
+ * @memberof Components
+ */
+const PieChartComponent = ({ startDate, endDate, timeFrame }) => {
+    const [pieChartData, setPieChartData] = useState([]);
+
+    // Call the function to fetch and update data
+    const updatePieChartData = async () => {
+        try {
+            const expensesByCategory = await getExpensesbyCategory(startDate, endDate); // {category_name: [{expense+category}]}
+            const categoryColors = {}; // {category_name: category_color}
+            let totalSpending = 0;
+
+            for (const key in expensesByCategory) {
+                if (expensesByCategory.hasOwnProperty(key)) {
+                    const newColor = expensesByCategory[key][0]['color'];
+                    categoryColors[key] = newColor;
+                }
+            }
+            // Process the data
+            const pieChartData = Object.keys(expensesByCategory).map((category) => {
+                const total = expensesByCategory[category].reduce(
+                    (sum, expense) => sum + expense.amount,
+                    0
+                );
+
+                // add to the totalOfEverything
+                totalSpending += total;
+                return {
+                    key: category,
+                    value: total,
+                    svg: { fill: categoryColors[category] },
+                    color: categoryColors[category],
+                    label: category,
+                };
+            });
+            setPieChartData(pieChartData);
+            setTotalSpending(totalSpending);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            updatePieChartData();
+        }, [timeFrame, startDate, endDate])
+    );
+
+    const [totalSpending, setTotalSpending] = useState(0);
+    const formattedTotal = `$${parseFloat(totalSpending).toFixed(2)}`;
+
+    const noExpenseData = [{ label: 'No Data Available', value: 1, color: Colors.SECONDARYCOLOR }];
+
+    // Check if there's data in the pieChartData object
+    const hasData = Object.keys(pieChartData).length > 0;
+
+    return (
+        &lt;View style={styles.container}>
+            &lt;View style={styles.content}>
+                &lt;PieChart
+                    data={hasData ? pieChartData : noExpenseData}
+                    donut
+                    radius={110}
+                    innerRadius={75}
+                    centerLabelComponent={() => {
+                        return (
+                            &lt;View style={styles.totalAmountContainer}>
+                                &lt;Text style={styles.totalAmountText}>{formattedTotal}&lt;/Text>
+                            &lt;/View>
+                        );
+                    }}
+                />
+                &lt;PieChartLegend chartData={hasData ? pieChartData : noExpenseData} />
+            &lt;/View>
+        &lt;/View>
+    );
+};
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    content: {
+        flex: 1,
+        alignItems: 'center',
+        paddingTop: 20,
+        paddingBottom: 10,
+    },
+    totalAmountContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    totalAmountText: {
+        fontSize: 22,
+        color: 'black',
+        fontWeight: 'bold',
+    },
+});
+export default PieChartComponent;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatabaseUtils.html">DatabaseUtils</a></li><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-ExpenseTableUtils.html">ExpenseTableUtils</a></li><li><a href="module-ImageUtils.html">ImageUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-RecurringTableUtils.html">RecurringTableUtils</a></li><li><a href="module-SQLiteUtils.html">SQLiteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createExampleData">createExampleData</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 12 2023 00:40:49 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

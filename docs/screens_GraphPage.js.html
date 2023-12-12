@@ -33,16 +33,15 @@
  */
 
 import { AntDesign } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
 import * as React from 'react';
-import { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 
 import LineGraphComponent from '../components/LineGraphComponent';
-import NewPieChartComponent from '../components/NewPieChartComponent';
-import WeekMonthYearButtons from '../components/weekMonthYearComponent';
+import PieChartComponent from '../components/PieChartComponent';
+import WeekMonthYearButtons from '../components/WeekMonthYearComponent';
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import {
@@ -130,15 +129,15 @@ const GraphPage = ({ navigation }) => {
             &lt;View style={styles.titleContainer}>
                 &lt;Text style={styles.titleText}>Statistics&lt;/Text>
             &lt;/View>
-            &lt;View style={{ backgroundColor: Colors.primaryColor }}>
+            &lt;View style={{ backgroundColor: Colors.PRIMARYCOLOR }}>
                 &lt;View style={styles.dateContainer}>
                     &lt;View style={styles.dateRange}>
                         &lt;TouchableOpacity onPress={handleDecrementTimeFrame}>
                             &lt;View style={styles.arrow}>
                                 &lt;AntDesign
                                     name="leftcircle"
-                                    color="#37c871"
-                                    backgroundColor="#f2f2f2"
+                                    color={Colors.SECONDARYCOLOR}
+                                    backgroundColor={Colors.PRIMARYCOLOR}
                                     size={30}
                                 />
                             &lt;/View>
@@ -154,8 +153,8 @@ const GraphPage = ({ navigation }) => {
                             &lt;View style={styles.arrow}>
                                 &lt;AntDesign
                                     name="rightcircle"
-                                    color="#37c871"
-                                    backgroundColor="#f2f2f2"
+                                    color={Colors.SECONDARYCOLOR}
+                                    backgroundColor={Colors.PRIMARYCOLOR}
                                     size={30}
                                 />
                             &lt;/View>
@@ -179,7 +178,7 @@ const GraphPage = ({ navigation }) => {
                         }}>
                         &lt;View style={styles.pieChartSlide}>
                             &lt;View style={styles.chartContainer}>
-                                &lt;NewPieChartComponent
+                                &lt;PieChartComponent
                                     startDate={selectedTimeframeDates[0]}
                                     endDate={selectedTimeframeDates[1]}
                                     timeFrame={selectedTimeframe}
@@ -210,7 +209,7 @@ const styles = StyleSheet.create({
         //paddingTop: StatusBar.currentHeight,
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     scrollableContent: {
         flex: 1,
@@ -225,7 +224,7 @@ const styles = StyleSheet.create({
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
-        color: Colors.primaryColor,
+        color: Colors.PRIMARYCOLOR,
         justifyContent: 'center',
     },
     dateContainer: {
@@ -249,8 +248,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         flex: 1,
         borderWidth: 1,
-        borderColor: Colors.secondaryColor,
-        backgroundColor: Colors.primaryColor,
+        borderColor: Colors.SECONDARYCOLOR,
+        backgroundColor: Colors.PRIMARYCOLOR,
         borderRadius: 15,
         marginTop: 20,
         marginHorizontal: 2,
@@ -281,7 +280,7 @@ const styles = StyleSheet.create({
         width: 10,
         height: 10,
         borderRadius: 5,
-        backgroundColor: Colors.secondaryColor, // Color for the active dot
+        backgroundColor: Colors.SECONDARYCOLOR, // Color for the active dot
     },
     scrollContentContainer: {
         paddingBottom: 60,
@@ -306,13 +305,13 @@ const styles = StyleSheet.create({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-FileSystemUtils.html">FileSystemUtils</a></li><li><a href="module-ImagePickerUtils.html">ImagePickerUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-SqliteUtils.html">SqliteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatabaseUtils.html">DatabaseUtils</a></li><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-ExpenseTableUtils.html">ExpenseTableUtils</a></li><li><a href="module-ImageUtils.html">ImageUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-RecurringTableUtils.html">RecurringTableUtils</a></li><li><a href="module-SQLiteUtils.html">SQLiteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createExampleData">createExampleData</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 05 2023 20:54:18 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 12 2023 00:40:49 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

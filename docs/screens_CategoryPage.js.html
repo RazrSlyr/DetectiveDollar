@@ -31,70 +31,56 @@
  * Allows the user to add and edit expense categories
  */
 
-import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    View,
-    Text,
-    ScrollView,
-    Dimensions,
-    Modal,
-    TextInput,
-    KeyboardAvoidingView,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ColorPicker from 'react-native-wheel-color-picker';
 
+import ButtonComponent from '../components/ButtonComponent';
+import CategoryAddComponent from '../components/CategoryAddComponent';
 import CategoryEditComponent from '../components/CategoryEditComponent';
+import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';
+import { addRowToCategoryTable, getCategoryTable } from '../util/CategoryTableUtils';
 
 export default function CategoryPage({ navigation }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [showEditor, setShowEditor] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [categoryName, setCategoryName] = useState('');
-    const [categoryColor, setColor] = useState('');
-
-    const onColorChange = (color) => {
-        setColor(color);
-    };
+    const [showEditorComponent, setShowEditorComponent] = useState(false);
+    const [showAddComponent, setShowAddComponent] = useState(false);
 
     useEffect(() => {
-        const getCategories = async () => {
-            try {
-                // Fetch expenses for today and set to state
-                const categories = await getCategoryTable();
-                setCategories(categories);
-                //console.log('Categories set!');
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
-        };
-
-        // Call getExpenses when the component mounts
-        getCategories();
+        updateCategories();
 
         // Add an event listener for focus to re-fetch expenses when the component comes into focus
-        const unsubscribe = navigation.addListener('focus', getCategories);
+        const unsubscribe = navigation.addListener('focus', updateCategories);
 
         // Clean up the event listener when the component unmounts
         return () => unsubscribe();
-    }, [navigation]);
+    }, [navigation, updateCategories]);
 
-    const openCategoryEditor = async () => {
-        setShowEditor(true);
+    const openCategoryEditor = () => {
+        setShowEditorComponent(true);
     };
-
+    const openCategoryAdd = () => {
+        setShowAddComponent(true);
+    };
     const updateCategories = async () => {
         try {
             // Fetch expenses for today and set to state
             const categories = await getCategoryTable();
+            categories.sort(function (a, b) {
+                const x = a.name;
+                const y = b.name;
+                if (x > y) {
+                    return 1;
+                }
+                if (x &lt; y) {
+                    return -1;
+                }
+                return 0;
+            });
             setCategories(categories);
             //console.log('Categories set!');
         } catch (error) {
@@ -104,9 +90,11 @@ export default function CategoryPage({ navigation }) {
 
     const closeCategoryEditor = () => {
         setSelectedCategory(null);
-        setShowEditor(false);
+        setShowEditorComponent(false);
     };
-
+    const closeCategoryAdd = () => {
+        setShowAddComponent(false);
+    };
     return (
         &lt;SafeAreaView style={styles.container}>
             &lt;StatusBar style="auto" />
@@ -116,81 +104,16 @@ export default function CategoryPage({ navigation }) {
             &lt;ScrollView
                 style={styles.scrollableContainer}
                 contentContainerStyle={styles.scrollableContent}>
-                &lt;TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-                    &lt;Text style={styles.addButtonText}>Add Category&lt;/Text>
-                &lt;/TouchableOpacity>
-                &lt;View style={styles.dividerLine} />
-                &lt;Modal
-                    animationType="slide"
-                    transparent
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        setModalVisible(!modalVisible);
-                    }}>
-                    &lt;KeyboardAvoidingView style={styles.modalShadow}>
-                        &lt;KeyboardAvoidingView style={styles.centeredView}>
-                            &lt;View style={styles.modalView}>
-                                &lt;Text style={styles.modalTitle}>Add Category&lt;/Text>
-                                &lt;View style={styles.inputContainer}>
-                                    &lt;Text style={styles.inputHeading}>Name&lt;/Text>
-                                    &lt;TextInput
-                                        style={styles.input}
-                                        value={categoryName}
-                                        onChangeText={(cName) => setCategoryName(cName)}
-                                    />
-                                    &lt;View style={styles.line} />
-                                    &lt;Text style={styles.inputHeading}>Color&lt;/Text>
-                                    &lt;View style={styles.colorPickerBox}>
-                                        &lt;ColorPicker
-                                            color={categoryColor}
-                                            onColorChangeComplete={(categoryColor) =>
-                                                onColorChange(categoryColor)
-                                            }
-                                            thumbSize={30}
-                                            sliderSize={30}
-                                            noSnap
-                                            row={false}
-                                        />
-                                    &lt;/View>
-                                &lt;/View>
-                                &lt;View style={styles.addCancelBox}>
-                                    &lt;TouchableOpacity
-                                        style={[
-                                            styles.addButton,
-                                            {
-                                                backgroundColor: Colors.secondaryColor,
-                                                width: '40%',
-                                                alignSelf: 'right',
-                                            },
-                                        ]}
-                                        onPress={async () => {
-                                            addRowToCategoryTable(categoryName, categoryColor);
-                                            setModalVisible(!modalVisible);
-                                            updateCategories();
-                                            setCategoryName(undefined);
-                                        }}>
-                                        &lt;Text style={styles.addButtonText}>Add&lt;/Text>
-                                    &lt;/TouchableOpacity>
-                                    &lt;TouchableOpacity
-                                        style={[
-                                            styles.addButton,
-                                            {
-                                                backgroundColor: 'red',
-                                                width: '40%',
-                                                alignSelf: 'right',
-                                            },
-                                        ]}
-                                        onPress={async () => {
-                                            setModalVisible(!modalVisible);
-                                            setCategoryName(undefined);
-                                        }}>
-                                        &lt;Text style={styles.addButtonText}>Cancel&lt;/Text>
-                                    &lt;/TouchableOpacity>
-                                &lt;/View>
-                            &lt;/View>
-                        &lt;/KeyboardAvoidingView>
-                    &lt;/KeyboardAvoidingView>
-                &lt;/Modal>
+                &lt;ButtonComponent
+                    onPress={() => {
+                        openCategoryAdd();
+                    }}
+                    name="Add"
+                    buttonColor={Colors.SECONDARYCOLOR}
+                    buttonStyle={styles.button}
+                />
+                &lt;GreenLine />
+
                 {categories.map((category) => {
                     return (
                         &lt;View
@@ -200,7 +123,7 @@ export default function CategoryPage({ navigation }) {
                                 {
                                     backgroundColor: category['color']
                                         ? category['color']
-                                        : Colors.secondaryColor,
+                                        : Colors.SECONDARYCOLOR,
                                 },
                             ]}>
                             &lt;Text style={styles.categoryText}>{category.name}&lt;/Text>
@@ -216,9 +139,13 @@ export default function CategoryPage({ navigation }) {
                     );
                 })}
             &lt;/ScrollView>
-
+            &lt;CategoryAddComponent
+                isVisable={showAddComponent}
+                onClose={closeCategoryAdd}
+                onAdd={updateCategories}
+            />
             &lt;CategoryEditComponent
-                isVisable={showEditor}
+                isVisable={showEditorComponent}
                 onClose={closeCategoryEditor}
                 category={selectedCategory}
                 onUpdate={updateCategories}
@@ -233,7 +160,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignSelf: 'center',
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     rowContainer: {
         width: '90%',
@@ -246,7 +173,7 @@ const styles = StyleSheet.create({
     scrollableContainer: {
         flex: 1,
         width: '100%',
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
     },
     scrollableContent: {
         width: '100%', // Adjust the width as needed
@@ -256,32 +183,10 @@ const styles = StyleSheet.create({
     titleContainer: {
         width: 'auto',
     },
-    addButton: {
-        color: Colors.secondaryColor,
-        width: '60%',
-        height: 50,
-        borderRadius: 20,
-        textAlign: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.secondaryColor,
-        margin: 20,
-    },
-    addButtonText: {
-        color: Colors.primaryColor,
-        alignSelf: 'center',
-        fontSize: Sizes.textSize,
-        fontWeight: 'bold',
-    },
-    dividerLine: {
-        width: '70%',
-        borderBottomWidth: 3,
-        borderColor: Colors.secondaryColor,
-        alignSelf: 'center',
-    },
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
-        color: Colors.primaryColor,
+        color: Colors.PRIMARYCOLOR,
         justifyContent: 'center',
     },
     catgeoryContainer: {
@@ -296,14 +201,14 @@ const styles = StyleSheet.create({
         borderWidth: 2,
     },
     categoryText: {
-        color: Colors.primaryColor,
+        color: Colors.PRIMARYCOLOR,
         fontSize: 30,
         fontWeight: 'bold',
         alignSelf: 'flex-start',
         margin: 10,
     },
     editButtonContainer: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         borderRadius: 30,
         width: '20%',
         height: 'auto',
@@ -312,74 +217,12 @@ const styles = StyleSheet.create({
         right: 20,
     },
     editText: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         fontSize: 20,
     },
-    backButton: {
-        width: 'auto',
-    },
-    // Starting now, add category modal styles
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalShadow: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    },
-    modalView: {
-        backgroundColor: Colors.primaryColor,
-        borderRadius: 20,
-        padding: 10,
-        alignItems: 'center',
-        elevation: 5,
-        width: '80%',
-        height: '70%',
-    },
-    modalTitle: {
-        textAlign: 'center',
-        color: Colors.secondaryColor,
-        fontWeight: 'bold',
-        fontSize: Sizes.titleSize,
-    },
-    inputContainer: {
-        height: '50%',
-        width: '80%',
+    button: {
+        width: 180,
         marginBottom: 10,
-    },
-    inputHeading: {
-        fontSize: 15,
-        fontFamily: 'Roboto-Bold',
-        color: Colors.secondaryColor,
-        width: '84%',
-        marginTop: 15,
-        marginBottom: 5,
-    },
-    input: {
-        width: '80%',
-        color: Colors.textColor,
-        fontFamily: 'Roboto-Bold',
-        fontSize: 20,
-        textAlign: 'left',
-    },
-    line: {
-        height: 2,
-        width: '100%',
-        backgroundColor: Colors.secondaryColor,
-        alignSelf: 'center',
-    },
-    addCancelBox: {
-        width: '80%',
-        height: 'auto',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: 120,
-    },
-    colorPickerBox: {
-        width: '100%',
-        height: 300,
     },
 });
 </code></pre>
@@ -392,13 +235,13 @@ const styles = StyleSheet.create({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-FileSystemUtils.html">FileSystemUtils</a></li><li><a href="module-ImagePickerUtils.html">ImagePickerUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-SqliteUtils.html">SqliteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatabaseUtils.html">DatabaseUtils</a></li><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-ExpenseTableUtils.html">ExpenseTableUtils</a></li><li><a href="module-ImageUtils.html">ImageUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-RecurringTableUtils.html">RecurringTableUtils</a></li><li><a href="module-SQLiteUtils.html">SQLiteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createExampleData">createExampleData</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 05 2023 20:54:18 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 12 2023 00:40:49 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

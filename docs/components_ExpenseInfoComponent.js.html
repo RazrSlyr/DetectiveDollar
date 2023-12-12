@@ -33,6 +33,7 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View, Modal, Dimensions } from 'react-native';
 
 import EditExpenseComponent from './EditExpenseComponent';
+import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
@@ -76,7 +77,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                 &lt;Entypo
                                     name="chevron-thin-left"
                                     size={45}
-                                    color={Colors.primaryColor}
+                                    color={Colors.PRIMARYCOLOR}
                                 />
                             &lt;/TouchableOpacity>
                             &lt;Text style={styles.title}>Expense Info&lt;/Text>
@@ -84,13 +85,18 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                         &lt;View style={styles.allInfoContainer}>
                             {onHome ? (
                                 &lt;View style={styles.buttonContainer}>
-                                    &lt;TouchableOpacity
-                                        style={styles.editButton}
+                                    &lt;ButtonComponent
                                         onPress={async () => {
                                             openInfo();
-                                        }}>
-                                        &lt;Text style={styles.buttonText}>Edit&lt;/Text>
-                                    &lt;/TouchableOpacity>
+                                        }}
+                                        name="Edit"
+                                        buttonColor="rgba(0, 0, 0, 0)"
+                                        buttonStyle={{ height: 50, width: 80, paddingTop: 10 }}
+                                        buttonTextStyle={{
+                                            fontSize: 25,
+                                            color: Colors.SECONDARYCOLOR,
+                                        }}
+                                    />
                                 &lt;/View>
                             ) : null}
                             {expense.picture !== null &amp;&amp; hasMediaLibraryPermission ? (
@@ -116,7 +122,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                         )}
                                 &lt;/Text>
                                 &lt;Text style={styles.infoText}>
-                                    {'Amount: ' + '$' + parseFloat(expense['amount']).toFixed(2)}
+                                    {'Amount: $' + parseFloat(expense['amount']).toFixed(2)}
                                 &lt;/Text>
                                 &lt;Text style={styles.infoText}>
                                     {'Category: ' + expense.category}
@@ -155,12 +161,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 32,
-        borderWidth: 5,
-        borderColor: 'black',
     },
     content: {
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         padding: 20,
         borderRadius: 8,
         width: '94%', // take 70% of the screen width
@@ -172,14 +175,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 5,
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         borderTopLeftRadius: 27, // Radius for the top-left corner
         borderTopRightRadius: 27, // Radius for the top-right corner
     },
     title: {
         fontWeight: 'bold',
-        fontSize: Sizes.titleSize,
-        color: Colors.primaryColor,
+        fontSize: Sizes.TITLESIZE,
+        color: Colors.PRIMARYCOLOR,
     },
     closeButton: {
         position: 'absolute',
@@ -212,19 +215,18 @@ const styles = StyleSheet.create({
     dividerLine: {
         width: '50%',
         borderBottomWidth: 3,
-        borderColor: Colors.secondaryColor,
+        borderColor: Colors.SECONDARYCOLOR,
         marginVertical: 0,
         alignSelf: 'center',
     },
     textContainer: {
         padding: 5,
-        backgroundColor: 'white',
         margin: 20,
         height: '50%',
     },
     infoText: {
-        fontSize: Sizes.textSize,
-        color: Colors.textColor,
+        fontSize: Sizes.TEXTSIZE,
+        color: Colors.TEXTCOLOR,
     },
     valueText: {
         fontSize: 20,
@@ -242,7 +244,7 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         fontSize: 24,
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
     },
 });
 </code></pre>
@@ -255,13 +257,13 @@ const styles = StyleSheet.create({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-FileSystemUtils.html">FileSystemUtils</a></li><li><a href="module-ImagePickerUtils.html">ImagePickerUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-SqliteUtils.html">SqliteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatabaseUtils.html">DatabaseUtils</a></li><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-ExpenseTableUtils.html">ExpenseTableUtils</a></li><li><a href="module-ImageUtils.html">ImageUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-RecurringTableUtils.html">RecurringTableUtils</a></li><li><a href="module-SQLiteUtils.html">SQLiteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createExampleData">createExampleData</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 05 2023 20:54:18 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 12 2023 00:40:49 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

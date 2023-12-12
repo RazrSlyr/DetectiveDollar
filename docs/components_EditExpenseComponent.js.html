@@ -46,12 +46,14 @@ import {
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import ButtonComponent from '../components/ButtonComponent';
 import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { updateExpense, saveImage, getCategoryTable } from '../util/FileSystemUtils';
-import { pickImage, captureImage } from '../util/ImagePickerUtils';
+import { captureImage, pickImage, saveImage } from '../util/ImageUtils';
+import { updateExpense } from '../util/ExpenseTableUtils';
+import { getCategoryTable } from '../util/CategoryTableUtils';
 
 /**
  * Component for the inspecting expense info
@@ -121,7 +123,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                     &lt;TextInput
                                         style={styles.input}
                                         placeholder={expense?.name}
-                                        placeholderTextColor={Colors.subHeadingColor}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                         onChangeText={(value) => setName(value)}
                                     />
                                     &lt;GreenLine />
@@ -132,7 +134,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                         style={styles.input}
                                         keyboardType="numeric"
                                         placeholder={`$${expense?.amount}`}
-                                        placeholderTextColor={Colors.subHeadingColor}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                         maxLength={10}
                                         onChangeText={(value) =>
                                             setAmount(parseFloat(value).toFixed(2))
@@ -156,7 +158,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                         }}
                                         dropdownLabel="Category"
                                         placeholderLabel={expense?.category}
-                                        placeholderTextColor={Colors.subHeadingColor}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                     />
                                     &lt;View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     &lt;GreenLine />
@@ -166,16 +168,16 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                     &lt;TextInput
                                         style={styles.input}
                                         placeholder={expense?.memo}
-                                        placeholderTextColor={Colors.subHeadingColor}
+                                        placeholderTextColor={Colors.SUBHEADINGCOLOR}
                                         onChangeText={(value) => setMemo(value)}
                                     />
                                     &lt;GreenLine />
                                 &lt;/View>
                                 &lt;View style={[styles.inputContainer, styles.cameraBtnsContainer]}>
                                     {previewURI ? (
-                                        &lt;SafeAreaView style={styles.container}>
+                                        &lt;SafeAreaView>
                                             &lt;Image
-                                                style={styles.preview}
+                                                style={styles.imagePreview}
                                                 source={{ uri: previewURI }}
                                             />
                                             &lt;TouchableOpacity
@@ -215,7 +217,7 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                                 &lt;Feather
                                                     name="camera"
                                                     size={36}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             &lt;/TouchableOpacity>
                                             &lt;TouchableOpacity
@@ -243,22 +245,24 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
                                                 &lt;AntDesign
                                                     name="upload"
                                                     size={36}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             &lt;/TouchableOpacity>
                                         &lt;/View>
                                     )}
                                     &lt;View style={styles.buttonContainer}>
-                                        &lt;TouchableOpacity
-                                            style={styles.saveButton}
-                                            onPress={handleButtonPress}>
-                                            &lt;Text style={styles.buttonText}>Save&lt;/Text>
-                                        &lt;/TouchableOpacity>
-                                        &lt;TouchableOpacity
-                                            style={styles.cancelButton}
-                                            onPress={onClose}>
-                                            &lt;Text style={styles.buttonText}>Cancel&lt;/Text>
-                                        &lt;/TouchableOpacity>
+                                        &lt;ButtonComponent
+                                            onPress={handleButtonPress}
+                                            name="Save"
+                                            buttonColor={Colors.SECONDARYCOLOR}
+                                            buttonStyle={styles.button}
+                                        />
+                                        &lt;ButtonComponent
+                                            onPress={onClose}
+                                            name="Cancel"
+                                            buttonColor={Colors.CONTRASTCOLOR}
+                                            buttonStyle={styles.button}
+                                        />
                                     &lt;/View>
                                 &lt;/View>
                             &lt;/View>
@@ -272,10 +276,14 @@ const EditExpenseComponent = ({ isVisible, onClose, expense = null }) => {
 export default EditExpenseComponent;
 
 const styles = StyleSheet.create({
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
     content: {
         height: Dimensions.get('window').height * 0.6,
         alignItems: 'center',
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         borderRadius: 40,
     },
     titleContainer: {
@@ -285,9 +293,9 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
     title: {
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         fontFamily: 'Roboto-Bold',
-        fontSize: Sizes.titleSize,
+        fontSize: Sizes.TITLESIZE,
         textAlign: 'center',
         fontWeight: 'bold',
     },
@@ -309,19 +317,19 @@ const styles = StyleSheet.create({
     inputHeading: {
         fontSize: 12,
         fontFamily: 'Roboto-Bold',
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         width: '84%',
         marginTop: 15,
         marginBottom: 5,
     },
     input: {
         width: '84%',
-        color: Colors.textColor,
+        color: Colors.TEXTCOLOR,
         fontFamily: 'Roboto-Bold',
-        fontSize: Sizes.textSize,
+        fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
-    preview: {
+    imagePreview: {
         height: '100%',
         aspectRatio: 1,
     },
@@ -350,27 +358,10 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         flexDirection: 'row',
     },
-    cancelButton: {
-        backgroundColor: '#FF3F48',
-        padding: 10,
-        borderRadius: 20,
-        height: 40,
-        width: 80,
+    button: {
+        width: 100,
         margin: 10,
-    },
-    saveButton: {
-        backgroundColor: Colors.secondaryColor,
-        padding: 10,
-        borderRadius: 20,
-        height: 40,
-        width: 80,
-        margin:10,
-    },
-    buttonText: {
-        textAlign: 'center',
-        fontSize: 20,
-        color: '#ffffff',
-    },
+    }
 });
 </code></pre>
         </article>
@@ -382,13 +373,13 @@ const styles = StyleSheet.create({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-FileSystemUtils.html">FileSystemUtils</a></li><li><a href="module-ImagePickerUtils.html">ImagePickerUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-SqliteUtils.html">SqliteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatabaseUtils.html">DatabaseUtils</a></li><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-ExpenseTableUtils.html">ExpenseTableUtils</a></li><li><a href="module-ImageUtils.html">ImageUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-RecurringTableUtils.html">RecurringTableUtils</a></li><li><a href="module-SQLiteUtils.html">SQLiteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createExampleData">createExampleData</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 05 2023 20:54:18 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 12 2023 00:40:49 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
