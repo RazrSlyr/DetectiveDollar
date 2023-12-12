@@ -5,39 +5,38 @@
 
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    View,
-    Text,
-    ScrollView,
-    Modal,
-    TextInput,
-    KeyboardAvoidingView,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ColorPicker from 'react-native-wheel-color-picker';
 
 import ButtonComponent from '../components/ButtonComponent';
+import CategoryAddComponent from '../components/CategoryAddComponent';
 import CategoryEditComponent from '../components/CategoryEditComponent';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';
-
+import { getCategoryTable } from '../util/FileSystemUtils';
 export default function CategoryPage({ navigation }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [showEditor, setShowEditor] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [categoryName, setCategoryName] = useState('');
-    const [categoryColor, setColor] = useState('');
+    const [showEditorComponent, setShowEditorComponent] = useState(false);
+    const [showAddComponent, setShowAddComponent] = useState(false);
 
     useEffect(() => {
         const getCategories = async () => {
             try {
                 // Fetch expenses for today and set to state
                 const categories = await getCategoryTable();
+                categories.sort(function (a, b) {
+                    const x = a.name;
+                    const y = b.name;
+                    if (x > y) {
+                        return 1;
+                    }
+                    if (x < y) {
+                        return -1;
+                    }
+                    return 0;
+                });
                 setCategories(categories);
                 //console.log('Categories set!');
             } catch (error) {
@@ -46,19 +45,21 @@ export default function CategoryPage({ navigation }) {
         };
 
         // Call getExpenses when the component mounts
-        getCategories();
+        updateCategories();
 
         // Add an event listener for focus to re-fetch expenses when the component comes into focus
         const unsubscribe = navigation.addListener('focus', getCategories);
 
         // Clean up the event listener when the component unmounts
         return () => unsubscribe();
-    }, [navigation]);
+    }, [navigation, updateCategories]);
 
-    const openCategoryEditor = async () => {
-        setShowEditor(true);
+    const openCategoryEditor = () => {
+        setShowEditorComponent(true);
     };
-
+    const openCategoryAdd = () => {
+        setShowAddComponent(true);
+    };
     const updateCategories = async () => {
         try {
             // Fetch expenses for today and set to state
@@ -72,10 +73,10 @@ export default function CategoryPage({ navigation }) {
 
     const closeCategoryEditor = () => {
         setSelectedCategory(null);
-        setShowEditor(false);
+        setShowEditorComponent(false);
     };
-    const onColorChange = (color) => {
-        setColor(color);
+    const closeCategoryAdd = () => {
+        setShowAddComponent(false);
     };
     return (
         <SafeAreaView style={styles.container}>
@@ -87,73 +88,15 @@ export default function CategoryPage({ navigation }) {
                 style={styles.scrollableContainer}
                 contentContainerStyle={styles.scrollableContent}>
                 <ButtonComponent
-                    onPress={() => setModalVisible(true)}
+                    onPress={() => {
+                        openCategoryAdd();
+                    }}
                     name="Add"
                     buttonColor={Colors.SECONDARYCOLOR}
                     buttonStyle={styles.button}
                 />
                 <GreenLine />
-                <Modal
-                    animationType="slide"
-                    transparent
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        setModalVisible(!modalVisible);
-                    }}>
-                    <KeyboardAvoidingView style={styles.modalShadow}>
-                        <KeyboardAvoidingView style={styles.centeredView}>
-                            <View style={styles.modalView}>
-                                <Text style={styles.modalTitle}>Add Category</Text>
-                                <View style={styles.inputContainer}>
-                                    <Text style={styles.inputHeading}>Name</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        value={categoryName}
-                                        onChangeText={(cName) => setCategoryName(cName)}
-                                    />
-                                    <View style={styles.line} />
-                                    <Text style={styles.inputHeading}>Color</Text>
-                                    <View style={styles.colorPickerBox}>
-                                        <ColorPicker
-                                            color={categoryColor}
-                                            onColorChangeComplete={(categoryColor) =>
-                                                onColorChange(categoryColor)
-                                            }
-                                            thumbSize={30}
-                                            sliderSize={30}
-                                            noSnap
-                                            row={false}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={styles.addCancelBox}>
-                                    <ButtonComponent
-                                        onPress={async () => {
-                                            addRowToCategoryTable(categoryName, categoryColor);
-                                            setModalVisible(!modalVisible);
-                                            updateCategories();
-                                            setCategoryName(undefined);
-                                        }}
-                                        name="Add"
-                                        buttonColor={Colors.SECONDARYCOLOR}
-                                        buttonStyle={{ width: 95, marginRight: 15 }}
-                                        buttonTextStyle={{ fontSize: 24 }}
-                                    />
-                                    <ButtonComponent
-                                        onPress={async () => {
-                                            setModalVisible(!modalVisible);
-                                            setCategoryName(undefined);
-                                        }}
-                                        name="Cancel"
-                                        buttonColor={Colors.CONTRASTCOLOR}
-                                        buttonStyle={{ width: 95, marginLeft: 15 }}
-                                        buttonTextStyle={{ fontSize: 24 }}
-                                    />
-                                </View>
-                            </View>
-                        </KeyboardAvoidingView>
-                    </KeyboardAvoidingView>
-                </Modal>
+
                 {categories.map((category) => {
                     return (
                         <View
@@ -179,9 +122,13 @@ export default function CategoryPage({ navigation }) {
                     );
                 })}
             </ScrollView>
-
+            <CategoryAddComponent
+                isVisable={showAddComponent}
+                onClose={closeCategoryAdd}
+                onAdd={updateCategories}
+            />
             <CategoryEditComponent
-                isVisable={showEditor}
+                isVisable={showEditorComponent}
                 onClose={closeCategoryEditor}
                 category={selectedCategory}
                 onUpdate={updateCategories}
