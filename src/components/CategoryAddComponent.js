@@ -16,6 +16,14 @@ import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
 import { addRowToCategoryTable } from '../util/CategoryTableUtils';
 const DEFAULTCOLOR = 'white';
+
+/**
+ * Component for the pop up that lets you add a new category
+ * @param {object} props. Props object. Contains the following props:
+ * isVisible (boolean), onClose (callback), onAdd (callback)
+ * @returns The new category pop up component
+ * @memberof Components
+ */
 const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
     const [categoryName, setCategoryName] = useState();
     const [categoryColor, setCategoryColor] = useState(DEFAULTCOLOR); //use to update color
