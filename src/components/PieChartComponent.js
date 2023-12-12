@@ -5,6 +5,7 @@ import { PieChart } from 'react-native-gifted-charts';
 
 import PieChartLegend from './PieChartLegend';
 import * as Colors from '../constants/Colors';
+import { getCategoryColorById } from '../util/CategoryTableUtils';
 import { getExpensesbyCategory } from '../util/ExpenseTableUtils';
 
 /**
@@ -26,7 +27,9 @@ const PieChartComponent = ({ startDate, endDate, timeFrame }) => {
 
             for (const key in expensesByCategory) {
                 if (expensesByCategory.hasOwnProperty(key)) {
-                    const newColor = expensesByCategory[key][0]['color'];
+                    const newColor = await getCategoryColorById(
+                        expensesByCategory[key][0]['category']
+                    );
                     categoryColors[key] = newColor;
                 }
             }
