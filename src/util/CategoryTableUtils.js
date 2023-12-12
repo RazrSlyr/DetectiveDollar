@@ -1,5 +1,5 @@
 /**
- * @module ExpenseTableUtils
+ * @module CategoryTableUtils
  */
 
 /**

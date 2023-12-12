@@ -9,6 +9,7 @@ import * as Sizes from '../constants/Sizes';
  * @param {object} props. Props object. Contains the following props:
  * todaysExpenses (list of expense objects), subHeadingText (string), containerWidth (number)
  * @returns The new category pop up component
+ * @memberof Components
  */
 const TodaySpendingComponent = ({ todayExpenses, subHeadingText, containerWidth }) => {
     const spending = useMemo(() => {
