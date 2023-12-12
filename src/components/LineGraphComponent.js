@@ -1,13 +1,13 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 
 import LineGraphStats from './LineGraphStats';
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { getExpensesFromDayframe } from '../util/FileSystemUtils';
+import { getExpensesFromDayframe } from '../util/ExpenseTableUtils';
 
 /**
  * Component for displaying a Line Graph of expense data
@@ -94,7 +94,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     const updateLineGraphData = async () => {
         try {
             timeFrame = timeFrame || WEEKLY;
-            const [startYear, startMonth, startDay] = startDate.split('-');
+            const [startYear, startMonth] = startDate.split('-');
 
             if (timeFrame === WEEKLY) {
                 const transactions = await getExpensesFromDayframe(startDate, endDate);
@@ -138,7 +138,7 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                 const totalDays = monthLabel.length;
                 const step = Math.floor(totalDays / 4);
                 const updatedData = transactions.reduce((accumulator, expense) => {
-                    const [expense_Year, expense_month, expense_day] = expense.day.split('-');
+                    const expense_day = expense.day.split('-')[2];
 
                     const dayOfMonth = parseInt(expense_day, 10);
 
@@ -248,20 +248,16 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
     return (
         <View style={{ flex: 1, justifyContent: 'center' }}>
             {lineGraphData.length > 0 ? (
-                <View
-                    style={{
-                        flex: 1,
-                        alignItems: 'center',
-                    }}>
+                <View style={styles.container}>
                     <LineChart
                         hideDataPoints
                         areaChart
                         data={lineGraphData}
-                        startFillColor={Colors.secondaryColor}
+                        startFillColor={Colors.SECONDARYCOLOR}
                         startOpacity={0.8}
                         endFillColor="#D5FADD"
                         endOpacity={0.3}
-                        color={Colors.secondaryColor}
+                        color={Colors.SECONDARYCOLOR}
                         thickness={4}
                         width={300}
                         height={220}
@@ -270,17 +266,8 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                         initialSpacing={initialSpacing}
                         endSpacing={0}
                         label={['0', '30']}
-                        xAxisLabelTextStyle={{
-                            color: Colors.textColor,
-                            fontSize,
-                            textAlign: 'left',
-                            marginRight: -9,
-                        }}
-                        yAxisTextStyle={{
-                            color: Colors.textColor,
-                            fontSize: 12,
-                            textAlign: 'left',
-                        }}
+                        xAxisLabelTextStyle={[styles.xAxis, fontSize]}
+                        yAxisTextStyle={styles.yAxis}
                         noOfSections={5}
                         yAxisLabelPrefix="$"
                         yAxisThickness={0}
@@ -296,9 +283,9 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                         }}
                         pointerConfig={{
                             pointerStripHeight: 160,
-                            pointerStripColor: Colors.subHeadingColor,
+                            pointerStripColor: Colors.SUBHEADINGCOLOR,
                             pointerStripWidth: 2,
-                            pointerColor: Colors.subHeadingColor,
+                            pointerColor: Colors.SUBHEADINGCOLOR,
                             radius: 6,
                             pointerLabelWidth: 100,
                             pointerLabelHeight: 90,
@@ -308,34 +295,10 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
                             hidePointer: true,
                             pointerLabelComponent: (items) => {
                                 return (
-                                    <View
-                                        style={{
-                                            height: 90,
-                                            width: 100,
-                                            justifyContent: 'center',
-                                            marginTop: -30,
-                                            marginLeft: -40,
-                                        }}>
-                                        <Text
-                                            style={{
-                                                color: Colors.textColor,
-                                                fontSize: 14,
-                                                marginBottom: 6,
-                                                textAlign: 'center',
-                                            }}>
-                                            {items[0].date}
-                                        </Text>
-                                        <View
-                                            style={{
-                                                paddingHorizontal: 14,
-                                                paddingVertical: 6,
-                                                borderRadius: 16,
-                                                backgroundColor: 'white',
-                                                borderColor: Colors.secondaryColor,
-                                                borderWidth: 2,
-                                            }}>
-                                            <Text
-                                                style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                                    <View style={styles.pointerContainer}>
+                                        <Text style={styles.pointerDate}>{items[0].date}</Text>
+                                        <View style={styles.pointerSpending}>
+                                            <Text style={styles.pointerSpendText}>
                                                 {'$' + items[0].value}
                                             </Text>
                                         </View>
@@ -358,3 +321,58 @@ const LineGraphComponent = ({ startDate, endDate, timeFrame }) => {
 };
 
 export default LineGraphComponent;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    pointerContainer: {
+        height: 90,
+        width: 100,
+        justifyContent: 'center',
+        marginTop: -30,
+        marginLeft: -40,
+    },
+    pointerDate: {
+        color: Colors.TEXTCOLOR,
+        fontSize: 14,
+        marginBottom: 6,
+        textAlign: 'center',
+    },
+    pointerSpending: {
+        paddingHorizontal: 14,
+        paddingVertical: 6,
+        borderRadius: 16,
+        backgroundColor: 'white',
+        borderColor: Colors.SECONDARYCOLOR,
+        borderWidth: 2,
+    },
+    pointerSpendText: {
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    xAxis: {
+        color: Colors.TEXTCOLOR,
+        textAlign: 'left',
+        marginRight: -9,
+    },
+    yAxis: {
+        color: Colors.TEXTCOLOR,
+        fontSize: 12,
+        textAlign: 'left',
+    },
+    pointerStyle: {
+        pointerStripHeight: 160,
+        pointerStripColor: Colors.SUBHEADINGCOLOR,
+        pointerStripWidth: 2,
+        pointerColor: Colors.SUBHEADINGCOLOR,
+        radius: 6,
+        pointerLabelWidth: 100,
+        pointerLabelHeight: 90,
+        activatePointersOnLongPress: false,
+        autoAdjustPointerLabelPosition: false,
+        activatePointersDelay: 2,
+        hidePointer: true,
+    },
+});

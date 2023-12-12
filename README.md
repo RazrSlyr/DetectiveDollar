@@ -15,6 +15,8 @@ git clone git@github.com:RazrSlyr/DetectiveDollar.git
 Next open your local repo in the terminal or command line and install the package dependencies using
 
 ```
+npm install
+or
 npx expo install
 ```
 Once all the packages have been installed, you can run a development build of the app by using

@@ -1,18 +1,11 @@
-import { Feather } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    Text,
-    View,
-    SafeAreaView,
-    Modal,
-    TextInput,
-} from 'react-native';
+import { Alert, Modal, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import ColorPicker from 'react-native-wheel-color-picker';
 
+import GreenLine from './GreenLine';
+import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
-import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
+import { updateRowFromCategoryTable } from '../util/CategoryTableUtils';
 
 /**
  * Component for the Category editing pop up
@@ -21,30 +14,14 @@ import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
  * @returns {object} The component object for the Category Edit Pop Up
  * @memberof Components
  */
+const DEFAULTCOLOR = 'white';
 const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }) => {
-    const [enableSave, setEnableSave] = useState(false);
-    const [categoryName, setCategoryName] = useState(category?.name);
-    const [categoryColor, setColor] = useState(category?.color); //use to update color
-
-    const onColorChange = (color) => {
-        setColor(color);
-    };
-
+    const [categoryName, setCategoryName] = useState();
+    const [categoryColor, setCategoryColor] = useState(DEFAULTCOLOR); //use to update color
     useEffect(() => {
-        const updateEnableSave = () => {
-            if (
-                (categoryName === undefined ||
-                    categoryName === '' ||
-                    categoryName === category.name) &&
-                (!categoryColor || categoryColor === category.color)
-            ) {
-                setEnableSave(false);
-            } else {
-                setEnableSave(true);
-            }
-        };
-        updateEnableSave();
-    }, [categoryName, categoryColor]);
+        setCategoryName(category?.name);
+        setCategoryColor(category?.color);
+    }, [category]);
 
     return (
         <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
@@ -58,25 +35,22 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputHeading}>Name</Text>
                                 <TextInput
-                                    style={styles.input}
-                                    value={
-                                        categoryName === undefined ? category.name : categoryName
-                                    }
+                                    style={styles.inputField}
+                                    value={categoryName !== undefined ? categoryName : ''}
+                                    placeholder={category?.name}
                                     onChangeText={(value) => {
-                                        //console.log('change value', value);
                                         setCategoryName(value);
-                                        //setColor(color)
                                     }}
                                 />
                             </View>
-                            <View style={styles.line} />
+                            <GreenLine style={{ alignSelf: 'center' }} />
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputHeading}>Color</Text>
                                 <View style={styles.colorPickerContainer}>
                                     <ColorPicker
-                                        color={!category?.color ? '#ffffff' : category.color}
+                                        color={categoryColor}
                                         onColorChangeComplete={(categoryColor) =>
-                                            onColorChange(categoryColor)
+                                            setCategoryColor(categoryColor)
                                         }
                                         thumbSize={30}
                                         sliderSize={30}
@@ -92,35 +66,50 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                         </View>
                     )}
                     <View style={styles.rowContainer}>
-                        <TouchableOpacity
-                            style={[
-                                styles.button,
-                                { backgroundColor: !enableSave ? 'grey' : styles.button.color },
-                            ]}
-                            disabled={!enableSave}
+                        <ButtonComponent
                             onPress={async () => {
-                                //console.log('attempt to update');
-                                await updateRowFromCategoryTable(
-                                    category.id,
-                                    categoryName === category?.name ? null : categoryName,
-                                    categoryColor === category?.color ? null : categoryColor
-                                );
-                                await onUpdate();
+                                if (
+                                    categoryName === undefined ||
+                                    categoryName === null ||
+                                    categoryName.trim().length === 0
+                                ) {
+                                    Alert.alert('Please Input a Category Name');
+                                    return;
+                                }
+                                if (
+                                    categoryName !== category?.name ||
+                                    categoryColor !== category?.color
+                                ) {
+                                    try {
+                                        await updateRowFromCategoryTable(
+                                            category.id,
+                                            categoryName.trim(),
+                                            categoryColor
+                                        );
+                                        await onUpdate();
+                                    } catch (error) {
+                                        console.log(
+                                            'Failed to update Category ' + category['id'],
+                                            error
+                                        );
+                                    }
+                                }
                                 onClose();
-                            }}>
-                            <Text style={styles.buttonText}>Save</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.button, { backgroundColor: 'red' }]}
+                            }}
+                            name="Save"
+                            buttonColor={Colors.SECONDARYCOLOR}
+                            buttonStyle={styles.button}
+                        />
+                        <ButtonComponent
                             onPress={async () => {
-                                //await deleteRowFromCategoryTable(category.name);
-                                await onUpdate();
                                 setCategoryName(undefined);
-                                setColor(undefined);
+                                setCategoryColor(undefined);
                                 onClose();
-                            }}>
-                            <Text style={styles.buttonText}>Cancel</Text>
-                        </TouchableOpacity>
+                            }}
+                            name="Cancel"
+                            buttonColor={Colors.CONTRASTCOLOR}
+                            buttonStyle={styles.button}
+                        />
                     </View>
                 </SafeAreaView>
             </View>
@@ -137,7 +126,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     container: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: -20,
@@ -156,7 +145,7 @@ const styles = StyleSheet.create({
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
     },
     inputContainer: {
         height: 'auto',
@@ -167,53 +156,30 @@ const styles = StyleSheet.create({
     inputHeading: {
         fontSize: 15,
         fontFamily: 'Roboto-Bold',
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         width: '84%',
         marginTop: 15,
         marginBottom: 5,
     },
-    input: {
+    inputField: {
         width: '84%',
-        color: Colors.textColor,
+        color: Colors.TEXTCOLOR,
         fontFamily: 'Roboto-Bold',
         fontSize: 20,
         textAlign: 'left',
-    },
-    line: {
-        height: 2,
-        width: '85%',
-        backgroundColor: Colors.secondaryColor,
-        alignSelf: 'center',
-    },
-    closeButton: {
-        position: 'absolute',
-        top: 5,
-        right: 5,
-    },
-    button: {
-        color: Colors.secondaryColor,
-        fontFamily: 'Roboto-Bold',
-        width: '35%',
-        height: 'auto',
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.secondaryColor,
-        marginRight: 15,
-    },
-    buttonText: {
-        fontFamily: 'Roboto-Bold',
-        color: '#ffffff',
-        textAlign: 'center',
-        fontSize: 24,
     },
     rowContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        //marginTop: 10,
     },
     colorPickerContainer: {
         height: 300,
         width: 300,
+    },
+    button: {
+        width: 100,
+        marginLeft: 20,
     },
 });

@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
     line: {
         height: 2,
         width: '84%',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
+        alignSelf: 'center',
     },
 });
 

@@ -24,20 +24,18 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import ButtonComponent from '../components/ButtonComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
 import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
+import TodaySpendingComponent from '../components/TodaysExpenseComponent';
 import * as Colors from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import * as Sizes from '../constants/Sizes';
+import { getCategoryTable } from '../util/CategoryTableUtils';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import {
-    addRowToExpenseTable,
-    saveImage,
-    getExpensesFromDay,
-    getCategoryTable,
-} from '../util/FileSystemUtils';
-import { pickImage, captureImage } from '../util/ImagePickerUtils';
+import { addRowToExpenseTable, getExpensesFromDay } from '../util/ExpenseTableUtils';
+import { captureImage, pickImage, saveImage } from '../util/ImageUtils';
 
 export default function AddExpense({ navigation }) {
     const [name, setName] = useState('');
@@ -47,25 +45,12 @@ export default function AddExpense({ navigation }) {
     const [frequency, setFrequency] = useState(NO_REPETION);
     const [previewURI, setImageURI] = useState(null);
     const [todayExpenses, setTodayExpenses] = useState([]);
-    const todaysDate = getCurrentDateString();
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [memo, setMemo] = useState(null);
+    const [resetDropdown, setResetDropdown] = useState(false);
 
-    const spending = useMemo(() => {
-        if (todayExpenses?.length === 0) {
-            return '$0.00';
-        }
-        let newSpending = 0;
-        todayExpenses.forEach((expense) => {
-            newSpending += parseFloat(expense['amount']);
-        });
-        const todaySpending = newSpending.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-        });
-        return todaySpending;
-    }, [todayExpenses]);
+
+    const todaysDate = getCurrentDateString();
 
     useEffect(() => {
         const getExpensesAndCategories = async () => {
@@ -95,7 +80,7 @@ export default function AddExpense({ navigation }) {
     // Format the date as "month/day/year"
     const formattedDate = `${month}/${day}/${year}`;
 
-    const handleButtonPress = async () => {
+    const handleAddButtonPress = async () => {
         // Add your button click logic here
         if (name === '' || amount === '' || category === '') {
             alert('Please Input a Name, Amount, and Category');
@@ -131,7 +116,15 @@ export default function AddExpense({ navigation }) {
             memo,
             frequency
         );
+        setResetDropdown(true);
         alert('Entry added');
+        // Clear input fields
+        setName(''); // Set the name to an empty string or initial value
+        setAmount(''); // Set the amount to an empty string or initial value
+        setCategory(''); // Set the category to an empty string or initial value
+        setMemo(null); // Set the memo to an empty string or initial value
+        setFrequency(NO_REPETION); // Set the frequency to the default value
+        setImageURI(null);
     };
     const clearImage = async () => {
         console.log('removed photo');
@@ -145,17 +138,11 @@ export default function AddExpense({ navigation }) {
                         <Text style={styles.title}>Add Expense</Text>
                     </View>
                     <StatusBar style="auto" />
-                    <View style={styles.totalExpenseContainer}>
-                        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subHeading}>
-                            Today's Spending
-                        </Text>
-                        <Text
-                            style={{
-                                fontSize: Sizes.largeText,
-                                margin: 'auto',
-                                textAlign: 'center',
-                            }}>{`${spending}`}</Text>
-                    </View>
+                    <TodaySpendingComponent
+                        todayExpenses={todayExpenses}
+                        subHeadingText="Today's Spending"
+                        containerWidth="80%"
+                    />
                     <KeyboardAvoidingView
                         style={{ flex: 1 }}
                         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -166,6 +153,7 @@ export default function AddExpense({ navigation }) {
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Name of expense"
+                                        value={name}
                                         onChangeText={(value) => setName(value)}
                                     />
                                     <GreenLine />
@@ -177,9 +165,8 @@ export default function AddExpense({ navigation }) {
                                         placeholder="$0.00"
                                         keyboardType="numeric"
                                         maxLength={10}
-                                        onChangeText={(value) =>
-                                            setAmount(parseFloat(value).toFixed(2))
-                                        }
+                                        value={amount}
+                                        onChangeText={(text) => setAmount(text)}
                                     />
                                     <GreenLine />
                                 </View>
@@ -188,7 +175,7 @@ export default function AddExpense({ navigation }) {
                                     <View style={styles.dateInputContainer}>
                                         <Text
                                             style={{
-                                                fontSize: Sizes.textSize,
+                                                fontSize: Sizes.TEXTSIZE,
                                                 textAlign: 'left',
                                                 flex: 1,
                                                 fontFamily: 'Roboto-Bold',
@@ -213,11 +200,13 @@ export default function AddExpense({ navigation }) {
                                                 value: category['id'],
                                             };
                                         })}
+                                        value={category}
                                         onChange={(item) => {
                                             setCategory(item.value);
                                         }}
                                         dropdownLabel="Category"
                                         placeholderLabel="Category"
+                                        reset={resetDropdown} // Pass the 'resetDropdown' state as a prop
                                     />
                                     <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
@@ -232,11 +221,13 @@ export default function AddExpense({ navigation }) {
                                             { label: 'Weekly', value: WEEKLY },
                                             { label: 'Monthly', value: MONTHLY },
                                         ]}
+                                        value={frequency}
                                         onChange={(item) => {
                                             setFrequency(item.value);
                                         }}
                                         dropdownLabel="Expense Frequency"
                                         placeholderLabel="Expense Frequency"
+                                        // makes category dropdown not clear...reset={resetDropdown} // Pass the 'resetDropdown' state as a prop
                                     />
                                     <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
@@ -246,6 +237,7 @@ export default function AddExpense({ navigation }) {
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Notes about spending"
+                                        value={memo}
                                         onChangeText={(value) => setMemo(value)}
                                     />
                                     <GreenLine />
@@ -254,15 +246,11 @@ export default function AddExpense({ navigation }) {
                                     {previewURI ? (
                                         <SafeAreaView style={styles.container}>
                                             <Image
-                                                style={styles.preview}
+                                                style={styles.previewImg}
                                                 source={{ uri: previewURI }}
                                             />
                                             <TouchableOpacity
-                                                style={{
-                                                    position: 'absolute',
-                                                    right: -30,
-                                                    alignSelf: 'center',
-                                                }}
+                                                style={styles.imageCancelButton}
                                                 onPress={async () => {
                                                     await clearImage();
                                                 }}>
@@ -294,7 +282,7 @@ export default function AddExpense({ navigation }) {
                                                 <Feather
                                                     name="camera"
                                                     size={36}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             </TouchableOpacity>
                                             <TouchableOpacity
@@ -322,24 +310,17 @@ export default function AddExpense({ navigation }) {
                                                 <AntDesign
                                                     name="upload"
                                                     size={36}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             </TouchableOpacity>
                                         </View>
                                     )}
-                                    <TouchableOpacity
-                                        style={styles.button}
-                                        onPress={handleButtonPress}>
-                                        <Text
-                                            style={{
-                                                fontFamily: 'Roboto-Bold',
-                                                color: '#ffffff',
-                                                textAlign: 'center',
-                                                fontSize: 24,
-                                            }}>
-                                            Add
-                                        </Text>
-                                    </TouchableOpacity>
+                                    <ButtonComponent
+                                        onPress={handleAddButtonPress}
+                                        name="Add"
+                                        buttonColor={Colors.SECONDARYCOLOR}
+                                        buttonStyle={styles.button}
+                                    />
                                 </View>
                             </View>
                         </ScrollView>
@@ -353,43 +334,26 @@ export default function AddExpense({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     content: {
         height: '100%',
         alignItems: 'center',
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         flexDirection: 'column',
     },
     titleContainer: {
         width: '100%',
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         paddingBottom: 10,
     },
     title: {
         color: 'white',
         fontFamily: 'Roboto-Bold',
-        fontSize: Sizes.titleSize,
+        fontSize: Sizes.TITLESIZE,
         textAlign: 'center',
         fontWeight: 'bold',
-    },
-    totalExpenseContainer: {
-        backgroundColor: 'white',
-        borderRadius: 15,
-        marginTop: 0,
-        marginBottom: 20,
-        height: 'auto',
-        width: '80%',
-        margin: 30,
-        top: 10,
-    },
-    subHeading: {
-        color: Colors.subHeadingColor,
-        fontSize: Sizes.subText,
-        margin: 'auto',
-        paddingLeft: 10,
-        paddingTop: 5,
     },
     box2: {
         width: Dimensions.get('window').width * 0.8,
@@ -415,29 +379,19 @@ const styles = StyleSheet.create({
     inputHeading: {
         fontSize: 12,
         fontFamily: 'Roboto-Bold',
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
         width: '84%',
         marginTop: 15,
         marginBottom: 5,
     },
     input: {
         width: '84%',
-        color: Colors.textColor,
+        color: Colors.TEXTCOLOR,
         fontFamily: 'Roboto-Bold',
-        fontSize: Sizes.textSize,
+        fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
-    button: {
-        color: Colors.secondaryColor,
-        fontFamily: 'Roboto-Bold',
-        width: '60%',
-        height: '40%',
-        borderRadius: 20,
-        textAlign: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.secondaryColor,
-    },
-    preview: {
+    previewImg: {
         height: '100%',
         aspectRatio: 1,
     },
@@ -461,4 +415,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '84%',
     },
+    imageCancelButton: {
+        position: 'absolute',
+        right: -30,
+        alignSelf: 'center',
+    },
+    button: { width: 180 },
 });

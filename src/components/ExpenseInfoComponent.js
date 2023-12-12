@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View, Modal, Dimensions } from 'react-native';
 
 import EditExpenseComponent from './EditExpenseComponent';
+import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
@@ -48,7 +49,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                 <Entypo
                                     name="chevron-thin-left"
                                     size={45}
-                                    color={Colors.primaryColor}
+                                    color={Colors.PRIMARYCOLOR}
                                 />
                             </TouchableOpacity>
                             <Text style={styles.title}>Expense Info</Text>
@@ -56,13 +57,18 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                         <View style={styles.allInfoContainer}>
                             {onHome ? (
                                 <View style={styles.buttonContainer}>
-                                    <TouchableOpacity
-                                        style={styles.editButton}
+                                    <ButtonComponent
                                         onPress={async () => {
                                             openInfo();
-                                        }}>
-                                        <Text style={styles.buttonText}>Edit</Text>
-                                    </TouchableOpacity>
+                                        }}
+                                        name="Edit"
+                                        buttonColor="rgba(0, 0, 0, 0)"
+                                        buttonStyle={{ height: 50, width: 80, paddingTop: 10 }}
+                                        buttonTextStyle={{
+                                            fontSize: 25,
+                                            color: Colors.SECONDARYCOLOR,
+                                        }}
+                                    />
                                 </View>
                             ) : null}
                             {expense.picture !== null && hasMediaLibraryPermission ? (
@@ -88,7 +94,7 @@ const ExpenseInfoComponent = ({ isVisible, onClose, onHome, expense = null, onUp
                                         )}
                                 </Text>
                                 <Text style={styles.infoText}>
-                                    {'Amount: ' + '$' + parseFloat(expense['amount']).toFixed(2)}
+                                    {'Amount: $' + parseFloat(expense['amount']).toFixed(2)}
                                 </Text>
                                 <Text style={styles.infoText}>
                                     {'Category: ' + expense.category}
@@ -127,12 +133,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 32,
-        borderWidth: 5,
-        borderColor: 'black',
     },
     content: {
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         padding: 20,
         borderRadius: 8,
         width: '94%', // take 70% of the screen width
@@ -144,14 +147,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 5,
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         borderTopLeftRadius: 27, // Radius for the top-left corner
         borderTopRightRadius: 27, // Radius for the top-right corner
     },
     title: {
         fontWeight: 'bold',
-        fontSize: Sizes.titleSize,
-        color: Colors.primaryColor,
+        fontSize: Sizes.TITLESIZE,
+        color: Colors.PRIMARYCOLOR,
     },
     closeButton: {
         position: 'absolute',
@@ -184,19 +187,18 @@ const styles = StyleSheet.create({
     dividerLine: {
         width: '50%',
         borderBottomWidth: 3,
-        borderColor: Colors.secondaryColor,
+        borderColor: Colors.SECONDARYCOLOR,
         marginVertical: 0,
         alignSelf: 'center',
     },
     textContainer: {
         padding: 5,
-        backgroundColor: 'white',
         margin: 20,
         height: '50%',
     },
     infoText: {
-        fontSize: Sizes.textSize,
-        color: Colors.textColor,
+        fontSize: Sizes.TEXTSIZE,
+        color: Colors.TEXTCOLOR,
     },
     valueText: {
         fontSize: 20,
@@ -214,6 +216,6 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         fontSize: 24,
-        color: Colors.secondaryColor,
+        color: Colors.SECONDARYCOLOR,
     },
 });

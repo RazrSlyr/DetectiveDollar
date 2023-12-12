@@ -22,21 +22,22 @@ import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import {
-    deleteRowFromExpenseTable,
-    deleteRowFromReacurringTable,
-    getRowFromExpenseTable,
-    deleteImage,
-    getCategoryNameFromId,
-    applyRecurringExpenses,
-    getExpenseTable,
-    getCategoryColorById,
     getExpenseUpdatesInSession,
-} from '../util/FileSystemUtils';
+    isFirstCheck,
+    resetExpenseUpdatesInSession,
+} from '../util/DatabaseUtils';
+import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
+import { deleteRowFromExpenseTable, getExpensesTableCategoryJoin, getRowFromExpenseTable } from '../util/ExpenseTableUtils';
+import { deleteImage } from '../util/ImageUtils';
+import { applyRecurringExpenses, deleteRowFromReacurringTable } from '../util/RecurringTableUtils';
 
 export default function HistoryPage({ navigation }) {
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [allExpenses, setAllExpeneses] = useState([]);
+    const [showExpenseInfo, setShowExpenseInfo] = useState(false);
+    const [selectedExpense, setSelectedExpense] = useState();
+
     const expensesToDisplay = useMemo(() => {
         return searchQuery.length === 0
             ? allExpenses
@@ -45,38 +46,21 @@ export default function HistoryPage({ navigation }) {
               );
     }, [allExpenses, searchQuery]);
 
-    const [showExpenseInfo, setShowExpenseInfo] = useState(false);
-    const [selectedExpense, setSelectedExpense] = useState();
-
-    let expenseChangesOnLastCheck = null;
-
     useEffect(() => {
         const getExpenses = async () => {
             try {
-                if (
-                    expenseChangesOnLastCheck === null ||
-                    expenseChangesOnLastCheck !== getExpenseUpdatesInSession()
-                ) {
-                    expenseChangesOnLastCheck = getExpenseUpdatesInSession();
-                } else {
+                if (!isFirstCheck() & (getExpenseUpdatesInSession() === 0)) {
                     return;
                 }
                 setLoading(true);
                 // Apply recurring expenses
                 await applyRecurringExpenses();
                 // Fetch expenses and set to state
-                const expenses = await getExpenseTable();
-                // Change expense categoryId to name
-                for (let i = 0; i < expenses.length; i++) {
-                    expenses[i]['categoryColor'] = await getCategoryColorById(
-                        expenses[i]['category']
-                    );
-                    expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
-                }
-                // Change expense categoryId to name
+                const expenses = await getExpensesTableCategoryJoin();
                 setAllExpeneses(expenses);
                 setLoading(false);
-                // console.log('expenses set!');
+                console.log('expenses set!');
+                resetExpenseUpdatesInSession();
             } catch (error) {
                 console.error('Error fetching expenses:', error);
             }
@@ -117,7 +101,7 @@ export default function HistoryPage({ navigation }) {
             <Text style={styles.titleText}>All Expenses</Text>
             {!loading && (
                 <View style={styles.searchBar}>
-                    <AntDesign name="search1" size={20} color={Colors.textColor} />
+                    <AntDesign name="search1" size={20} color={Colors.TEXTCOLOR} />
                     <TextInput
                         style={styles.input}
                         placeholder="Search Expenses..."
@@ -126,13 +110,15 @@ export default function HistoryPage({ navigation }) {
                 </View>
             )}
             <View style={styles.expensesContainer}>
-                {loading && <ActivityIndicator size={200} color={Colors.secondaryColor} />}
+                {loading && <ActivityIndicator size={200} color={Colors.SECONDARYCOLOR} />}
                 {!loading && (
                     <FlatList
                         contentContainerStyle={styles.scrollableContent}
-                        data={expensesToDisplay}
+                        data={[...expensesToDisplay].reverse()}
                         renderItem={(row) => {
                             const expense = row['item'];
+                            const date = getDateFromUTCDatetimeString(expense['timestamp']);
+                            const datetime = getDatetimeString(date);
                             return (
                                 <TouchableOpacity
                                     onPress={async () => {
@@ -144,13 +130,13 @@ export default function HistoryPage({ navigation }) {
                                             <View
                                                 style={{
                                                     ...styles.colorCircle,
-                                                    backgroundColor: expense['categoryColor'],
+                                                    backgroundColor: expense['color'],
                                                 }}
                                             />
                                             <Text
                                                 style={{
                                                     ...styles.categoryName,
-                                                    color: expense['categoryColor'],
+                                                    color: expense['color'],
                                                 }}>
                                                 {expense['category']}
                                             </Text>
@@ -160,20 +146,30 @@ export default function HistoryPage({ navigation }) {
                                                 {expense['name']}
                                             </Text>
                                             <Text style={styles.expenseData}>
-                                                {expense['timestamp'].replace(/ /g, '\n')}
+                                                {datetime.replace(/ /g, '\n')}
                                             </Text>
+                                        </View>
+                                        <View style={{ alignItems: 'center', width: '25%' }}>
+                                            <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                                style={styles.expenseValue}>
+                                                {'$' + parseFloat(expense['amount']).toFixed(2)}
+                                            </Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                width: '15%',
+                                                alignItems: 'center',
+                                                right: 5,
+                                            }}>
                                             {expense['reacurring_id'] && (
                                                 <FontAwesome
                                                     name="repeat"
                                                     size={24}
-                                                    color={Colors.secondaryColor}
+                                                    color={Colors.SECONDARYCOLOR}
                                                 />
                                             )}
-                                        </View>
-                                        <View style={{ width: '30%' }}>
-                                            <Text style={styles.expenseValue}>
-                                                {'$' + parseFloat(expense['amount']).toFixed(2)}
-                                            </Text>
                                         </View>
                                         <TouchableOpacity
                                             onPress={async () => {
@@ -216,10 +212,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: Colors.secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
     },
     expensesContainer: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.PRIMARYCOLOR,
         width: '100%',
         height: '80%',
         padding: 10,
@@ -244,17 +240,17 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     expenseNameBox: {
-        width: '40%',
+        width: '30%',
         height: 55,
         margin: 5,
     },
     expenseName: {
-        fontSize: Sizes.textSize,
-        color: Colors.textColor,
+        fontSize: Sizes.TEXTSIZE,
+        color: Colors.TEXTCOLOR,
     },
     expenseData: {
-        fontSize: Sizes.subText,
-        color: Colors.subHeadingColor,
+        fontSize: Sizes.SUBTEXT,
+        color: Colors.SUBHEADINGCOLOR,
     },
     expenseValue: {
         fontSize: 20,
@@ -277,12 +273,12 @@ const styles = StyleSheet.create({
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
-        color: Colors.primaryColor,
+        color: Colors.PRIMARYCOLOR,
     },
     input: {
         width: '84%',
-        color: Colors.textColor,
-        fontSize: Sizes.textSize,
+        color: Colors.TEXTCOLOR,
+        fontSize: Sizes.TEXTSIZE,
         textAlign: 'left',
     },
     searchBar: {

@@ -2,10 +2,10 @@
  * @namespace Components
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import { secondaryColor } from '../Colors';
+import * as Colors from '../constants/Colors';
 
 /**
  * Component for an Add Button
@@ -26,7 +26,7 @@ const AddButton = ({ onPress }) => {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: secondaryColor,
+        backgroundColor: Colors.SECONDARYCOLOR,
         padding: 10,
         borderRadius: 10,
         marginTop: 20,
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonText: {
-        color: '#fff',
+        color: 'white',
         fontSize: 30,
     },
 });
