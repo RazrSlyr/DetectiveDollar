@@ -1,4 +1,32 @@
-import React, { useState } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/CategoryAddComponent.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/CategoryAddComponent.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
 import {
     Alert,
     StyleSheet,
@@ -29,28 +57,28 @@ const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
     const [categoryColor, setCategoryColor] = useState(DEFAULTCOLOR); //use to update color
 
     return (
-        <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
-            <View
+        &lt;Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
+            &lt;View
                 style={styles.modalContainer}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                <SafeAreaView style={styles.container}>
-                    <View style={styles.titleContainer}>
-                        <Text style={styles.titleText}>Add Category</Text>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.inputHeading}>Name</Text>
-                        <TextInput
+                &lt;SafeAreaView style={styles.container}>
+                    &lt;View style={styles.titleContainer}>
+                        &lt;Text style={styles.titleText}>Add Category&lt;/Text>
+                    &lt;/View>
+                    &lt;View style={styles.inputContainer}>
+                        &lt;Text style={styles.inputHeading}>Name&lt;/Text>
+                        &lt;TextInput
                             style={styles.inputField}
                             value={categoryName}
                             placeholder="Category Name"
                             onChangeText={(value) => setCategoryName(value)}
                         />
-                    </View>
-                    <GreenLine />
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.inputHeading}>Color</Text>
-                        <View style={styles.colorPickerContainer}>
-                            <ColorPicker
+                    &lt;/View>
+                    &lt;GreenLine />
+                    &lt;View style={styles.inputContainer}>
+                        &lt;Text style={styles.inputHeading}>Color&lt;/Text>
+                        &lt;View style={styles.colorPickerContainer}>
+                            &lt;ColorPicker
                                 color={DEFAULTCOLOR}
                                 onColorChangeComplete={(categoryColor) =>
                                     setCategoryColor(categoryColor)
@@ -60,10 +88,10 @@ const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
                                 noSnap
                                 row={false}
                             />
-                        </View>
-                    </View>
-                    <View style={styles.rowContainer}>
-                        <ButtonComponent
+                        &lt;/View>
+                    &lt;/View>
+                    &lt;View style={styles.rowContainer}>
+                        &lt;ButtonComponent
                             onPress={async () => {
                                 if (
                                     categoryName === undefined ||
@@ -87,7 +115,7 @@ const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
                             buttonColor={Colors.SECONDARYCOLOR}
                             buttonStyle={styles.button}
                         />
-                        <ButtonComponent
+                        &lt;ButtonComponent
                             onPress={async () => {
                                 setCategoryName(undefined);
                                 setCategoryColor(DEFAULTCOLOR);
@@ -97,10 +125,10 @@ const CategoryAddComponent = ({ isVisable, onClose, onAdd }) => {
                             buttonColor={Colors.CONTRASTCOLOR}
                             buttonStyle={styles.button}
                         />
-                    </View>
-                </SafeAreaView>
-            </View>
-        </Modal>
+                    &lt;/View>
+                &lt;/SafeAreaView>
+            &lt;/View>
+        &lt;/Modal>
     );
 };
 
@@ -170,3 +198,26 @@ const styles = StyleSheet.create({
         marginLeft: 20,
     },
 });
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-DatabaseUtils.html">DatabaseUtils</a></li><li><a href="module-DatetimeUtils.html">DatetimeUtils</a></li><li><a href="module-ExpenseTableUtils.html">ExpenseTableUtils</a></li><li><a href="module-ImageUtils.html">ImageUtils</a></li><li><a href="module-NameUtils.html">NameUtils</a></li><li><a href="module-RecurringTableUtils.html">RecurringTableUtils</a></li><li><a href="module-SQLiteUtils.html">SQLiteUtils</a></li></ul><h3>Namespaces</h3><ul><li><a href="Components.html">Components</a></li></ul><h3>Global</h3><ul><li><a href="global.html#TodaySpendingComponent">TodaySpendingComponent</a></li><li><a href="global.html#createExampleData">createExampleData</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Dec 12 2023 00:45:33 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
