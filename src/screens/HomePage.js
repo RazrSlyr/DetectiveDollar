@@ -6,7 +6,7 @@
 
 import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -82,21 +82,6 @@ export default function HomePage({ navigation }) {
             console.error('Error fetching expenses for new date:', error);
         }
     };
-
-    const spending = useMemo(() => {
-        if (todayExpenses?.length === 0) {
-            return 0;
-        }
-        let newSpending = 0;
-        todayExpenses.forEach(async (expense) => {
-            newSpending += parseFloat(expense['amount']);
-        });
-        const todaySpending = newSpending.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        });
-        return todaySpending;
-    }, [todayExpenses]);
 
     const handleDelete = async (expense) => {
         deleteImage(expense['picture']);

@@ -7,7 +7,7 @@ import { AntDesign, Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     TouchableOpacity,
     StyleSheet,
@@ -48,7 +48,6 @@ export default function AddExpense({ navigation }) {
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [memo, setMemo] = useState(null);
     const [resetDropdown, setResetDropdown] = useState(false);
-
 
     const todaysDate = getCurrentDateString();
 
