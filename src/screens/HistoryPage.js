@@ -152,6 +152,16 @@ export default function HistoryPage({ navigation }) {
                                             <Text style={styles.expenseData}>
                                                 {expense['timestamp'].replace(/ /g, '\n')}
                                             </Text>
+                                        </View>
+                                        <View style={{ alignItems: 'center', width: '25%' }}>
+                                            <Text
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                                style={styles.expenseValue}>
+                                                {'$' + parseFloat(expense['amount']).toFixed(2)}
+                                            </Text>
+                                        </View>
+                                        <View style={{ width: '15%', alignItems: 'center', right: 5 }}>
                                             {expense['reacurring_id'] && (
                                                 <FontAwesome
                                                     name="repeat"
@@ -159,11 +169,6 @@ export default function HistoryPage({ navigation }) {
                                                     color={Colors.SECONDARYCOLOR}
                                                 />
                                             )}
-                                        </View>
-                                        <View style={{ width: '30%' }}>
-                                            <Text style={styles.expenseValue}>
-                                                {'$' + parseFloat(expense['amount']).toFixed(2)}
-                                            </Text>
                                         </View>
                                         <TouchableOpacity
                                             onPress={async () => {
@@ -234,7 +239,7 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     expenseNameBox: {
-        width: '40%',
+        width: '30%',
         height: 55,
         margin: 5,
     },
