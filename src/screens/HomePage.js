@@ -28,7 +28,6 @@ import {
 } from '../util/ExpenseTableUtils';
 import { deleteImage } from '../util/ImageUtils';
 import { applyRecurringExpenses, deleteRowFromReacurringTable } from '../util/RecurringTableUtils';
-import { createExampleData } from '../util/TestUtils';
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
@@ -103,23 +102,6 @@ export default function HomePage({ navigation }) {
         setTodayExpenses(expenses);
     };
 
-    const handleAddFakeData = async () => {
-        alert('Adding example data...');
-        // Add expenses
-        await createExampleData();
-
-        // Fetch expenses for today and set to state
-        const expenses = await getExpensesFromDay(targetDate);
-        // Change expense categoryId to name
-        for (let i = 0; i < expenses.length; i++) {
-            expenses[i]['categoryId'] = expenses[i]['category'];
-            expenses[i]['categoryColor'] = await getCategoryColorById(expenses[i]['category']);
-            expenses[i]['category'] = await getCategoryNameFromId(expenses[i]['category']);
-        }
-        setTodayExpenses(expenses);
-        alert('Data has been added and set');
-    };
-
     // make date more readable
     const parts = targetDate.split('-');
     const year = parts[0];
@@ -162,9 +144,6 @@ export default function HomePage({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-            <TouchableOpacity style={styles.debug} onPress={handleAddFakeData}>
-                <FontAwesome name="wrench" size={15} color="black" />
-            </TouchableOpacity>
             <TodaySpendingComponent
                 todayExpenses={todayExpenses}
                 subHeadingText="Total Spendings"
