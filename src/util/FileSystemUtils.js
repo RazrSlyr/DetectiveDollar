@@ -214,7 +214,7 @@ export async function addRowToExpenseTable(
  * @param {string} icon (optional) Icon Name
  * @returns {integer} The ID of the category that is added
  */
-export async function addRowToCategoryTable(categoryName, color = 'black', icon = null) {
+export async function addRowToCategoryTable(categoryName, color = 'white', icon = null) {
     const db = await getDatabase();
     let categoryId = null;
     await db.transactionAsync(async (tx) => {

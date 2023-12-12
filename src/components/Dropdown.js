@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
@@ -12,9 +12,16 @@ import * as Sizes from '../constants/Sizes';
  * @returns {object} The component object for the Date Picker
  * @memberof Components
  */
-function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
+function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel, reset }) {
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
+    useEffect(() => {
+        // Reset the dropdown when the 'reset' prop changes
+        if (reset) {
+            setValue(null);
+            setIsFocus(false);
+        }
+    }, [reset]);
 
     return (
         <View style={styles.container}>
@@ -24,6 +31,7 @@ function DropdownSelector({ data, onChange, dropdownLabel, placeholderLabel }) {
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
+                selectedTextProps={{ numberOfLines: 1, ellipsizeMode: 'tail' }}
                 data={data}
                 //search
                 maxHeight={300}

@@ -50,6 +50,8 @@ export default function AddExpense({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);
     const [targetDate, setTargetDate] = useState(getCurrentDateString());
     const [memo, setMemo] = useState(null);
+    const [resetDropdown, setResetDropdown] = useState(false);
+
 
     const todaysDate = getCurrentDateString();
 
@@ -117,7 +119,15 @@ export default function AddExpense({ navigation }) {
             memo,
             frequency
         );
+        setResetDropdown(true);
         alert('Entry added');
+        // Clear input fields
+        setName(''); // Set the name to an empty string or initial value
+        setAmount(''); // Set the amount to an empty string or initial value
+        setCategory(''); // Set the category to an empty string or initial value
+        setMemo(null); // Set the memo to an empty string or initial value
+        setFrequency(NO_REPETION); // Set the frequency to the default value
+        setImageURI(null);
     };
     const clearImage = async () => {
         console.log('removed photo');
@@ -146,6 +156,7 @@ export default function AddExpense({ navigation }) {
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Name of expense"
+                                        value={name}
                                         onChangeText={(value) => setName(value)}
                                     />
                                     <GreenLine />
@@ -157,9 +168,8 @@ export default function AddExpense({ navigation }) {
                                         placeholder="$0.00"
                                         keyboardType="numeric"
                                         maxLength={10}
-                                        onChangeText={(value) =>
-                                            setAmount(parseFloat(value).toFixed(2))
-                                        }
+                                        value={amount}
+                                        onChangeText={(text) => setAmount(text)}
                                     />
                                     <GreenLine />
                                 </View>
@@ -193,11 +203,13 @@ export default function AddExpense({ navigation }) {
                                                 value: category['id'],
                                             };
                                         })}
+                                        value={category}
                                         onChange={(item) => {
                                             setCategory(item.value);
                                         }}
                                         dropdownLabel="Category"
                                         placeholderLabel="Category"
+                                        reset={resetDropdown} // Pass the 'resetDropdown' state as a prop
                                     />
                                     <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
@@ -212,11 +224,13 @@ export default function AddExpense({ navigation }) {
                                             { label: 'Weekly', value: WEEKLY },
                                             { label: 'Monthly', value: MONTHLY },
                                         ]}
+                                        value={frequency}
                                         onChange={(item) => {
                                             setFrequency(item.value);
                                         }}
                                         dropdownLabel="Expense Frequency"
                                         placeholderLabel="Expense Frequency"
+                                        // makes category dropdown not clear...reset={resetDropdown} // Pass the 'resetDropdown' state as a prop
                                     />
                                     <View style={{ height: 15, width: 15, marginBottom: 1 }} />
                                     <GreenLine />
@@ -226,6 +240,7 @@ export default function AddExpense({ navigation }) {
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Notes about spending"
+                                        value={memo}
                                         onChangeText={(value) => setMemo(value)}
                                     />
                                     <GreenLine />

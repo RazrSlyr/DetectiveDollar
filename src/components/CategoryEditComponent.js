@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    Text,
-    View,
-    SafeAreaView,
-    Modal,
-    TextInput,
-} from 'react-native';
+import { Alert, Modal, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import ColorPicker from 'react-native-wheel-color-picker';
 
 import GreenLine from './GreenLine';
@@ -22,30 +14,14 @@ import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
  * @returns {object} The component object for the Category Edit Pop Up
  * @memberof Components
  */
+const DEFAULTCOLOR = 'white';
 const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }) => {
-    const [enableSave, setEnableSave] = useState(false);
-    const [categoryName, setCategoryName] = useState(category?.name);
-    const [categoryColor, setColor] = useState(category?.color); //use to update color
-
-    const onColorChange = (color) => {
-        setColor(color);
-    };
-
+    const [categoryName, setCategoryName] = useState();
+    const [categoryColor, setCategoryColor] = useState(DEFAULTCOLOR); //use to update color
     useEffect(() => {
-        const updateEnableSave = () => {
-            if (
-                (categoryName === undefined ||
-                    categoryName === '' ||
-                    categoryName === category.name) &&
-                (!categoryColor || categoryColor === category.color)
-            ) {
-                setEnableSave(false);
-            } else {
-                setEnableSave(true);
-            }
-        };
-        updateEnableSave();
-    }, [categoryName, categoryColor]);
+        setCategoryName(category?.name);
+        setCategoryColor(category?.color);
+    }, [category]);
 
     return (
         <Modal animationType="slide" transparent visible={isVisable} onRequestClose={() => onClose}>
@@ -60,13 +36,10 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                 <Text style={styles.inputHeading}>Name</Text>
                                 <TextInput
                                     style={styles.inputField}
-                                    value={
-                                        categoryName === undefined ? category.name : categoryName
-                                    }
+                                    value={categoryName !== undefined ? categoryName : ''}
+                                    placeholder={category?.name}
                                     onChangeText={(value) => {
-                                        //console.log('change value', value);
                                         setCategoryName(value);
-                                        //setColor(color)
                                     }}
                                 />
                             </View>
@@ -75,9 +48,9 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                                 <Text style={styles.inputHeading}>Color</Text>
                                 <View style={styles.colorPickerContainer}>
                                     <ColorPicker
-                                        color={!category?.color ? 'white' : category.color}
+                                        color={categoryColor}
                                         onColorChangeComplete={(categoryColor) =>
-                                            onColorChange(categoryColor)
+                                            setCategoryColor(categoryColor)
                                         }
                                         thumbSize={30}
                                         sliderSize={30}
@@ -95,13 +68,32 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                     <View style={styles.rowContainer}>
                         <ButtonComponent
                             onPress={async () => {
-                                //console.log('attempt to update');
-                                await updateRowFromCategoryTable(
-                                    category.id,
-                                    categoryName === category?.name ? null : categoryName,
-                                    categoryColor === category?.color ? null : categoryColor
-                                );
-                                await onUpdate();
+                                if (
+                                    categoryName === undefined ||
+                                    categoryName === null ||
+                                    categoryName.trim().length === 0
+                                ) {
+                                    Alert.alert('Please Input a Category Name');
+                                    return;
+                                }
+                                if (
+                                    categoryName !== category?.name ||
+                                    categoryColor !== category?.color
+                                ) {
+                                    try {
+                                        await updateRowFromCategoryTable(
+                                            category.id,
+                                            categoryName.trim(),
+                                            categoryColor
+                                        );
+                                        await onUpdate();
+                                    } catch (error) {
+                                        console.log(
+                                            'Failed to update Category ' + category['id'],
+                                            error
+                                        );
+                                    }
+                                }
                                 onClose();
                             }}
                             name="Save"
@@ -110,9 +102,8 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                         />
                         <ButtonComponent
                             onPress={async () => {
-                                await onUpdate();
                                 setCategoryName(undefined);
-                                setColor(undefined);
+                                setCategoryColor(undefined);
                                 onClose();
                             }}
                             name="Cancel"
@@ -181,7 +172,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 10,
+        //marginTop: 10,
     },
     colorPickerContainer: {
         height: 300,
