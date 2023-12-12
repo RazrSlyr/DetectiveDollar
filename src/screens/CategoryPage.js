@@ -14,7 +14,8 @@ import CategoryEditComponent from '../components/CategoryEditComponent';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { getCategoryTable } from '../util/FileSystemUtils';
+import { addRowToCategoryTable, getCategoryTable } from '../util/CategoryTableUtils';
+
 export default function CategoryPage({ navigation }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);

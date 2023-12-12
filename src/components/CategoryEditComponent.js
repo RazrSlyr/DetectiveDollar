@@ -5,7 +5,7 @@ import ColorPicker from 'react-native-wheel-color-picker';
 import GreenLine from './GreenLine';
 import ButtonComponent from '../components/ButtonComponent';
 import * as Colors from '../constants/Colors';
-import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
+import { updateRowFromCategoryTable } from '../util/CategoryTableUtils';
 
 /**
  * Component for the Category editing pop up

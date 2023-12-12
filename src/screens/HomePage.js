@@ -15,6 +15,7 @@ import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import TodaySpendingComponent from '../components/TodaysExpenseComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
+import { getCategoryColorById, getCategoryNameFromId } from '../util/CategoryTableUtils';
 import {
     getCurrentDateString,
     getDateFromUTCDatetimeString,
@@ -22,15 +23,12 @@ import {
 } from '../util/DatetimeUtils';
 import {
     deleteRowFromExpenseTable,
-    deleteRowFromReacurringTable,
     getExpensesFromDay,
     getRowFromExpenseTable,
-    deleteImage,
-    getCategoryNameFromId,
-    applyRecurringExpenses,
-    createExampleData,
-    getCategoryColorById,
-} from '../util/FileSystemUtils';
+} from '../util/ExpenseTableUtils';
+import { deleteImage } from '../util/ImageUtils';
+import { applyRecurringExpenses, deleteRowFromReacurringTable } from '../util/RecurringTableUtils';
+import { createExampleData } from '../util/TestUtils';
 
 export default function HomePage({ navigation }) {
     const [todayExpenses, setTodayExpenses] = useState([]);

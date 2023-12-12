@@ -1,5 +1,5 @@
 /**
- * @module SqliteUtils
+ * @module SQLiteUtils
  */
 
 /**

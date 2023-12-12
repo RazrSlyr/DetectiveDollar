@@ -7,7 +7,7 @@ import LineGraphStats from './LineGraphStats';
 import * as Colors from '../constants/Colors';
 import { YEARLY, MONTHLY, WEEKLY } from '../constants/FrequencyConstants';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import { getExpensesFromDayframe } from '../util/FileSystemUtils';
+import { getExpensesFromDayframe } from '../util/ExpenseTableUtils';
 
 /**
  * Component for displaying a Line Graph of expense data
