@@ -22,33 +22,10 @@ export default function CategoryPage({ navigation }) {
     const [showAddComponent, setShowAddComponent] = useState(false);
 
     useEffect(() => {
-        const getCategories = async () => {
-            try {
-                // Fetch expenses for today and set to state
-                const categories = await getCategoryTable();
-                categories.sort(function (a, b) {
-                    const x = a.name;
-                    const y = b.name;
-                    if (x > y) {
-                        return 1;
-                    }
-                    if (x < y) {
-                        return -1;
-                    }
-                    return 0;
-                });
-                setCategories(categories);
-                //console.log('Categories set!');
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
-        };
-
-        // Call getExpenses when the component mounts
         updateCategories();
 
         // Add an event listener for focus to re-fetch expenses when the component comes into focus
-        const unsubscribe = navigation.addListener('focus', getCategories);
+        const unsubscribe = navigation.addListener('focus', updateCategories);
 
         // Clean up the event listener when the component unmounts
         return () => unsubscribe();
@@ -64,6 +41,17 @@ export default function CategoryPage({ navigation }) {
         try {
             // Fetch expenses for today and set to state
             const categories = await getCategoryTable();
+            categories.sort(function (a, b) {
+                const x = a.name;
+                const y = b.name;
+                if (x > y) {
+                    return 1;
+                }
+                if (x < y) {
+                    return -1;
+                }
+                return 0;
+            });
             setCategories(categories);
             //console.log('Categories set!');
         } catch (error) {
@@ -166,12 +154,6 @@ const styles = StyleSheet.create({
     titleContainer: {
         width: 'auto',
     },
-    dividerLine: {
-        width: '70%',
-        borderBottomWidth: 3,
-        borderColor: Colors.SECONDARYCOLOR,
-        alignSelf: 'center',
-    },
     titleText: {
         fontWeight: 'bold',
         fontSize: 35,
@@ -208,72 +190,6 @@ const styles = StyleSheet.create({
     editText: {
         color: Colors.SECONDARYCOLOR,
         fontSize: 20,
-    },
-    backButton: {
-        width: 'auto',
-    },
-    // Starting now, add category modal styles
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalShadow: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    },
-    modalView: {
-        backgroundColor: Colors.PRIMARYCOLOR,
-        borderRadius: 20,
-        padding: 10,
-        alignItems: 'center',
-        elevation: 5,
-        width: '80%',
-        height: '70%',
-    },
-    modalTitle: {
-        textAlign: 'center',
-        color: Colors.SECONDARYCOLOR,
-        fontWeight: 'bold',
-        fontSize: Sizes.TITLESIZE,
-    },
-    inputContainer: {
-        height: '50%',
-        width: '80%',
-        marginBottom: 10,
-    },
-    inputHeading: {
-        fontSize: 15,
-        fontFamily: 'Roboto-Bold',
-        color: Colors.SECONDARYCOLOR,
-        width: '84%',
-        marginTop: 15,
-        marginBottom: 5,
-    },
-    input: {
-        width: '80%',
-        color: Colors.TEXTCOLOR,
-        fontFamily: 'Roboto-Bold',
-        fontSize: 20,
-        textAlign: 'left',
-    },
-    line: {
-        height: 2,
-        width: '100%',
-        backgroundColor: Colors.SECONDARYCOLOR,
-        alignSelf: 'center',
-    },
-    addCancelBox: {
-        width: '80%',
-        height: 'auto',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: 120,
-    },
-    colorPickerBox: {
-        width: '100%',
-        height: 300,
     },
     button: {
         width: 180,
