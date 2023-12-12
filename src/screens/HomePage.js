@@ -237,22 +237,27 @@ export default function HomePage({ navigation }) {
                                                 {datetime.replace(' ', '\n')}
                                             </Text>
                                         </View>
-                                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                                            {expense['reacurring_id'] && (
-                                                <View style={{ marginRight: 30 }}>
-                                                    <FontAwesome
-                                                        name="repeat"
-                                                        size={24}
-                                                        color={Colors.SECONDARYCOLOR}
-                                                    />
-                                                </View>
-                                            )}
+                                        <View style={{ alignItems: 'center', width: '30%' }}>
                                             <Text
                                                 numberOfLines={1}
                                                 ellipsizeMode="tail"
                                                 style={styles.expenseValue}>
                                                 {'$' + parseFloat(expense['amount']).toFixed(2)}
                                             </Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                width: '15%',
+                                                alignItems: 'center',
+                                                right: 5,
+                                            }}>
+                                            {expense['reacurring_id'] && (
+                                                <FontAwesome
+                                                    name="repeat"
+                                                    size={24}
+                                                    color={Colors.SECONDARYCOLOR}
+                                                />
+                                            )}
                                         </View>
                                         <TouchableOpacity
                                             onPress={async () => {
@@ -393,8 +398,6 @@ const styles = StyleSheet.create({
     expenseValue: {
         fontSize: 20,
         color: 'red',
-        overflow: 'hidden',
-        width: '60%',
     },
     colorAndCategoryBox: {
         width: 'auto',
