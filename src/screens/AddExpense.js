@@ -30,14 +30,10 @@ import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import { DAILY, MONTHLY, NO_REPETION, WEEKLY } from '../constants/FrequencyConstants';
 import * as Sizes from '../constants/Sizes';
+import { getCategoryTable } from '../util/CategoryTableUtils';
 import { getCurrentDateString } from '../util/DatetimeUtils';
-import {
-    addRowToExpenseTable,
-    saveImage,
-    getExpensesFromDay,
-    getCategoryTable,
-} from '../util/FileSystemUtils';
-import { pickImage, captureImage } from '../util/ImagePickerUtils';
+import { addRowToExpenseTable, getExpensesFromDay } from '../util/ExpenseTableUtils';
+import { captureImage, pickImage, saveImage } from '../util/ImageUtils';
 
 export default function AddExpense({ navigation }) {
     const [name, setName] = useState('');

@@ -23,7 +23,7 @@ import ColorPicker from 'react-native-wheel-color-picker';
 import CategoryEditComponent from '../components/CategoryEditComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { addRowToCategoryTable, getCategoryTable } from '../util/FileSystemUtils';
+import { addRowToCategoryTable, getCategoryTable } from '../util/CategoryTableUtils';
 
 export default function CategoryPage({ navigation }) {
     const [categories, setCategories] = useState([]);

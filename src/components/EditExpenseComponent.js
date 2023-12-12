@@ -22,8 +22,9 @@ import DropdownSelector from '../components/Dropdown';
 import GreenLine from '../components/GreenLine';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { updateExpense, saveImage, getCategoryTable } from '../util/FileSystemUtils';
-import { pickImage, captureImage } from '../util/ImagePickerUtils';
+import { captureImage, pickImage, saveImage } from '../util/ImageUtils';
+import { updateExpense } from '../util/ExpenseTableUtils';
+import { getCategoryTable } from '../util/CategoryTableUtils';
 
 /**
  * Component for the inspecting expense info
@@ -336,7 +337,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         height: 40,
         width: 80,
-        margin:10,
+        margin: 10,
     },
     buttonText: {
         textAlign: 'center',

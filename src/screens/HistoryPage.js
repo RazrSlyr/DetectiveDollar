@@ -21,17 +21,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ExpenseInfoComponent from '../components/ExpenseInfoComponent';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
+import { getCategoryColorById, getCategoryNameFromId } from '../util/CategoryTableUtils';
+import { getExpenseUpdatesInSession, resetExpenseUpdatesInSession } from '../util/DatabaseUtils';
+import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
 import {
     deleteRowFromExpenseTable,
-    deleteRowFromReacurringTable,
-    getRowFromExpenseTable,
-    deleteImage,
-    getCategoryNameFromId,
-    applyRecurringExpenses,
     getExpenseTable,
-    getCategoryColorById,
-    getExpenseUpdatesInSession,
-} from '../util/FileSystemUtils';
+    getRowFromExpenseTable,
+} from '../util/ExpenseTableUtils';
+import { deleteImage } from '../util/ImageUtils';
+import { applyRecurringExpenses, deleteRowFromReacurringTable } from '../util/RecurringTableUtils';
 
 export default function HistoryPage({ navigation }) {
     const [loading, setLoading] = useState(false);
@@ -48,17 +47,10 @@ export default function HistoryPage({ navigation }) {
     const [showExpenseInfo, setShowExpenseInfo] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState();
 
-    let expenseChangesOnLastCheck = null;
-
     useEffect(() => {
         const getExpenses = async () => {
             try {
-                if (
-                    expenseChangesOnLastCheck === null ||
-                    expenseChangesOnLastCheck !== getExpenseUpdatesInSession()
-                ) {
-                    expenseChangesOnLastCheck = getExpenseUpdatesInSession();
-                } else {
+                if (getExpenseUpdatesInSession() === 0) {
                     return;
                 }
                 setLoading(true);
@@ -76,6 +68,7 @@ export default function HistoryPage({ navigation }) {
                 // Change expense categoryId to name
                 setAllExpeneses(expenses);
                 setLoading(false);
+                resetExpenseUpdatesInSession();
                 // console.log('expenses set!');
             } catch (error) {
                 console.error('Error fetching expenses:', error);
@@ -133,6 +126,8 @@ export default function HistoryPage({ navigation }) {
                         data={expensesToDisplay}
                         renderItem={(row) => {
                             const expense = row['item'];
+                            const date = getDateFromUTCDatetimeString(expense['timestamp']);
+                            const datetime = getDatetimeString(date);
                             return (
                                 <TouchableOpacity
                                     onPress={async () => {
@@ -160,7 +155,7 @@ export default function HistoryPage({ navigation }) {
                                                 {expense['name']}
                                             </Text>
                                             <Text style={styles.expenseData}>
-                                                {expense['timestamp'].replace(/ /g, '\n')}
+                                                {datetime.replace(' ', '\n')}
                                             </Text>
                                             {expense['reacurring_id'] && (
                                                 <FontAwesome

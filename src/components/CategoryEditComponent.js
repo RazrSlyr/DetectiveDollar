@@ -12,7 +12,7 @@ import {
 import ColorPicker from 'react-native-wheel-color-picker';
 
 import * as Colors from '../constants/Colors';
-import { updateRowFromCategoryTable } from '../util/FileSystemUtils';
+import { updateRowFromCategoryTable } from '../util/CategoryTableUtils';
 
 /**
  * Component for the Category editing pop up
@@ -99,7 +99,6 @@ const CategoryEditComponent = ({ isVisable, onClose, onUpdate, category = null }
                             ]}
                             disabled={!enableSave}
                             onPress={async () => {
-                                //console.log('attempt to update');
                                 await updateRowFromCategoryTable(
                                     category.id,
                                     categoryName === category?.name ? null : categoryName,

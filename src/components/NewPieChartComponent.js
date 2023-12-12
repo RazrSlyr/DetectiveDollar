@@ -12,11 +12,12 @@ import {
     getMonthStartEndDate,
     getYearStartEndDate,
 } from '../util/DatetimeUtils';
-import { getExpensesbyCategory, getCategoryColorByName } from '../util/FileSystemUtils';
+import { getExpensesbyCategory } from '../util/ExpenseTableUtils';
+import { getCategoryColorByName } from '../util/CategoryTableUtils';
 
 /**
  * Component for displaying a pie graph of expenses separated by category
- * @param {object} props Props object. Props are startDate (string), endDate (string), 
+ * @param {object} props Props object. Props are startDate (string), endDate (string),
  * and timeFrame (use FrequencyConstants)
  * @returns {object} The component object for the Pie Graph
  * @memberof Components
