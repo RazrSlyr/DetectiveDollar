@@ -27,7 +27,11 @@ import {
     resetExpenseUpdatesInSession,
 } from '../util/DatabaseUtils';
 import { getDateFromUTCDatetimeString, getDatetimeString } from '../util/DatetimeUtils';
-import { deleteRowFromExpenseTable, getExpensesTableCategoryJoin, getRowFromExpenseTable } from '../util/ExpenseTableUtils';
+import {
+    deleteRowFromExpenseTable,
+    getExpensesTableCategoryJoin,
+    getRowFromExpenseTable,
+} from '../util/ExpenseTableUtils';
 import { deleteImage } from '../util/ImageUtils';
 import { applyRecurringExpenses, deleteRowFromReacurringTable } from '../util/RecurringTableUtils';
 
